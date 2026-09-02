@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deutsch B2 Dashboard</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #faf9f4;
+  color: #1a1a1a;
+  margin: 0;
+  padding: 24px;
+  line-height: 1.5;
+}
+.wrap { max-width: 1180px; margin: 0 auto; }
+h1 { color: #2a4d3a; margin: 0 0 4px 0; font-size: 28px; }
+h2 { color: #2a4d3a; margin: 32px 0 12px 0; font-size: 20px; border-bottom: 2px solid #e8e5d4; padding-bottom: 6px; }
+h3 { color: #4a4a4a; margin: 16px 0 8px 0; font-size: 15px; font-weight: 600; }
+.subtitle { color: #777; font-size: 14px; margin-bottom: 8px; }
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin: 8px 0 16px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.banner.snapshot { background: #fff7e6; border: 1px solid #f0d99a; color: #6b5118; }
+.banner.live { background: #e8f5e8; border: 1px solid #a8d4a8; color: #2a4d3a; }
+.banner button { background: #2a4d3a; color: white; border: 0; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+.banner button:hover { background: #3a6d4a; }
+.banner button:disabled { background: #aaa; cursor: not-allowed; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0 8px 0; }
+.kpi-card { background: white; border: 1px solid #e8e5d4; border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+.kpi-value { font-size: 28px; font-weight: 700; color: #2a4d3a; line-height: 1.1; }
+.kpi-label { font-size: 12px; color: #777; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+.card { background: white; border: 1px solid #e8e5d4; border-radius: 10px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+.chart-box { position: relative; height: 280px; }
+table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.data th { background: #f0ede4; text-align: left; padding: 8px 10px; font-weight: 600; color: #4a4a4a; border-bottom: 1px solid #e0ddd0; }
+table.data td { padding: 8px 10px; border-bottom: 1px solid #f0ede4; vertical-align: top; }
+table.data tr:last-child td { border-bottom: none; }
+.tag { display: inline-block; background: #e8efe5; color: #2a4d3a; padding: 4px 10px; border-radius: 14px; font-size: 12px; margin: 3px 4px 3px 0; }
+.tag.dim { background: #eee; color: #888; }
+.heatmap { display: flex; flex-wrap: wrap; gap: 2px; padding: 8px 0; }
+.cell { width: 14px; height: 14px; border-radius: 3px; background: #ebe8d8; position: relative; }
+.cell.conv { background: #6b9b7a; }
+.cell.review { background: #b3c9b9; }
+.cell.both { background: #2a4d3a; }
+.cell[title]:hover::after {
+  content: attr(title); position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+  background: #333; color: white; padding: 3px 7px; border-radius: 4px; font-size: 11px; white-space: nowrap; z-index: 10;
+}
+.legend { font-size: 12px; color: #666; display: flex; gap: 12px; margin-top: 6px; align-items: center; flex-wrap: wrap; }
+.legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
+.hint { color: #888; font-size: 12px; font-style: italic; }
+.bar-bg { background: #ebe8d8; border-radius: 4px; height: 8px; overflow: hidden; margin: 4px 0; }
+.bar-fill { background: #6b9b7a; height: 100%; }
+.flex { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; padding: 3px 0; }
+.muted { color: #888; font-size: 12px; }
+.section-intro { font-size: 13px; color: #777; margin: 4px 0 12px 0; }
+.vtabs-nav { display: flex; gap: 2px; border-bottom: 2px solid #e0ddd0; margin: 16px 0 12px 0; flex-wrap: wrap; }
+.vtab { background: none; border: none; padding: 8px 14px; font-size: 13px; color: #666; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; border-radius: 6px 6px 0 0; }
+.vtab.active { color: #2a4d3a; border-bottom-color: #6b9b7a; font-weight: 700; background: #f8f7f0; }
+.vtab:hover:not(.active) { background: #f5f3eb; color: #2a4d3a; }
+.vtab-count { color: #999; font-size: 11px; margin-left: 4px; }
+.vtab.active .vtab-count { color: #6b9b7a; }
+.vtab-panel { display: none; }
+.vtab-panel.active { display: block; }
+.vtab-controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+.vsearch { flex: 1; min-width: 180px; padding: 7px 12px; border: 1px solid #d6d3c4; border-radius: 6px; font-size: 13px; background: white; }
+.vsearch:focus { outline: none; border-color: #6b9b7a; box-shadow: 0 0 0 2px #6b9b7a33; }
+.vtheme-filter, .vsort-toggle { padding: 7px 10px; border: 1px solid #d6d3c4; border-radius: 6px; font-size: 13px; background: white; cursor: pointer; }
+.vtab-list { max-height: 420px; overflow-y: auto; padding-right: 4px; border: 1px solid #f0ede4; border-radius: 6px; }
+.vitem { padding: 8px 12px; border-bottom: 1px solid #f5f3eb; display: grid; grid-template-columns: minmax(140px, 1fr) 2fr auto; gap: 12px; align-items: baseline; font-size: 13px; }
+.vitem:last-child { border-bottom: none; }
+.vitem:hover { background: #faf9f4; }
+.vitem-word { font-weight: 600; color: #2a4d3a; }
+.vitem-meaning { color: #555; font-size: 12px; }
+.vitem-meta { color: #999; font-size: 11px; text-align: right; white-space: nowrap; }
+.vitem.stale .vitem-meta { color: #c8863a; font-weight: 600; }
+.vitem.stale .vitem-word::before { content: "⏰ "; font-size: 11px; }
+.vgroup-header { font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 0.6px; padding: 10px 12px 4px 12px; background: #f5f3eb; border-bottom: 1px solid #e8e5d4; }
+.vtab-empty { padding: 30px 20px; text-align: center; color: #888; font-size: 13px; }
+.diag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #888; background: #f5f3eb; padding: 8px; border-radius: 6px; white-space: pre-wrap; margin-top: 8px; max-height: 200px; overflow: auto; }
+details summary { cursor: pointer; color: #888; font-size: 12px; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Deutsch B2 Dashboard</h1>
+<div class="subtitle" id="subtitle">Tracking your German practice over time</div>
+</header>
+<div id="banner"></div>
+<main id="app"></main>
+</div>
+
+<script>
+// === SNAPSHOT DATA (regenerated each time you ask Claude to refresh the dashboard) ===
+// This is SAMPLE data so you can see the shape the dashboard expects.
+// Ask Claude to read your Apple Notes and replace SNAPSHOT_SESSIONS / SNAPSHOT_REVIEW_DATES
+// with your real session history the first time you set this up.
+const SNAPSHOT_ASOF = "2026-09-01";
+const SNAPSHOT_SESSIONS = [
+  {
+    "date": "2026-09-01",
+    "theme": "Technologie im Alltag",
+    "name": "Deutsch B2 Konversation, 2026-09-01, Technologie im Alltag",
+    "nouns": [
+      { "word": "das Gerät", "plural": "die Geräte", "meaning": "device, gadget", "example": "Dieses Gerät macht mein Leben viel einfacher." },
+      { "word": "das Passwort", "plural": "die Passwörter", "meaning": "password", "example": "Ich habe zu viele Passwörter, die ich mir merken muss." }
+    ],
+    "adjectives": [
+      { "word": "drahtlos", "meaning": "wireless", "example": "Die drahtlose Verbindung funktioniert hier nicht gut." },
+      { "word": "veraltet", "meaning": "outdated, obsolete", "example": "Dieses Betriebssystem ist schon ziemlich veraltet." }
+    ],
+    "verbs": [
+      { "infinitive": "hochladen (trennbar)", "presens": "lade hoch / lädst hoch", "perfekt": "hat hochgeladen", "meaning": "to upload", "example": "Ich habe das Foto hochgeladen." }
+    ],
+    "idioms": [
+      { "idiom": "am Puls der Zeit sein", "literal": "to be at the pulse of the time", "meaning": "to be up to date", "example": "Wer am Puls der Zeit sein will, muss sich ständig weiterbilden." }
+    ],
+    "mistakes": [
+      { "num": "1", "category": "Präposition", "wrong": "Ich denke an das Update seit gestern", "right": "Ich denke seit gestern an das Update", "explanation": "Zeitangabe steht meist vor dem Präpositionalobjekt." }
+    ],
+    "stats": { "Anzahl Antworten": 9, "Wörter insgesamt": 240, "Durchschnittliche Wortzahl pro Antwort": 27, "Komplexe Sätze (Nebensätze)": 4, "dass-Sätze": 1, "weil-Sätze": 1, "wenn-Sätze": 1, "Konjunktiv II": 0, "Passiv": 1, "Genitiv": 0, "Eigene Fragen gestellt": 1, "Wiederverwendung alter Wörter": 2, "Wiederverwendung alter Redewendungen": 1, "Sitzungsdauer (Minuten)": 30 }
+  },
+  {
+    "date": "2026-08-28",
+    "theme": "Reisen und Kultur",
+    "name": "Deutsch B2 Quiz, 2026-08-28",
+    "nouns": [
+      { "word": "die Sehenswürdigkeit", "plural": "die Sehenswürdigkeiten", "meaning": "tourist attraction, sight", "example": "Wir haben alle wichtigen Sehenswürdigkeiten besichtigt." },
+      { "word": "der Aufenthalt", "plural": "die Aufenthalte", "meaning": "stay, visit", "example": "Unser Aufenthalt in Wien war viel zu kurz." }
+    ],
+    "adjectives": [
+      { "word": "abwechslungsreich", "meaning": "varied, eventful", "example": "Es war eine abwechslungsreiche Reise." }
+    ],
+    "verbs": [
+      { "infinitive": "sich verirren", "presens": "verirre mich / verirrst dich", "perfekt": "hat sich verirrt", "meaning": "to get lost", "example": "Wir haben uns in der Altstadt verirrt." }
+    ],
+    "idioms": [
+      { "idiom": "die Welt entdecken", "literal": "to discover the world", "meaning": "to travel and explore", "example": "Sie will die Welt entdecken, bevor sie mit dem Studium beginnt." }
+    ],
+    "mistakes": [
+      { "num": "1", "category": "Kasus", "wrong": "wegen der Regen", "right": "wegen des Regens", "explanation": "\"Wegen\" verlangt den Genitiv." },
+      { "num": "2", "category": "Wortstellung", "wrong": "Ich habe gestern, weil es geregnet hat, das Museum besucht", "right": "Ich habe gestern das Museum besucht, weil es geregnet hat", "explanation": "Nebensatz meist ans Ende, nicht mitten im Hauptsatz." }
+    ],
+    "stats": { "Anzahl Antworten": 12, "Wörter insgesamt": 310, "Durchschnittliche Wortzahl pro Antwort": 26, "Komplexe Sätze (Nebensätze)": 6, "dass-Sätze": 2, "weil-Sätze": 2, "wenn-Sätze": 1, "Konjunktiv II": 1, "Passiv": 0, "Genitiv": 1, "Eigene Fragen gestellt": 0, "Wiederverwendung alter Wörter": 1, "Wiederverwendung alter Redewendungen": 0, "Sitzungsdauer (Minuten)": 35 }
+  }
+];
+const SNAPSHOT_REVIEW_DATES = ["2026-08-22", "2026-08-28"];
+
+const CATEGORY_COLORS = {
+  'Artikel/Genus': '#6b9b7a', 'Kasus': '#c4885a', 'Wortstellung': '#7a8fb8',
+  'Verbform': '#d4a85a', 'Präposition': '#a87ba8', 'Wortwahl': '#5a9fa8',
+  'Vokabular': '#b85a7a', 'Rechtschreibung': '#8a8a5a', 'Komposition': '#a8a8a8',
+  'Sonstiges': '#bdbdbd', 'Unkategorisiert': '#cccccc'
+};
+
+let lastDiag = '';
+
+function normalizeMcpResponse(resp, depth) {
+  depth = depth || 0;
+  if (depth > 6 || resp == null) return resp;
+  if (Array.isArray(resp)) return resp;
+  if (typeof resp === 'object') {
+    if (Array.isArray(resp.content)) {
+      const text = resp.content.map(c => (c && typeof c.text === 'string') ? c.text : '').join('');
+      return normalizeMcpResponse(text, depth + 1);
+    }
+    if (resp.result !== undefined) return normalizeMcpResponse(resp.result, depth + 1);
+    if (resp.data !== undefined) return normalizeMcpResponse(resp.data, depth + 1);
+    return resp;
+  }
+  if (typeof resp === 'string') {
+    const trimmed = resp.trim();
+    if (trimmed && (trimmed.startsWith('[') || trimmed.startsWith('{') || trimmed.startsWith('"'))) {
+      try { return normalizeMcpResponse(JSON.parse(trimmed), depth + 1); } catch {}
+    }
+    return resp;
+  }
+  return resp;
+}
+
+async function tryLiveLoad() {
+  const diagLines = [];
+  if (!window.cowork || typeof window.cowork.callMcpTool !== 'function') {
+    return { ok: false, diag: 'window.cowork.callMcpTool not available' };
+  }
+  const attempts = [{}, { limit: 50 }, { limit: 30 }];
+  let list = null;
+  for (const args of attempts) {
+    try {
+      const raw = await window.cowork.callMcpTool('mcp__Read_and_Write_Apple_Notes__list_notes', args);
+      if (raw && raw.isError) {
+        const txt = Array.isArray(raw.content) ? raw.content.map(c => c && c.text).join('') : String(raw);
+        diagLines.push('list_notes ' + JSON.stringify(args) + ' -> error: ' + txt.slice(0, 200));
+        continue;
+      }
+      const norm = normalizeMcpResponse(raw);
+      if (Array.isArray(norm)) { list = norm; diagLines.push('list_notes ' + JSON.stringify(args) + ' -> ok, ' + norm.length + ' notes'); break; }
+      diagLines.push('list_notes ' + JSON.stringify(args) + ' -> unexpected: ' + (typeof norm));
+    } catch (e) {
+      diagLines.push('list_notes ' + JSON.stringify(args) + ' -> threw: ' + (e.message || String(e)));
+    }
+  }
+  if (!list) return { ok: false, diag: diagLines.join('\n') };
+
+  const seen = new Set();
+  const convNotes = [], reviewNotes = [];
+  list.forEach(n => {
+    if (!n || !n.name) return;
+    const k = n.id || n.name;
+    if (seen.has(k)) return; seen.add(k);
+    if (n.name.startsWith('Deutsch B2 Konversation')) convNotes.push(n);
+    else if (n.name.startsWith('Deutsch B2 Review')) reviewNotes.push(n);
+  });
+  diagLines.push('Found ' + convNotes.length + ' conversation notes and ' + reviewNotes.length + ' review notes');
+
+  const sessions = [];
+  for (const n of convNotes) {
+    try {
+      const raw = await window.cowork.callMcpTool('mcp__Read_and_Write_Apple_Notes__get_note_content', { note_name: n.name });
+      if (raw && raw.isError) { diagLines.push('get_note_content "' + n.name + '" -> error'); continue; }
+      const norm = normalizeMcpResponse(raw);
+      const html = typeof norm === 'string' ? norm : JSON.stringify(norm);
+      const session = parseNote(html, n.name);
+      if (session.date) sessions.push(session);
+    } catch (e) {
+      diagLines.push('get_note_content "' + n.name + '" -> ' + (e.message || String(e)));
+    }
+  }
+  const reviewDates = reviewNotes.map(n => { const m = n.name.match(/(\d{4}-\d{2}-\d{2})/); return m ? m[1] : null; }).filter(Boolean);
+  if (sessions.length === 0) return { ok: false, diag: diagLines.join('\n') };
+  sessions.sort((a, b) => a.date.localeCompare(b.date));
+  return { ok: true, sessions, reviewDates, diag: diagLines.join('\n') };
+}
+
+function parseNote(html, noteName) {
+  const dateMatch = noteName.match(/(\d{4}-\d{2}-\d{2})/);
+  const themeMatch = noteName.match(/\d{4}-\d{2}-\d{2},\s*(.+)$/);
+  const session = {
+    date: dateMatch ? dateMatch[1] : null,
+    theme: themeMatch ? themeMatch[1].trim() : 'Unbekannt',
+    name: noteName,
+    nouns: [], adjectives: [], verbs: [], idioms: [], mistakes: [], stats: {}
+  };
+  if (typeof html !== 'string') return session;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const tables = Array.from(doc.querySelectorAll('table'));
+  tables.forEach(t => {
+    const rows = Array.from(t.querySelectorAll('tr'));
+    if (rows.length === 0) return;
+    const header = Array.from(rows[0].querySelectorAll('td,th')).map(c => c.textContent.trim());
+    const data = rows.slice(1).map(tr => Array.from(tr.querySelectorAll('td,th')).map(c => c.textContent.trim()));
+    if (data.length === 0) return;
+    if (header.includes('Wort') && header.includes('Plural')) {
+      session.nouns.push(...data.map(r => ({ word: r[0]||'', plural: r[1]||'', meaning: r[2]||'', example: r[3]||'' })));
+    } else if (header[0] === 'Adjektiv') {
+      session.adjectives.push(...data.map(r => ({ word: r[0]||'', meaning: r[1]||'', example: r[2]||'' })));
+    } else if (header[0] === 'Infinitiv') {
+      session.verbs.push(...data.map(r => ({ infinitive: r[0]||'', presens: r[1]||'', perfekt: r[2]||'', meaning: r[3]||'', example: r[4]||'' })));
+    } else if (header[0] === 'Redewendung') {
+      session.idioms.push(...data.map(r => ({ idiom: r[0]||'', literal: r[1]||'', meaning: r[2]||'', example: r[3]||'' })));
+    } else if (header.includes('Kategorie') && header.includes('Falsch')) {
+      session.mistakes.push(...data.map(r => ({ num: r[0]||'', category: (r[1]||'Sonstiges').trim(), wrong: r[2]||'', right: r[3]||'', explanation: r[4]||'' })));
+    } else if (header[0] === '#' && header.includes('Falsch')) {
+      session.mistakes.push(...data.map(r => ({ num: r[0]||'', category: 'Unkategorisiert', wrong: r[1]||'', right: r[2]||'', explanation: r[3]||'' })));
+    } else if (header[0] === 'Metrik') {
+      data.forEach(r => {
+        const key = r[0]||''; const val = r[1]||'';
+        const num = parseInt(String(val).replace(/[^\d\-]/g, ''), 10);
+        session.stats[key] = isNaN(num) ? val : num;
+      });
+    }
+  });
+  return session;
+}
+
+function setBanner(mode, diag) {
+  const bar = document.getElementById('banner');
+  if (mode === 'live') {
+    bar.className = 'banner live';
+    bar.innerHTML = '<span><b>Live</b> data from your Apple Notes, refreshed just now.</span><button id="refreshBtn">Refresh again</button>';
+  } else {
+    const detail = diag ? `<details style="margin-top:6px"><summary>Why am I seeing a snapshot?</summary><div class="diag">${escapeHtml(diag)}</div></details>` : '';
+    bar.className = 'banner snapshot';
+    bar.innerHTML = `<span><b>Snapshot</b> from ${SNAPSHOT_ASOF}. The live Apple Notes bridge from this artifact sandbox is not responding (HTTP 400). Ask Claude "refresh my dashboard" to rebake with the latest data.${detail}</span><button id="refreshBtn">Try live again</button>`;
+  }
+  const btn = document.getElementById('refreshBtn');
+  if (btn) btn.onclick = boot;
+}
+
+async function boot() {
+  document.getElementById('app').innerHTML = '<div class="card" style="text-align:center;color:#888;padding:40px">Trying live Apple Notes...</div>';
+  setBanner('snapshot', 'Trying live load...');
+  const live = await tryLiveLoad();
+  if (live.ok) {
+    setBanner('live');
+    render(live.sessions, live.reviewDates);
+  } else {
+    setBanner('snapshot', live.diag);
+    render(SNAPSHOT_SESSIONS, SNAPSHOT_REVIEW_DATES);
+  }
+}
+
+function render(sessions, reviewDates) {
+  const totalSessions = sessions.length;
+  const allNouns = new Map(), allAdj = new Map(), allVerbs = new Map(), allIdioms = new Map();
+  let totalMistakes = 0;
+  const mistakeByCat = {};
+  const catSessionSet = new Map(); // category -> Set of session dates it appeared in
+  sessions.forEach(s => {
+    s.nouns.forEach(n => { if (n.word) { const k = n.word.toLowerCase(); const prev = allNouns.get(k); allNouns.set(k, { ...n, firstDate: prev?.firstDate || s.date, firstTheme: prev?.firstTheme || s.theme }); } });
+    s.adjectives.forEach(a => { if (a.word) { const k = a.word.toLowerCase(); const prev = allAdj.get(k); allAdj.set(k, { ...a, firstDate: prev?.firstDate || s.date, firstTheme: prev?.firstTheme || s.theme }); } });
+    s.verbs.forEach(v => { const k = (v.infinitive||'').toLowerCase().split(/[\s(]/)[0]; if (k) { const prev = allVerbs.get(k); allVerbs.set(k, { ...v, firstDate: prev?.firstDate || s.date, firstTheme: prev?.firstTheme || s.theme }); } });
+    s.idioms.forEach(i => { if (i.idiom) { const k = i.idiom.toLowerCase(); const prev = allIdioms.get(k); allIdioms.set(k, { ...i, firstDate: prev?.firstDate || s.date, firstTheme: prev?.firstTheme || s.theme }); } });
+    const seenCatsThisSession = new Set();
+    s.mistakes.forEach(m => {
+      totalMistakes++;
+      const cat = m.category || 'Sonstiges';
+      mistakeByCat[cat] = (mistakeByCat[cat] || 0) + 1;
+      if (!seenCatsThisSession.has(cat)) {
+        seenCatsThisSession.add(cat);
+        if (!catSessionSet.has(cat)) catSessionSet.set(cat, new Set());
+        catSessionSet.get(cat).add(s.date);
+      }
+    });
+  });
+  const themeCount = {};
+  sessions.forEach(s => { themeCount[s.theme] = (themeCount[s.theme] || 0) + 1; });
+  const activitySet = new Set([...sessions.map(s => s.date), ...reviewDates].filter(Boolean));
+  const streak = computeStreak(activitySet);
+  const b2 = { 'dass-Sätze': 0, 'weil-Sätze': 0, 'wenn-Sätze': 0, 'Konjunktiv II': 0, 'Passiv': 0, 'Genitiv': 0, 'Komplexe Sätze (Nebensätze)': 0 };
+  let totalWords = 0, totalQ = 0, reuseW = 0, reuseI = 0;
+  sessions.forEach(s => {
+    Object.keys(b2).forEach(k => { const v = s.stats[k]; if (typeof v === 'number') b2[k] += v; });
+    if (typeof s.stats['Wörter insgesamt'] === 'number') totalWords += s.stats['Wörter insgesamt'];
+    if (typeof s.stats['Eigene Fragen gestellt'] === 'number') totalQ += s.stats['Eigene Fragen gestellt'];
+    if (typeof s.stats['Wiederverwendung alter Wörter'] === 'number') reuseW += s.stats['Wiederverwendung alter Wörter'];
+    if (typeof s.stats['Wiederverwendung alter Redewendungen'] === 'number') reuseI += s.stats['Wiederverwendung alter Redewendungen'];
+  });
+  const topCats = Object.entries(mistakeByCat).sort((a,b) => b[1] - a[1]);
+  // Sticky categories: which Kategorie appears in the most distinct sessions?
+  const totalLiveSessions = sessions.filter(s => s.mistakes && s.mistakes.length > 0).length;
+  const stickyCats = Array.from(catSessionSet.entries())
+    .map(([cat, dates]) => ({
+      category: cat,
+      sessions: dates.size,
+      totalCount: mistakeByCat[cat] || 0,
+      exampleMistakes: []
+    }))
+    .sort((a, b) => (b.sessions - a.sessions) || (b.totalCount - a.totalCount))
+    .slice(0, 6);
+  // Attach up to 2 example mistakes per sticky category
+  stickyCats.forEach(sc => {
+    for (const s of sessions) {
+      for (const m of s.mistakes) {
+        if ((m.category || 'Sonstiges') === sc.category) {
+          sc.exampleMistakes.push({ wrong: m.wrong, right: m.right, date: s.date });
+          if (sc.exampleMistakes.length >= 2) break;
+        }
+      }
+      if (sc.exampleMistakes.length >= 2) break;
+    }
+  });
+  const cumulative = sessions.map((s, i) => {
+    const nounSet = new Set(), verbSet = new Set(), idiomSet = new Set();
+    for (let j = 0; j <= i; j++) {
+      sessions[j].nouns.forEach(n => nounSet.add(n.word.toLowerCase()));
+      sessions[j].verbs.forEach(v => verbSet.add((v.infinitive||'').toLowerCase().split(/[\s(]/)[0]));
+      sessions[j].idioms.forEach(id => idiomSet.add(id.idiom.toLowerCase()));
+    }
+    return { date: s.date, nouns: nounSet.size, verbs: verbSet.size, idioms: idiomSet.size };
+  });
+
+  document.getElementById('subtitle').textContent = `${totalSessions} session${totalSessions === 1 ? '' : 's'} tracked`;
+
+  document.getElementById('app').innerHTML = `
+<section>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-value">${totalSessions}</div><div class="kpi-label">Sessions</div></div>
+    <div class="kpi-card"><div class="kpi-value">${streak}</div><div class="kpi-label">Streak (days)</div></div>
+    <div class="kpi-card"><div class="kpi-value">${allNouns.size + allAdj.size}</div><div class="kpi-label">Words</div></div>
+    <div class="kpi-card"><div class="kpi-value">${allVerbs.size}</div><div class="kpi-label">Verbs</div></div>
+    <div class="kpi-card"><div class="kpi-value">${allIdioms.size}</div><div class="kpi-label">Idioms</div></div>
+    <div class="kpi-card"><div class="kpi-value">${totalMistakes}</div><div class="kpi-label">Mistakes</div></div>
+    <div class="kpi-card"><div class="kpi-value">${Object.keys(themeCount).length}</div><div class="kpi-label">Themes</div></div>
+  </div>
+</section>
+
+<h2>Consistency</h2>
+<div class="card">
+  <div id="heatmap" class="heatmap"></div>
+  <div class="legend">
+    <span><span class="sw" style="background:#6b9b7a"></span>Conversation</span>
+    <span><span class="sw" style="background:#b3c9b9"></span>Review</span>
+    <span><span class="sw" style="background:#2a4d3a"></span>Both</span>
+    <span><span class="sw" style="background:#ebe8d8"></span>No practice</span>
+  </div>
+  <div class="hint" id="streakHint"></div>
+</div>
+
+<h2>Themes Covered</h2>
+<div class="card">
+  ${Object.entries(themeCount).sort((a,b)=>b[1]-a[1]).map(([t,c]) => `<span class="tag">${escapeHtml(t)}${c>1?' ×'+c:''}</span>`).join('') || '<div class="muted">No themes yet.</div>'}
+  <div class="hint">Aim for variety. Themes you haven't tried could be next week's conversation.</div>
+</div>
+
+<div class="row">
+  <div>
+    <h2>B2 Structures Used</h2>
+    <div class="card">
+      <p class="section-intro">"Grown-up grammar" markers across all sessions.</p>
+      <div class="chart-box"><canvas id="b2Chart"></canvas></div>
+    </div>
+  </div>
+  <div>
+    <h2>Mistake Patterns</h2>
+    <div class="card">
+      <p class="section-intro">Where your brain keeps tripping.</p>
+      <div class="chart-box"><canvas id="mistakeChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<h2>Cumulative Knowledge</h2>
+<div class="card">
+  <p class="section-intro">Your vocabulary, verbs, and idioms growing session by session.</p>
+  <div class="chart-box"><canvas id="cumulativeChart"></canvas></div>
+</div>
+
+<h2>Top Mistake Categories</h2>
+<div class="card">
+  ${topCats.length === 0 ? '<div class="muted">No mistakes tracked yet.</div>' : `
+    <table class="data">
+      <thead><tr><th>Category</th><th>Count</th><th>Share</th></tr></thead>
+      <tbody>
+        ${topCats.map(([c,n]) => {
+          const pct = Math.round(n / totalMistakes * 100);
+          return `<tr>
+            <td><span class="tag" style="background:${CATEGORY_COLORS[c]||'#ddd'};color:white">${escapeHtml(c)}</span></td>
+            <td>${n}</td>
+            <td><div style="display:flex;align-items:center;gap:8px"><div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:${pct}%;background:${CATEGORY_COLORS[c]||'#999'}"></div></div><span class="muted">${pct}%</span></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`}
+</div>
+
+<h2>Sticky Categories</h2>
+<div class="card">
+  <p class="section-intro">Which mistake categories appear in the most live sessions. This is your real "recurring pattern" list, since exact wording rarely repeats but categories do.</p>
+  ${stickyCats.length === 0 ? '<div class="muted">No mistake data yet.</div>' : `
+    <table class="data">
+      <thead><tr><th>Category</th><th>Appeared in sessions</th><th>Total mistakes</th><th>Recent examples</th></tr></thead>
+      <tbody>
+        ${stickyCats.map(sc => {
+          const pctSessions = totalLiveSessions > 0 ? Math.round(sc.sessions / totalLiveSessions * 100) : 0;
+          return `<tr>
+            <td><span class="tag" style="background:${CATEGORY_COLORS[sc.category]||'#ddd'};color:white">${escapeHtml(sc.category)}</span></td>
+            <td><b>${sc.sessions}</b> of ${totalLiveSessions} <span class="muted">(${pctSessions}%)</span></td>
+            <td>${sc.totalCount}</td>
+            <td>${sc.exampleMistakes.map(m => `<div style="margin-bottom:3px;font-size:12px"><span style="color:#a04747">${escapeHtml(m.wrong)}</span> <span class="muted">→</span> <span style="color:#2a7a3a">${escapeHtml(m.right)}</span></div>`).join('')}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `}
+</div>
+
+<h2>Vocabulary Explorer</h2>
+<div class="card">
+  <div class="kpi-grid" style="margin-bottom:0">
+    <div class="kpi-card"><div class="kpi-value">${reuseW}</div><div class="kpi-label">Reused words</div></div>
+    <div class="kpi-card"><div class="kpi-value">${reuseI}</div><div class="kpi-label">Reused idioms</div></div>
+    <div class="kpi-card"><div class="kpi-value">${totalQ}</div><div class="kpi-label">Initiative moments</div></div>
+    <div class="kpi-card"><div class="kpi-value">${totalSessions > 0 ? Math.round(totalWords/totalSessions) : 0}</div><div class="kpi-label">Avg words/session</div></div>
+  </div>
+
+  <div class="vtabs-nav">
+    <button class="vtab active" data-vtab="nouns">📚 Nouns & Adj <span class="vtab-count">${allNouns.size + allAdj.size}</span></button>
+    <button class="vtab" data-vtab="verbs">⚙️ Verbs <span class="vtab-count">${allVerbs.size}</span></button>
+    <button class="vtab" data-vtab="idioms">🎭 Idioms <span class="vtab-count">${allIdioms.size}</span></button>
+    <button class="vtab" data-vtab="ready">⏰ Ready to Reuse <span class="vtab-count" id="readyCount"></span></button>
+    <button class="vtab" data-vtab="reused">✨ Reused <span class="vtab-count" id="reusedCount"></span></button>
+  </div>
+
+  <div class="vtab-panel active" id="vtab-nouns">
+    <div class="vtab-controls">
+      <input type="text" class="vsearch" data-tab="nouns" placeholder="Search nouns and adjectives...">
+      <select class="vtheme-filter" data-tab="nouns"><option value="all">All themes</option></select>
+      <select class="vsort-toggle" data-tab="nouns">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="az">A → Z</option>
+      </select>
+    </div>
+    <div class="vtab-list" id="vlist-nouns"></div>
+  </div>
+
+  <div class="vtab-panel" id="vtab-verbs">
+    <div class="vtab-controls">
+      <input type="text" class="vsearch" data-tab="verbs" placeholder="Search verbs...">
+      <select class="vtheme-filter" data-tab="verbs"><option value="all">All themes</option></select>
+      <select class="vsort-toggle" data-tab="verbs">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="az">A → Z</option>
+      </select>
+    </div>
+    <div class="vtab-list" id="vlist-verbs"></div>
+  </div>
+
+  <div class="vtab-panel" id="vtab-idioms">
+    <div class="vtab-controls">
+      <input type="text" class="vsearch" data-tab="idioms" placeholder="Search idioms...">
+      <select class="vtheme-filter" data-tab="idioms"><option value="all">All themes</option></select>
+      <select class="vsort-toggle" data-tab="idioms">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="az">A → Z</option>
+      </select>
+    </div>
+    <div class="vtab-list" id="vlist-idioms"></div>
+  </div>
+
+  <div class="vtab-panel" id="vtab-ready">
+    <p class="section-intro">Words, verbs, and idioms learned more than 14 days ago that haven't been marked as reused. Pull one of these into next Tuesday's conversation to move it from "know it" to "own it."</p>
+    <div class="vtab-controls">
+      <input type="text" class="vsearch" data-tab="ready" placeholder="Search...">
+      <select class="vtheme-filter" data-tab="ready"><option value="all">All themes</option></select>
+      <select class="vsort-toggle" data-tab="ready">
+        <option value="stale">Most stale (longest since learned)</option>
+        <option value="newest">Newest first</option>
+        <option value="az">A → Z</option>
+      </select>
+    </div>
+    <div class="vtab-list" id="vlist-ready"></div>
+  </div>
+
+  <div class="vtab-panel" id="vtab-reused">
+    <p class="section-intro">Specific items you have actively reused in later sessions. Historical sessions only tracked reuse counts, so this fills in going forward from your next Tuesday session.</p>
+    <div class="vtab-list" id="vlist-reused"></div>
+  </div>
+</div>
+
+<h2>Session Log</h2>
+<div class="card">
+  <table class="data">
+    <thead><tr><th>Date</th><th>Theme</th><th>Words</th><th>Verbs</th><th>Idioms</th><th>Mistakes</th><th>Total Wörter</th></tr></thead>
+    <tbody>
+      ${sessions.slice().reverse().map(s => `<tr>
+        <td>${s.date}</td><td>${escapeHtml(s.theme)}</td>
+        <td>${s.nouns.length + s.adjectives.length}</td>
+        <td>${s.verbs.length}</td>
+        <td>${s.idioms.length}</td>
+        <td>${s.mistakes.length}</td>
+        <td>${s.stats['Wörter insgesamt'] ?? '—'}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+
+  renderHeatmap(sessions, reviewDates, streak);
+  renderB2Chart(b2);
+  renderMistakeChart(mistakeByCat);
+  renderCumulativeChart(cumulative);
+  setupVocabTabs(allNouns, allAdj, allVerbs, allIdioms, sessions);
+}
+
+function computeStreak(dateSet) {
+  if (dateSet.size === 0) return 0;
+  const sorted = Array.from(dateSet).sort();
+  const last = sorted[sorted.length - 1];
+  if (last < daysAgo(2)) return 0;
+  let streak = 1;
+  let cursor = new Date(last);
+  for (let i = sorted.length - 2; i >= 0; i--) {
+    const d = new Date(sorted[i]);
+    const diff = Math.round((cursor - d) / 86400000);
+    if (diff <= 2 && diff >= 0) { streak++; cursor = d; } else break;
+  }
+  return streak;
+}
+
+function daysAgo(n) {
+  const d = new Date(); d.setDate(d.getDate() - n);
+  return d.toISOString().slice(0, 10);
+}
+
+function setupVocabTabs(allNouns, allAdj, allVerbs, allIdioms, sessions) {
+  const today = new Date();
+  const daysSince = d => Math.floor((today - new Date(d)) / 86400000);
+  const READY_DAYS = 14;
+
+  // Build normalized item lists
+  const nounsAdjs = [
+    ...Array.from(allNouns.values()).map(n => ({ ...n, displayWord: n.word, type: 'Nomen' })),
+    ...Array.from(allAdj.values()).map(a => ({ ...a, displayWord: a.word, type: 'Adjektiv' }))
+  ];
+  const verbs = Array.from(allVerbs.values()).map(v => ({ ...v, displayWord: v.infinitive, type: 'Verb' }));
+  const idioms = Array.from(allIdioms.values()).map(i => ({ ...i, displayWord: i.idiom, type: 'Redewendung' }));
+
+  // Ready to reuse: items older than READY_DAYS
+  const ready = [...nounsAdjs, ...verbs, ...idioms]
+    .filter(x => x.firstDate && daysSince(x.firstDate) >= READY_DAYS);
+
+  // Reused: empty for now (historical data doesn't have named items)
+  const reused = [];
+
+  const tabData = {
+    nouns: nounsAdjs,
+    verbs: verbs,
+    idioms: idioms,
+    ready: ready,
+    reused: reused
+  };
+
+  // Update tab count spans
+  const readyCountEl = document.getElementById('readyCount');
+  if (readyCountEl) readyCountEl.textContent = ready.length;
+  const reusedCountEl = document.getElementById('reusedCount');
+  if (reusedCountEl) reusedCountEl.textContent = reused.length;
+
+  // Collect themes from all items
+  const collectThemes = items => Array.from(new Set(items.map(x => x.firstTheme).filter(Boolean))).sort();
+  ['nouns', 'verbs', 'idioms', 'ready'].forEach(tab => {
+    const themes = collectThemes(tabData[tab]);
+    const sel = document.querySelector(`.vtheme-filter[data-tab="${tab}"]`);
+    if (sel && themes.length) {
+      themes.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        sel.appendChild(opt);
+      });
+    }
+  });
+
+  // Per-tab state
+  const state = {
+    nouns: { search: '', theme: 'all', sort: 'newest' },
+    verbs: { search: '', theme: 'all', sort: 'newest' },
+    idioms: { search: '', theme: 'all', sort: 'newest' },
+    ready: { search: '', theme: 'all', sort: 'stale' },
+    reused: { search: '', theme: 'all', sort: 'newest' }
+  };
+
+  function filterAndSort(items, tab) {
+    const s = state[tab];
+    let result = items;
+    if (s.search) {
+      const q = s.search.toLowerCase();
+      result = result.filter(x =>
+        (x.displayWord || '').toLowerCase().includes(q) ||
+        (x.meaning || '').toLowerCase().includes(q) ||
+        (x.example || '').toLowerCase().includes(q)
+      );
+    }
+    if (s.theme !== 'all') {
+      result = result.filter(x => (x.firstTheme || '') === s.theme);
+    }
+    result = [...result];
+    if (s.sort === 'newest') {
+      result.sort((a, b) => (b.firstDate || '').localeCompare(a.firstDate || ''));
+    } else if (s.sort === 'oldest' || s.sort === 'stale') {
+      result.sort((a, b) => (a.firstDate || '').localeCompare(b.firstDate || ''));
+    } else if (s.sort === 'az') {
+      result.sort((a, b) => (a.displayWord || '').localeCompare(b.displayWord || ''));
+    }
+    return result;
+  }
+
+  function renderItem(item) {
+    const days = item.firstDate ? daysSince(item.firstDate) : null;
+    const staleClass = days !== null && days >= READY_DAYS ? ' stale' : '';
+    const dateLabel = item.firstDate ? item.firstDate + (days !== null && days >= READY_DAYS ? ` (${days}d)` : '') : '';
+    const themeLabel = item.firstTheme ? `<span style="color:#8a8a5a">${escapeHtml(item.firstTheme)}</span> · ` : '';
+    return `<div class="vitem${staleClass}"><span class="vitem-word">${escapeHtml(item.displayWord || '')}</span><span class="vitem-meaning">${escapeHtml(item.meaning || '')}</span><span class="vitem-meta">${themeLabel}${dateLabel}</span></div>`;
+  }
+
+  function renderList(tab) {
+    const listEl = document.getElementById('vlist-' + tab);
+    if (!listEl) return;
+    if (tab === 'reused' && reused.length === 0) {
+      listEl.innerHTML = '<div class="vtab-empty">✨ Named reused items will start appearing here after your next Tuesday session. The conversation task now saves each reused word/idiom by name in section G) of the note. Historical sessions only stored counts.</div>';
+      return;
+    }
+    const items = filterAndSort(tabData[tab], tab);
+    if (items.length === 0) {
+      listEl.innerHTML = '<div class="vtab-empty">No matches. Try clearing the search or changing the filter.</div>';
+      return;
+    }
+    listEl.innerHTML = items.map(renderItem).join('');
+  }
+
+  // Wire up tab switching
+  document.querySelectorAll('.vtab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.vtab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.vtab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.vtab;
+      const panel = document.getElementById('vtab-' + tab);
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  // Wire up search inputs
+  document.querySelectorAll('.vsearch').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const tab = e.target.dataset.tab;
+      state[tab].search = e.target.value.trim();
+      renderList(tab);
+    });
+  });
+
+  // Wire up theme filter
+  document.querySelectorAll('.vtheme-filter').forEach(sel => {
+    sel.addEventListener('change', e => {
+      const tab = e.target.dataset.tab;
+      state[tab].theme = e.target.value;
+      renderList(tab);
+    });
+  });
+
+  // Wire up sort
+  document.querySelectorAll('.vsort-toggle').forEach(sel => {
+    sel.addEventListener('change', e => {
+      const tab = e.target.dataset.tab;
+      state[tab].sort = e.target.value;
+      renderList(tab);
+    });
+  });
+
+  // Initial render of all lists
+  ['nouns', 'verbs', 'idioms', 'ready', 'reused'].forEach(renderList);
+}
+
+function renderHeatmap(sessions, reviewDates, streak) {
+  const days = 56;
+  const conv = new Set(sessions.map(s => s.date));
+  const rev = new Set(reviewDates);
+  const cells = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const iso = d.toISOString().slice(0, 10);
+    let cls = 'cell';
+    if (conv.has(iso) && rev.has(iso)) cls += ' both';
+    else if (conv.has(iso)) cls += ' conv';
+    else if (rev.has(iso)) cls += ' review';
+    const label = `${iso}${conv.has(iso)?' (Conversation)':rev.has(iso)?' (Review)':''}`;
+    cells.push(`<div class="${cls}" title="${label}"></div>`);
+  }
+  document.getElementById('heatmap').innerHTML = cells.join('');
+  document.getElementById('streakHint').textContent = streak > 0
+    ? `Current streak: ${streak} session day${streak===1?'':'s'} in the last week.`
+    : 'No active streak. Your next scheduled session will start one.';
+}
+
+function renderB2Chart(totals) {
+  const ctx = document.getElementById('b2Chart').getContext('2d');
+  const labels = Object.keys(totals).map(k => k.replace('-Sätze', '').replace('Komplexe Sätze (Nebensätze)', 'Nebensätze'));
+  const data = Object.values(totals);
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Uses', data, backgroundColor: '#6b9b7a', borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+  });
+}
+
+function renderMistakeChart(byCat) {
+  const ctx = document.getElementById('mistakeChart').getContext('2d');
+  const entries = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  if (entries.length === 0) {
+    ctx.canvas.parentElement.innerHTML = '<div class="muted" style="padding:40px;text-align:center">No mistakes tracked yet.</div>';
+    return;
+  }
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: entries.map(e=>e[0]), datasets: [{ data: entries.map(e=>e[1]), backgroundColor: entries.map(e=>CATEGORY_COLORS[e[0]]||'#aaa'), borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } } }
+  });
+}
+
+function renderCumulativeChart(rows) {
+  const ctx = document.getElementById('cumulativeChart').getContext('2d');
+  if (rows.length === 0) {
+    ctx.canvas.parentElement.innerHTML = '<div class="muted" style="padding:40px;text-align:center">No data yet.</div>';
+    return;
+  }
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: rows.map(r => r.date),
+      datasets: [
+        { label: 'Nouns/Adj', data: rows.map(r => r.nouns), borderColor: '#6b9b7a', backgroundColor: '#6b9b7a33', tension: 0.3, fill: true },
+        { label: 'Verbs', data: rows.map(r => r.verbs), borderColor: '#c4885a', backgroundColor: '#c4885a33', tension: 0.3, fill: true },
+        { label: 'Idioms', data: rows.map(r => r.idioms), borderColor: '#7a8fb8', backgroundColor: '#7a8fb833', tension: 0.3, fill: true }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } },
+      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+else boot();
+</script>
+</body>
+</html>

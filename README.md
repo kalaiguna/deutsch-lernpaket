@@ -10,7 +10,7 @@ Three Claude skills for a full weekly German B2 practice routine, designed for a
 | **german-weekend-review** | Fri, 9 AM | Game-show quiz format with 4-5 themed Runden and 10-15 questions max. Mandatory "Fehler-Rewind" round that re-tests past mistakes. Saves a scored quiz note. |
 | **german-sunday-schreiben-und-hoeren** | Sun, 9 AM | Listening round using real audio/video from Deutsche Welle, Easy German, or Slow German (3-5 min with transcript), plus a translation round on the same theme. Sentence-by-sentence corrections with B2 reformulations. |
 
-All three save summary notes into a single Apple Notes folder called **Deutsch lernen B2 🇦🇹**, which lets you build a growing library of your own German learning history and (optionally) power a progress dashboard.
+All three save summary notes into a single Apple Notes folder called **Deutsch lernen B2 🇦🇹**, which lets you build a growing library of your own German learning history and power `dashboard-template.html`, the progress dashboard included in this repo (see below).
 
 ## Design principles
 
@@ -72,7 +72,15 @@ The **Sunday Schreiben & Hören** skill also uses **WebSearch and WebFetch** to 
 
 ## Recommended companion: progress dashboard
 
-I built a small HTML dashboard that reads all the Apple Notes saved by these skills and visualizes progress over time: session streak, mistake categories (pie chart), sticky category patterns, cumulative vocabulary growth, B2 structures used, Ready-to-Reuse list, etc. Not included in this repo but easy to build if you want one; open an issue and I can share the template.
+`dashboard-template.html` is a self-contained HTML dashboard that reads the Apple Notes saved by these skills and visualizes progress over time: session streak, mistake categories (pie chart), sticky category patterns, cumulative vocabulary growth, B2 structures used, and a tabbed Vocabulary Explorer (Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused).
+
+It ships with sample data so you can see the shape it expects. To make it yours:
+
+1. Open the file in a browser, or drop it into Cowork as an artifact.
+2. Ask Claude: "read my Deutsch lernen B2 notes from Apple Notes and rebuild this dashboard with my real sessions."
+3. Claude will replace the `SNAPSHOT_SESSIONS` and `SNAPSHOT_REVIEW_DATES` constants near the top of the `<script>` block with your actual data.
+
+Re-run step 2 any time you want it refreshed. If you're running it as a Cowork artifact with the Apple Notes connector available, it can also try a live refresh via the "Refresh" banner button instead of a full manual rebuild.
 
 ## License
 

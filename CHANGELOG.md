@@ -16,6 +16,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### Fixed
 - Bugs squashed since the last release.
 
+## [1.1.0] - 2026-09-02
+
+### Added
+- `dashboard-template.html` — a self-contained progress dashboard that reads the Apple Notes saved by the three skills and visualizes session streak, mistake categories, sticky category patterns, cumulative vocabulary growth, and a tabbed Vocabulary Explorer (Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused). Ships with sample data; ask Claude to rebuild it with your real sessions.
+- README section explaining how to set up and refresh the dashboard.
+
 ## [1.0.0] - 2026-09-02
 
 ### Added
@@ -31,5 +37,6 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Fixed 10-category mistake taxonomy for pattern tracking over time.
 - B2 paraphrase after every corrected answer to show the "correct → fluent" upgrade path.
 
-[Unreleased]: https://github.com/MohgaNabil/deutsch-lernpaket/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/MohgaNabil/deutsch-lernpaket/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/MohgaNabil/deutsch-lernpaket/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MohgaNabil/deutsch-lernpaket/releases/tag/v1.0.0
