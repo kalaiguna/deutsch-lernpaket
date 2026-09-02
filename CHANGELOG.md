@@ -31,5 +31,5 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Fixed 10-category mistake taxonomy for pattern tracking over time.
 - B2 paraphrase after every corrected answer to show the "correct → fluent" upgrade path.
 
-[Unreleased]: https://github.com/YOURUSERNAME/deutsch-b2-lernpaket/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/YOURUSERNAME/deutsch-b2-lernpaket/releases/tag/v1.0.0
+[Unreleased]: https://github.com/MohgaNabil/deutsch-b2-lernpaket/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/MohgaNabil/deutsch-b2-lernpaket/releases/tag/v1.0.0
