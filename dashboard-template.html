@@ -25,12 +25,19 @@ h3 { color: #4a4a4a; margin: 16px 0 8px 0; font-size: 15px; font-weight: 600; }
 .banner button { background: #2a4d3a; color: white; border: 0; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; }
 .banner button:hover { background: #3a6d4a; }
 .banner button:disabled { background: #aaa; cursor: not-allowed; }
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0 8px 0; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 16px 0 8px 0; }
 .kpi-card { background: white; border: 1px solid #e8e5d4; border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
 .kpi-value { font-size: 28px; font-weight: 700; color: #2a4d3a; line-height: 1.1; }
 .kpi-label { font-size: 12px; color: #777; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  .heatmap { gap: 3px; }
+  .vitem { grid-template-columns: 1fr; gap: 2px; }
+  .vitem-meta { text-align: left; }
+  .vtab { padding: 6px 10px; font-size: 12px; }
+}
 .card { background: white; border: 1px solid #e8e5d4; border-radius: 10px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
 .chart-box { position: relative; height: 280px; }
 table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -40,10 +47,12 @@ table.data tr:last-child td { border-bottom: none; }
 .tag { display: inline-block; background: #e8efe5; color: #2a4d3a; padding: 4px 10px; border-radius: 14px; font-size: 12px; margin: 3px 4px 3px 0; }
 .tag.dim { background: #eee; color: #888; }
 .heatmap { display: flex; flex-wrap: wrap; gap: 2px; padding: 8px 0; }
-.cell { width: 14px; height: 14px; border-radius: 3px; background: #ebe8d8; position: relative; }
+.cell { width: 18px; height: 18px; border-radius: 4px; background: #ebe8d8; position: relative; }
 .cell.conv { background: #6b9b7a; }
 .cell.review { background: #b3c9b9; }
 .cell.both { background: #2a4d3a; }
+.cell.listening { background: #5a8fb8; }
+.cell.listening-conv { background: #4a6a8a; }
 .cell[title]:hover::after {
   content: attr(title); position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
   background: #333; color: white; padding: 3px 7px; border-radius: 4px; font-size: 11px; white-space: nowrap; z-index: 10;
@@ -97,9 +106,10 @@ details summary { cursor: pointer; color: #888; font-size: 12px; }
 <script>
 // === SNAPSHOT DATA (regenerated each time you ask Claude to refresh the dashboard) ===
 // This is SAMPLE data so you can see the shape the dashboard expects.
-// Ask Claude to read your Apple Notes and replace SNAPSHOT_SESSIONS / SNAPSHOT_REVIEW_DATES
+// Ask Claude to read your Notion pages (Deutsch lernen B2) and replace SNAPSHOT_SESSIONS / SNAPSHOT_REVIEW_DATES
 // with your real session history the first time you set this up.
-const SNAPSHOT_ASOF = "2026-09-01";
+const SNAPSHOT_ASOF = "2026-09-05";
+const NOTION_DB_ID = null; // Optional: set to your Notion database ID to enable database mode (see NOTION_DATABASE_SETUP.md)
 const SNAPSHOT_SESSIONS = [
   {
     "date": "2026-09-01",
@@ -182,58 +192,137 @@ function normalizeMcpResponse(resp, depth) {
   return resp;
 }
 
+async function tryLiveLoadDatabase() {
+  if (!window.cowork || typeof window.cowork.callMcpTool !== 'function') {
+    return { ok: false, diag: 'window.cowork.callMcpTool not available' };
+  }
+  const diagLines = [];
+  try {
+    const raw = await window.cowork.callMcpTool('notion_query_database', {
+      database_id: NOTION_DB_ID,
+      sorts: [{ property: 'Date', direction: 'ascending' }],
+      page_size: 100
+    });
+    if (raw && raw.isError) return { ok: false, diag: 'notion_query_database -> error' };
+    const norm = normalizeMcpResponse(raw);
+    const rows = Array.isArray(norm) ? norm : (norm && Array.isArray(norm.results) ? norm.results : []);
+    diagLines.push('notion_query_database (database mode) -> ' + rows.length + ' rows');
+    if (rows.length === 0) return { ok: false, diag: diagLines.join('\n') };
+
+    const sessions = [], quizDates = [];
+    const getTextProp = (p) => { if (!p) return ''; const a = p.title || p.rich_text || []; return Array.isArray(a) ? a.map(t => (t && t.plain_text) || '').join('') : ''; };
+    const getSelectProp = (p) => (p && p.select && p.select.name) || '';
+    const getDateProp = (p) => (p && p.date && p.date.start) || '';
+    const getNumProp = (p) => (p && p.number != null) ? p.number : 0;
+
+    for (const row of rows) {
+      const props = row.properties || {};
+      const date = getDateProp(props.Date || props.date);
+      const theme = getTextProp(props.Theme || props.theme);
+      const type = getSelectProp(props.Type || props.type);
+      const name = getTextProp(props.Name || props.name || props.title);
+      if (!date) continue;
+      if (type === 'quiz' || (name && name.startsWith('Deutsch B2 Quiz'))) {
+        quizDates.push(date.substring(0, 10)); continue;
+      }
+      const session = {
+        date: date.substring(0, 10),
+        theme: theme || 'Unbekannt',
+        name: name || ('Deutsch B2 Sitzung, ' + date.substring(0, 10)),
+        type: type || 'conv',
+        nouns: [], adjectives: [], verbs: [], idioms: [], mistakes: [],
+        stats: { 'Wörter insgesamt': getNumProp(props['Word Count']), 'Fehler gesamt': getNumProp(props['Mistake Count']), 'Sitzungsdauer (Minuten)': 30 }
+      };
+      const score = getTextProp(props.Score || props.score);
+      if (score) session.stats['Score'] = score;
+      const srcUrl = props['Source URL'] && props['Source URL'].url;
+      if (srcUrl) session.source_url = srcUrl;
+      sessions.push(session);
+    }
+
+    if (sessions.length === 0 && quizDates.length === 0) return { ok: false, diag: diagLines.join('\n') };
+    sessions.sort((a, b) => a.date.localeCompare(b.date));
+    return { ok: true, sessions, reviewDates: quizDates, diag: diagLines.join('\n') };
+  } catch (e) {
+    return { ok: false, diag: 'notion_query_database threw: ' + (e.message || String(e)) };
+  }
+}
+
 async function tryLiveLoad() {
   const diagLines = [];
   if (!window.cowork || typeof window.cowork.callMcpTool !== 'function') {
     return { ok: false, diag: 'window.cowork.callMcpTool not available' };
   }
-  const attempts = [{}, { limit: 50 }, { limit: 30 }];
-  let list = null;
-  for (const args of attempts) {
+  if (NOTION_DB_ID) return tryLiveLoadDatabase();
+
+  // Search Notion for all three session types
+  const queries = [
+    { q: 'Deutsch B2 Konversation', type: 'conv' },
+    { q: 'Deutsch B2 Quiz', type: 'quiz' },
+    { q: 'Deutsch B2 Übersetzung', type: 'listening' }
+  ];
+  const pages = [];
+  for (const { q, type } of queries) {
     try {
-      const raw = await window.cowork.callMcpTool('mcp__Read_and_Write_Apple_Notes__list_notes', args);
-      if (raw && raw.isError) {
-        const txt = Array.isArray(raw.content) ? raw.content.map(c => c && c.text).join('') : String(raw);
-        diagLines.push('list_notes ' + JSON.stringify(args) + ' -> error: ' + txt.slice(0, 200));
-        continue;
-      }
+      const raw = await window.cowork.callMcpTool('notion_search', { query: q, filter: { property: 'object', value: 'page' } });
+      if (raw && raw.isError) { diagLines.push('notion_search "' + q + '" -> error'); continue; }
       const norm = normalizeMcpResponse(raw);
-      if (Array.isArray(norm)) { list = norm; diagLines.push('list_notes ' + JSON.stringify(args) + ' -> ok, ' + norm.length + ' notes'); break; }
-      diagLines.push('list_notes ' + JSON.stringify(args) + ' -> unexpected: ' + (typeof norm));
+      const results = Array.isArray(norm) ? norm : (norm && Array.isArray(norm.results) ? norm.results : []);
+      results.forEach(p => { if (p) pages.push({ page: p, type }); });
+      diagLines.push('notion_search "' + q + '" -> ' + results.length + ' pages');
     } catch (e) {
-      diagLines.push('list_notes ' + JSON.stringify(args) + ' -> threw: ' + (e.message || String(e)));
+      diagLines.push('notion_search "' + q + '" -> threw: ' + (e.message || String(e)));
     }
   }
-  if (!list) return { ok: false, diag: diagLines.join('\n') };
+  if (pages.length === 0) return { ok: false, diag: diagLines.join('\n') };
+
+  function getPageTitle(page) {
+    const props = page.properties || {};
+    const titleProp = props.title || props.Name || props.name || Object.values(props).find(p => p && p.type === 'title');
+    if (!titleProp) return '';
+    const arr = titleProp.title || titleProp.rich_text || [];
+    return Array.isArray(arr) ? arr.map(t => (t && t.plain_text) || '').join('') : '';
+  }
 
   const seen = new Set();
-  const convNotes = [], reviewNotes = [];
-  list.forEach(n => {
-    if (!n || !n.name) return;
-    const k = n.id || n.name;
-    if (seen.has(k)) return; seen.add(k);
-    if (n.name.startsWith('Deutsch B2 Konversation')) convNotes.push(n);
-    else if (n.name.startsWith('Deutsch B2 Review')) reviewNotes.push(n);
-  });
-  diagLines.push('Found ' + convNotes.length + ' conversation notes and ' + reviewNotes.length + ' review notes');
+  const sessions = [], quizDates = [];
 
-  const sessions = [];
-  for (const n of convNotes) {
+  for (const { page, type } of pages) {
+    const pageId = page.id;
+    if (!pageId || seen.has(pageId)) continue;
+    seen.add(pageId);
+    const noteName = getPageTitle(page);
+    if (!noteName.startsWith('Deutsch B2')) continue;
+
+    if (type === 'quiz') {
+      const m = noteName.match(/(\d{4}-\d{2}-\d{2})/);
+      if (m) quizDates.push(m[1]);
+      continue;
+    }
+
+    // Retrieve the first code block which contains the session JSON
     try {
-      const raw = await window.cowork.callMcpTool('mcp__Read_and_Write_Apple_Notes__get_note_content', { note_name: n.name });
-      if (raw && raw.isError) { diagLines.push('get_note_content "' + n.name + '" -> error'); continue; }
+      const raw = await window.cowork.callMcpTool('notion_retrieve_block_children', { block_id: pageId });
+      if (raw && raw.isError) { diagLines.push('retrieve_blocks "' + noteName + '" -> error'); continue; }
       const norm = normalizeMcpResponse(raw);
-      const html = typeof norm === 'string' ? norm : JSON.stringify(norm);
-      const session = parseNote(html, n.name);
-      if (session.date) sessions.push(session);
+      const blocks = Array.isArray(norm) ? norm : (norm && Array.isArray(norm.results) ? norm.results : []);
+      const codeBlock = blocks.find(b => b && b.type === 'code');
+      if (!codeBlock) { diagLines.push('"' + noteName + '" -> no JSON code block'); continue; }
+      const richText = codeBlock.code && codeBlock.code.rich_text;
+      const codeText = Array.isArray(richText) ? richText.map(t => (t && t.plain_text) || '').join('') : '';
+      if (!codeText.trim()) { diagLines.push('"' + noteName + '" -> empty code block'); continue; }
+      try {
+        const session = JSON.parse(codeText);
+        if (session && session.date) { sessions.push(session); diagLines.push('"' + noteName + '" -> ok'); }
+      } catch { diagLines.push('"' + noteName + '" -> JSON parse failed'); }
     } catch (e) {
-      diagLines.push('get_note_content "' + n.name + '" -> ' + (e.message || String(e)));
+      diagLines.push('retrieve_blocks "' + noteName + '" -> ' + (e.message || String(e)));
     }
   }
-  const reviewDates = reviewNotes.map(n => { const m = n.name.match(/(\d{4}-\d{2}-\d{2})/); return m ? m[1] : null; }).filter(Boolean);
+
   if (sessions.length === 0) return { ok: false, diag: diagLines.join('\n') };
   sessions.sort((a, b) => a.date.localeCompare(b.date));
-  return { ok: true, sessions, reviewDates, diag: diagLines.join('\n') };
+  return { ok: true, sessions, reviewDates: quizDates, diag: diagLines.join('\n') };
 }
 
 function parseNote(html, noteName) {
@@ -281,18 +370,18 @@ function setBanner(mode, diag) {
   const bar = document.getElementById('banner');
   if (mode === 'live') {
     bar.className = 'banner live';
-    bar.innerHTML = '<span><b>Live</b> data from your Apple Notes, refreshed just now.</span><button id="refreshBtn">Refresh again</button>';
+    bar.innerHTML = '<span><b>Live</b> data from your Notion pages, refreshed just now.</span><button id="refreshBtn">Refresh again</button>';
   } else {
     const detail = diag ? `<details style="margin-top:6px"><summary>Why am I seeing a snapshot?</summary><div class="diag">${escapeHtml(diag)}</div></details>` : '';
     bar.className = 'banner snapshot';
-    bar.innerHTML = `<span><b>Snapshot</b> from ${SNAPSHOT_ASOF}. The live Apple Notes bridge from this artifact sandbox is not responding (HTTP 400). Ask Claude "refresh my dashboard" to rebake with the latest data.${detail}</span><button id="refreshBtn">Try live again</button>`;
+    bar.innerHTML = `<span><b>Snapshot</b> from ${SNAPSHOT_ASOF}. Live Notion load requires the Notion MCP connector. Ask Claude "refresh my dashboard" to rebake with the latest data.${detail}</span><button id="refreshBtn">Try live again</button>`;
   }
   const btn = document.getElementById('refreshBtn');
   if (btn) btn.onclick = boot;
 }
 
 async function boot() {
-  document.getElementById('app').innerHTML = '<div class="card" style="text-align:center;color:#888;padding:40px">Trying live Apple Notes...</div>';
+  document.getElementById('app').innerHTML = '<div class="card" style="text-align:center;color:#888;padding:40px">Trying live Notion load...</div>';
   setBanner('snapshot', 'Trying live load...');
   const live = await tryLiveLoad();
   if (live.ok) {
@@ -340,6 +429,20 @@ function render(sessions, reviewDates) {
     if (typeof s.stats['Wiederverwendung alter Wörter'] === 'number') reuseW += s.stats['Wiederverwendung alter Wörter'];
     if (typeof s.stats['Wiederverwendung alter Redewendungen'] === 'number') reuseI += s.stats['Wiederverwendung alter Redewendungen'];
   });
+  let listenCorrect = 0, listenTotal = 0;
+  sessions.forEach(s => {
+    if (s.type === 'listening' || s.type === 'reading') {
+      const scoreStr = s.stats && (s.stats['Hörverstehen (richtig/gesamt)'] || s.stats['Leseverstehen (richtig/gesamt)']);
+      if (scoreStr) {
+        const parts = String(scoreStr).split('/');
+        if (parts.length === 2) {
+          const c = parseInt(parts[0], 10), t = parseInt(parts[1], 10);
+          if (!isNaN(c) && !isNaN(t) && t > 0) { listenCorrect += c; listenTotal += t; }
+        }
+      }
+    }
+  });
+  const listenPct = listenTotal > 0 ? Math.round(listenCorrect / listenTotal * 100) : null;
   const topCats = Object.entries(mistakeByCat).sort((a,b) => b[1] - a[1]);
   // Sticky categories: which Kategorie appears in the most distinct sessions?
   const totalLiveSessions = sessions.filter(s => s.mistakes && s.mistakes.length > 0).length;
@@ -386,15 +489,21 @@ function render(sessions, reviewDates) {
     <div class="kpi-card"><div class="kpi-value">${allIdioms.size}</div><div class="kpi-label">Idioms</div></div>
     <div class="kpi-card"><div class="kpi-value">${totalMistakes}</div><div class="kpi-label">Mistakes</div></div>
     <div class="kpi-card"><div class="kpi-value">${Object.keys(themeCount).length}</div><div class="kpi-label">Themes</div></div>
+    <div class="kpi-card"><div class="kpi-value">${listenPct !== null ? listenPct + '%' : '—'}</div><div class="kpi-label">Listen/Read score</div></div>
   </div>
 </section>
+
+${stickyCats.length > 0 ? `<div class="banner" style="background:#fef0e8;border-color:#f0c4a0;color:#7a3010;margin:0 0 4px 0">
+  <span>📌 <b>Recommended focus:</b> ${escapeHtml(stickyCats[0].category)} — your most recurring mistake (${stickyCats[0].sessions} sessions, ${stickyCats[0].totalCount} total). Target this in your next practice session.</span>
+</div>` : ''}
 
 <h2>Consistency</h2>
 <div class="card">
   <div id="heatmap" class="heatmap"></div>
   <div class="legend">
     <span><span class="sw" style="background:#6b9b7a"></span>Conversation</span>
-    <span><span class="sw" style="background:#b3c9b9"></span>Review</span>
+    <span><span class="sw" style="background:#5a8fb8"></span>Listening/Reading</span>
+    <span><span class="sw" style="background:#b3c9b9"></span>Quiz</span>
     <span><span class="sw" style="background:#2a4d3a"></span>Both</span>
     <span><span class="sw" style="background:#ebe8d8"></span>No practice</span>
   </div>
@@ -476,6 +585,9 @@ function render(sessions, reviewDates) {
     <div class="kpi-card"><div class="kpi-value">${reuseI}</div><div class="kpi-label">Reused idioms</div></div>
     <div class="kpi-card"><div class="kpi-value">${totalQ}</div><div class="kpi-label">Initiative moments</div></div>
     <div class="kpi-card"><div class="kpi-value">${totalSessions > 0 ? Math.round(totalWords/totalSessions) : 0}</div><div class="kpi-label">Avg words/session</div></div>
+  </div>
+  <div style="text-align:right;margin:8px 0 0 0">
+    <button onclick="exportVocabCSV()" style="background:#2a4d3a;color:white;border:0;padding:7px 16px;border-radius:6px;font-size:13px;cursor:pointer">Export CSV</button>
   </div>
 
   <div class="vtabs-nav">
@@ -567,6 +679,7 @@ function render(sessions, reviewDates) {
   renderB2Chart(b2);
   renderMistakeChart(mistakeByCat);
   renderCumulativeChart(cumulative);
+  window._allNouns = allNouns; window._allAdj = allAdj; window._allVerbs = allVerbs; window._allIdioms = allIdioms;
   setupVocabTabs(allNouns, allAdj, allVerbs, allIdioms, sessions);
 }
 
@@ -740,19 +853,23 @@ function setupVocabTabs(allNouns, allAdj, allVerbs, allIdioms, sessions) {
 }
 
 function renderHeatmap(sessions, reviewDates, streak) {
-  const days = 56;
-  const conv = new Set(sessions.map(s => s.date));
+  const days = window.innerWidth < 480 ? 28 : 56;
+  const conv = new Set(sessions.filter(s => s.type !== 'listening' && s.type !== 'reading').map(s => s.date));
+  const listen = new Set(sessions.filter(s => s.type === 'listening' || s.type === 'reading').map(s => s.date));
   const rev = new Set(reviewDates);
   const cells = [];
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i);
     const iso = d.toISOString().slice(0, 10);
     let cls = 'cell';
-    if (conv.has(iso) && rev.has(iso)) cls += ' both';
-    else if (conv.has(iso)) cls += ' conv';
-    else if (rev.has(iso)) cls += ' review';
-    const label = `${iso}${conv.has(iso)?' (Conversation)':rev.has(iso)?' (Review)':''}`;
-    cells.push(`<div class="${cls}" title="${label}"></div>`);
+    const hasConv = conv.has(iso), hasListen = listen.has(iso), hasRev = rev.has(iso);
+    if ((hasConv || hasListen) && hasRev) cls += ' both';
+    else if (hasConv && hasListen) cls += ' listening-conv';
+    else if (hasListen) cls += ' listening';
+    else if (hasConv) cls += ' conv';
+    else if (hasRev) cls += ' review';
+    const typeLabel = hasConv && hasListen ? ' (Conv + Listening)' : hasConv ? ' (Conversation)' : hasListen ? ' (Listening/Reading)' : hasRev ? ' (Quiz)' : '';
+    cells.push(`<div class="${cls}" title="${iso}${typeLabel}"></div>`);
   }
   document.getElementById('heatmap').innerHTML = cells.join('');
   document.getElementById('streakHint').textContent = streak > 0
@@ -807,6 +924,19 @@ function renderCumulativeChart(rows) {
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } },
       scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
   });
+}
+
+function exportVocabCSV() {
+  const rows = [['Type','Word','Plural','Meaning','Example','Theme','Date']];
+  (window._allNouns || []).forEach(n => rows.push(['Noun', n.word||'', n.plural||'', n.meaning||'', n.example||'', n.firstTheme||'', n.firstDate||'']));
+  (window._allAdj || []).forEach(a => rows.push(['Adjective', a.word||'', '', a.meaning||'', a.example||'', a.firstTheme||'', a.firstDate||'']));
+  (window._allVerbs || []).forEach(v => rows.push(['Verb', v.infinitive||'', '', v.meaning||'', v.example||'', v.firstTheme||'', v.firstDate||'']));
+  (window._allIdioms || []).forEach(i => rows.push(['Idiom', i.idiom||'', '', i.meaning||'', i.example||'', i.firstTheme||'', i.firstDate||'']));
+  const csv = rows.map(r => r.map(f => `"${String(f).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], {type: 'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `deutsch-b2-vocab-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
 }
 
 function escapeHtml(s) {
