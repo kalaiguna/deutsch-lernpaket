@@ -49,6 +49,8 @@ SESSION STRUCTURE
 
    PROFESSIONAL FOCUS (optional): If the learner works in IT, finance, or a German enterprise environment, prioritize Handelsblatt, Gründerszene, or Heise articles over general news. This builds domain-specific vocabulary directly relevant to workplace German.
 
+   THEME PREFIX: When the source is Handelsblatt, Gründerszene, or Heise, prefix the session theme with 💼 (e.g., "💼 KI in der Industrie", "💼 Cloud-Kosten senken"). This makes professional sessions visually distinct in Notion's table and calendar views.
+
    Extract:
    - Title
    - Source name and full URL

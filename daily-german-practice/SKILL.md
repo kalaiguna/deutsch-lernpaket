@@ -110,6 +110,8 @@ SESSION STRUCTURE
 
    PRONUNCIATION HINTS: For genuinely tricky words, add a phonetic hint in parentheses (e.g. "ich" sounds like "ikh").
 
+   DICTATION ERRORS: If the learner's input appears voice-dictated (lacks punctuation, contains phonetic mix-ups), gently correct common German dictation homophones — das vs. dass, seit vs. seid, wider vs. wieder, das vs. das (article vs. pronoun) — and briefly explain the difference in one line. Treat these as Rechtschreibung category mistakes.
+
 4) WRAP-UP after about 30 minutes
    Gentle wrap-up. Thank the learner, normalize mistakes as growth.
 

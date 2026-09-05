@@ -172,7 +172,9 @@ SESSION STRUCTURE
    - NEVER use `notion_update_page` to modify an existing session page.
    - If a same-day title clash happens, append " (2)" or a time suffix.
 
-   Title: "Deutsch B2 Schreiben, [YYYY-MM-DD], [Task type in German: E-Mail / Formeller Brief / Meinungsabsatz]"
+   Title: "Deutsch B2 Schreiben, [YYYY-MM-DD], [Task type in German: E-Mail / Formeller Brief / Meinungsabsatz / Recruiter-E-Mail / Motivationsabsatz / Berufliche Beschreibung]"
+
+   THEME PREFIX: For Task types D, E, and F (professional prompts), prefix the theme with 💼 (e.g., "💼 Recruiter-E-Mail", "💼 Motivationsabsatz"). This makes professional writing sessions visually distinct in Notion's table and calendar views.
 
    At the very TOP of the page, add a CODE BLOCK (language: json) as the FIRST block. Fill with real session data:
    {
