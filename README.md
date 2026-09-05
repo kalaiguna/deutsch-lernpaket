@@ -1,93 +1,214 @@
-# Deutsch B2 Lernpaket
+﻿# Deutsch B2 Lernpaket
 
-Three Claude skills for a full weekly German B2 practice routine, designed for a learner working toward fluent B2 conversation.
+Seven Claude skills that cover all four German language skills (Sprechen, Hören, Schreiben, Lesen)
+across a structured weekly and monthly schedule — with every session saved to Notion and
+visualised in a progress dashboard.
 
-## What's inside
+Designed for learners at **B1+ transitioning toward B2**, particularly those aiming for
+professional fluency in a German-speaking workplace (IT, finance, enterprise). Works equally
+well at any level — adjust the cron schedule and session frequency to your pace.
 
-| Skill | When it runs | What it does |
+> **New to this repo?** Read [GETTING_STARTED.md](GETTING_STARTED.md) first.
+> Running on **Windows + Android**? See [ANDROID_WINDOWS_SETUP.md](ANDROID_WINDOWS_SETUP.md).
+
+---
+
+## What's Inside
+
+| Skill | Schedule | What it does |
 |---|---|---|
-| **daily-german-practice** | Tue + Thu, 9 AM | Live 30-min German conversation. Catches every mistake with a category label, always adds a B2 paraphrase, saves a rich Apple Note with vocabulary, verbs, idioms, mistakes, reused items, and stats. |
-| **german-weekend-review** | Fri, 9 AM | Game-show quiz format with 4-5 themed Runden and 10-15 questions max. Mandatory "Fehler-Rewind" round that re-tests past mistakes. Saves a scored quiz note. |
-| **german-sunday-schreiben-und-hoeren** | Sun, 9 AM | Listening round using real audio/video from Deutsche Welle, Easy German, or Slow German (3-5 min with transcript), plus a translation round on the same theme. Sentence-by-sentence corrections with B2 reformulations. |
+| **daily-german-practice** | Tue + Thu, 9 AM | 30-min typed German conversation. Reads previous recommendations before starting, avoids repeating recent themes, surfaces vocabulary due for reuse. Every mistake gets a category label and B2 paraphrase. |
+| **german-weekend-review** | Fri, 9 AM | Game-show quiz with 4–5 themed rounds and 10–15 questions. Adaptive Fehler-Rewind round weights questions toward your most recurring mistake categories. Pulls from full session history, not just the last 7 days. |
+| **german-sunday-schreiben-und-hoeren** | Sun, 9 AM | Real German audio/video (Deutsche Welle / Easy German / Slow German) with 3 key words pre-taught before listening, comprehension questions, then a translation exercise on the same theme. |
+| **schreib-skill** | Monthly, Sat | Free-form writing session: informal email, formal letter, or opinion paragraph (100–150 words). Evaluated on register, coherence, paragraph structure, and B2 grammar. |
+| **lektuere-skill** | Fortnightly, Wed | Reads a real 300–500 word German article (tagesschau.de, Spiegel, Zeit). Pre-teaches 5 vocabulary items, then asks 6 comprehension questions: skimming, scanning, inference, vocabulary in context. |
+| **monatsrueckblick** | 1st of month | Monthly report card. Aggregates all session data from the past 30 days: mistake patterns, vocabulary growth, reuse rate, B2 structures. Gives 3 concrete focus areas for next month. |
+| **grammatik-vertiefung** | 10th of month | Dedicated grammar deep-dive. One B2 grammar point per session (Konjunktiv I/II, Passiv, Nominalisierung, Relativsätze, Modalpartikeln, etc.) with explicit rules, fill-in-the-blank exercises, transformation drills, and free production. |
 
-All three save summary notes into a single Apple Notes folder called **Deutsch lernen B2 🇦🇹**, which lets you build a growing library of your own German learning history and power `dashboard-template.html`, the progress dashboard included in this repo (see below).
+All sessions save to a Notion page called **Deutsch lernen B2**, building a searchable
+library of your own learning history. The included `dashboard-template.html` reads those pages
+and visualises your progress over time.
 
-## Design principles
+---
 
-- **One question at a time.** Gentle rhythm that's easy to follow. No message ever asks more than two questions.
-- **Bilingual formatting.** Every German line is bold with the 🇦🇹 flag, followed by a blank line and the English translation with the 🇬🇧 flag. Easy to scan, easy to have your Mac read the German aloud.
-- **No em dashes.** Uses commas, periods, pipes, or middle dots as separators.
-- **Proper umlauts always** (ä, ö, ü, ß). No "ae/oe/ue/ss" substitutes.
-- **B2 paraphrase after every mistake.** Shows the upgrade path from "correct but plain" to "B2 fluent" on every turn.
-- **Mistake categories.** Each mistake gets one of 10 fixed labels (Artikel/Genus, Kasus, Wortstellung, Verbform, Präposition, Wortwahl, Vokabular, Rechtschreibung, Komposition, Sonstiges) so you can spot patterns over time.
+## Skills Covered
+
+| Skill | Coverage | Sessions |
+|---|---|---|
+| Sprechen (Speaking) | Typed conversation with bilingual corrections and B2 paraphrases every turn | Tue + Thu |
+| Hören (Listening) | Real audio/video with pre-taught vocabulary and comprehension questions | Sunday |
+| Schreiben (Writing) | Typed conversation responses + sentence-by-sentence translation + free-form writing | Tue/Thu, Sun, monthly Sat |
+| Lesen (Reading) | Dedicated reading comprehension with real German articles | Fortnightly Wed |
+
+---
+
+## Design Principles
+
+- **One question at a time.** No message ever asks more than two questions. Predictable rhythm.
+- **Bilingual formatting.** Every German line is bold with 🇩🇪, followed by a blank line and
+  the English with 🇬🇧. Easy to scan, easy to have Edge read the German aloud.
+- **B2 paraphrase after every turn.** Shows the upgrade from "correct but plain" to "B2 fluent"
+  every single exchange.
+- **11 fixed mistake categories.** (Artikel/Genus, Kasus, Wortstellung, Verbform, Präposition,
+  Wortwahl, Vokabular, Rechtschreibung, Komposition, Anglizismus/False Friend, Sonstiges.)
+  The Anglizismus category specifically tracks direct-translation errors from English — a
+  common, high-impact problem for English speakers in professional German contexts. Consistent
+  labelling across all skills so the dashboard can spot patterns over time.
+- **No em dashes. Proper umlauts always.** (ä, ö, ü, ß — never ae/oe/ue/ss.)
+
+---
+
+## Requirements
+
+| Requirement | Details |
+|---|---|
+| Claude subscription | Pro or Team (needed for scheduled tasks) |
+| Claude Code or Cowork | To install skills and run scheduled tasks |
+| Notion account | Free plan is enough — create one at notion.so |
+| Notion MCP connector | Enable in Claude Code Settings → Integrations |
+| WebSearch + WebFetch | Needed by the Sunday skill to fetch real audio episodes (on by default) |
+
+> This repo works on Windows and Android via Notion.
+> For a full walkthrough see [ANDROID_WINDOWS_SETUP.md](ANDROID_WINDOWS_SETUP.md).
+
+---
+
+## One-Time Notion Setup
+
+1. Create a free Notion account at notion.so.
+2. Create a top-level Notion page called exactly **Deutsch lernen B2** — this is the folder
+   all session notes will be saved into.
+3. In Claude Code, go to **Settings → Integrations** and enable the **Notion MCP connector**.
+   Grant it permission to create and read pages.
+4. On Android, install the **Notion app** (Google Play) and sign in with the same account.
+   Your session notes will appear there automatically after each practice.
+
+---
 
 ## Installation
 
-### Option A: Install the `.skill` files (easiest)
+### Option A — Install the `.skill` files (easiest)
 
-1. Download the `.skill` file you want from the [releases page](../../releases) or from this repo.
-2. Drag the file into Claude (Claude Code, Cowork, or claude.ai).
-3. Click **Save skill** in the file preview.
-4. The skill is now available for scheduled tasks and manual invocation.
+Six `.skill` files are included in this repo (one per skill). Drag any of them into Claude Code or Cowork and click **Save skill** in the preview.
 
-### Option B: Copy the SKILL.md manually
+| File | Skill |
+|---|---|
+| `daily-german-practice.skill` | Tue/Thu conversation |
+| `german-weekend-review.skill` | Friday quiz |
+| `german-sunday-schreiben-und-hoeren.skill` | Sunday listening + translation |
+| `schreib-skill.skill` | Monthly free-form writing |
+| `lektuere-skill.skill` | Fortnightly reading comprehension |
+| `monatsrueckblick.skill` | Monthly report card |
+| `grammatik-vertiefung.skill` | Monthly grammar deep-dive |
 
-1. Open the folder for the skill you want (e.g. `daily-german-practice/`).
-2. Copy the entire content of `SKILL.md`.
-3. In Cowork or Claude Code, create a new scheduled task and paste the content as the prompt.
+### Option B — Copy SKILL.md manually
 
-## Setting up the scheduled tasks
+1. Open the skill folder (e.g. `daily-german-practice/`).
+2. Copy the full contents of `SKILL.md`.
+3. In Claude Code or Cowork, create a new scheduled task and paste it as the prompt.
 
-Each skill runs as a scheduled task with these cron expressions (times in your local timezone):
+---
 
-| Skill | Cron | Human-readable |
+## Scheduled Tasks
+
+Set up three scheduled tasks using these cron expressions (times in your local timezone):
+
+| Skill | Cron | When |
 |---|---|---|
-| daily-german-practice | `0 9 * * 2,4` | Tuesday & Thursday at 9:00 AM |
+| daily-german-practice | `0 9 * * 2,4` | Tuesday and Thursday at 9:00 AM |
 | german-weekend-review | `0 9 * * 5` | Friday at 9:00 AM |
 | german-sunday-schreiben-und-hoeren | `0 9 * * 0` | Sunday at 9:00 AM |
+| lektuere-skill | `0 9 * * 3` | Every other Wednesday at 9:00 AM |
+| schreib-skill | `0 9 * * 6` | Every Saturday at 9:00 AM (or first Saturday of month) |
+| monatsrueckblick | `0 9 1 * *` | 1st of every month at 9:00 AM |
+| grammatik-vertiefung | `0 9 10 * *` | 10th of every month at 9:00 AM |
 
-In **Cowork**:
+**In Cowork:**
 1. Open the Scheduled section in the sidebar.
 2. New scheduled task → paste the SKILL.md prompt.
-3. Set the cron expression from the table above.
-4. Save.
+3. Set the cron expression from the table above and save.
 
-In **Claude Code**:
-1. Use the `mcp__scheduled-tasks__create_scheduled_task` MCP tool.
-2. Pass the SKILL.md content as `prompt`, and the cron string as `cronExpression`.
+**In Claude Code:**
+Use the `mcp__scheduled-tasks__create_scheduled_task` MCP tool. Pass the SKILL.md content as
+`prompt` and the cron string as `cronExpression`.
 
-## Required connectors
+---
 
-All three skills need **Read and Write Apple Notes** access (macOS only) to save session summaries. Grant permission when Claude first asks.
+## How Sessions Are Saved
 
-The **Sunday Schreiben & Hören** skill also uses **WebSearch and WebFetch** to find a fresh German podcast or video episode each week. Both are typically available by default.
+Each skill saves a Notion page inside **Deutsch lernen B2** with this naming convention:
+
+| Session type | Page title format |
+|---|---|
+| Conversation (Tue/Thu) | `Deutsch B2 Konversation, YYYY-MM-DD, Theme` |
+| Quiz (Fri) | `Deutsch B2 Quiz, YYYY-MM-DD` |
+| Listening + Translation (Sun) | `Deutsch B2 Übersetzung & Hören, YYYY-MM-DD, Theme` |
+
+The first block of every conversation and listening page is a JSON code block containing the
+full structured session data (vocabulary, mistakes, stats). The dashboard reads this block
+directly — no HTML parsing required.
+
+---
+
+## Progress Dashboard
+
+`dashboard-template.html` is a self-contained HTML file that visualises your session history:
+
+- Session streak heatmap
+- Mistake category breakdown (pie chart)
+- Sticky mistake categories (which errors keep recurring across sessions)
+- Cumulative vocabulary growth (nouns, verbs, idioms over time)
+- B2 grammar structures used
+- Tabbed Vocabulary Explorer: Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused
+
+**To use it:**
+
+1. Open `dashboard-template.html` in Microsoft Edge or Chrome.
+2. It loads with sample data by default so you can see the layout immediately.
+3. After your first few real sessions, ask Claude Code:
+
+   > "Read all pages inside my Deutsch lernen B2 Notion page and update the
+   > SNAPSHOT_SESSIONS array in dashboard-template.html with my real session data.
+   > Also update SNAPSHOT_ASOF to today's date."
+
+4. Refresh the browser tab. Your real data will now appear.
+
+The dashboard can also attempt a live Notion load via the **"Try live again"** button if the
+Notion MCP connector is available in your environment. If it is not, it falls back to the
+embedded snapshot data — just ask Claude to refresh the snapshot after each session instead.
+
+---
 
 ## Customization
 
-- **Learner name.** The prompts refer to "the learner" (generic). Search and replace with your name for a personal touch.
-- **Time of day.** Change the `0 9` in the cron to any hour that fits your schedule (`0 7` for 7 AM, `30 20` for 8:30 PM, etc.).
-- **Frequency.** The daily practice runs Tue/Thu (`* * 2,4`). Swap to Mon-Fri with `* * 1-5`, or every day with `* * *`.
-- **Folder name.** All notes save into "Deutsch lernen B2 🇦🇹". If you prefer a different folder name, find that string in each SKILL.md and replace it.
-- **CEFR level.** The prompts are calibrated for B2. To retarget for B1 or C1, adjust: the "B2 paraphrase" language, the mistake bar (looser corrections for B1, stricter for C1), and the required grammar structures (e.g. drop Konjunktiv II for B1, add Konjunktiv I for C1).
+- **Learner name.** The prompts use "the learner" throughout. Find and replace with your name
+  in each SKILL.md for a personal touch.
+- **Pronouns.** Each SKILL.md defaults to gender-neutral `they/them`. To switch to `she/her`
+  or `he/him`, update the config comment on line 7 of each SKILL.md and do a find-and-replace
+  for `they`/`them`/`their` in that file.
+- **Time of day.** Change `0 9` in the cron to your preferred hour (`0 7` = 7 AM, `30 20` = 8:30 PM).
+- **Frequency.** Daily practice runs Tue/Thu (`2,4`). Change to Mon–Fri with `1-5` or every day
+  with `*`.
+- **Notion page name.** All sessions save to "Deutsch lernen B2". If you rename it, find that
+  string in each SKILL.md and replace it consistently.
+- **CEFR level.** Skills are calibrated for B2. To retarget for B1 (loosen corrections, drop
+  Konjunktiv II) or C1 (stricter bar, add Konjunktiv I), adjust the paraphrase language and
+  grammar structure tracking in each SKILL.md.
 
-## Recommended companion: progress dashboard
+---
 
-`dashboard-template.html` is a self-contained HTML dashboard that reads the Apple Notes saved by these skills and visualizes progress over time: session streak, mistake categories (pie chart), sticky category patterns, cumulative vocabulary growth, B2 structures used, and a tabbed Vocabulary Explorer (Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused).
+## Additional Guides
 
-It ships with sample data so you can see the shape it expects. To make it yours:
+| File | Contents |
+|---|---|
+| [NOTION_DATABASE_SETUP.md](NOTION_DATABASE_SETUP.md) | Optional: migrate from free-form Notion pages to a structured Notion database for calendar view and faster queries |
 
-1. Open the file in a browser, or drop it into Cowork as an artifact.
-2. Ask Claude: "read my Deutsch lernen B2 notes from Apple Notes and rebuild this dashboard with my real sessions."
-3. Claude will replace the `SNAPSHOT_SESSIONS` and `SNAPSHOT_REVIEW_DATES` constants near the top of the `<script>` block with your actual data.
-
-Re-run step 2 any time you want it refreshed. If you're running it as a Cowork artifact with the Apple Notes connector available, it can also try a live refresh via the "Refresh" banner button instead of a full manual rebuild.
+---
 
 ## License
 
-MIT. Use freely, remix, share. Attribution appreciated but not required.
+MIT. Forked from the original [deutsch-lernpaket by MohgaNabil](../../). This fork adds Notion integration, Windows and Android support, three new skill files, dashboard improvements, and all documentation. Both the original and this fork's contributions are MIT licensed — use freely, remix, share.
 
-## Feedback
-
-If you use these skills and something feels off (too strict, too gentle, too much scaffolding, unclear formatting), open an issue with a concrete example. The skills have been iterated many times based on real-world use by a B2 learner, and every new use case makes them better.
+---
 
 Viel Erfolg beim Deutschlernen!
