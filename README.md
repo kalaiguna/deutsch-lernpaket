@@ -9,7 +9,6 @@ professional fluency in a German-speaking workplace (IT, finance, enterprise). W
 well at any level — adjust the cron schedule and session frequency to your pace.
 
 > **New to this repo?** Start with the One-Time Notion Setup section below.
-> Running on **Windows + Android**? This repo is built for that — Notion works on both.
 
 ---
 
@@ -26,7 +25,7 @@ well at any level — adjust the cron schedule and session frequency to your pac
 | **grammatik-vertiefung** | 10th of month | Dedicated grammar deep-dive. One B2 grammar point per session (Konjunktiv I/II, Passiv, Nominalisierung, Relativsätze, Modalpartikeln, etc.) with explicit rules, fill-in-the-blank exercises, transformation drills, and free production. |
 
 All sessions save to a Notion page called **Deutsch lernen B2**, building a searchable
-library of your own learning history. The included `dashboard.html` reads those pages
+library of your own learning history. The included `core/dashboard/dashboard.html` reads those pages
 and visualises your progress over time.
 
 ---
@@ -68,8 +67,6 @@ and visualises your progress over time.
 | Notion MCP connector | Enable in Claude Code Settings → Integrations |
 | WebSearch + WebFetch | Needed by the Sunday skill to fetch real audio episodes (on by default) |
 
-> This repo works on Windows and Android via Notion.
-
 ---
 
 ## One-Time Notion Setup
@@ -79,7 +76,7 @@ and visualises your progress over time.
    all session notes will be saved into.
 3. In Claude Code, go to **Settings → Integrations** and enable the **Notion MCP connector**.
    Grant it permission to create and read pages.
-4. On Android, install the **Notion app** (Google Play) and sign in with the same account.
+4. On mobile, install the **Notion app** (iOS App Store or Google Play) and sign in with the same account.
    Your session notes will appear there automatically after each practice.
 
 ---
@@ -88,21 +85,21 @@ and visualises your progress over time.
 
 ### Option A — Install the `.skill` files (easiest)
 
-Seven `.skill` files are included in this repo (one per skill). Drag any of them into Claude Code or Cowork and click **Save skill** in the preview.
+Seven `.skill` files are in `platforms/claude/` (one per skill). Drag any of them into Claude Code or Cowork and click **Save skill** in the preview.
 
 | File | Skill |
 |---|---|
-| `daily-german-practice.skill` | Tue/Thu conversation |
-| `german-weekend-review.skill` | Friday quiz |
-| `german-sunday-schreiben-und-hoeren.skill` | Sunday listening + translation |
-| `schreib-skill.skill` | Monthly free-form writing |
-| `lektuere-skill.skill` | Fortnightly reading comprehension |
-| `monatsrueckblick.skill` | Monthly report card |
-| `grammatik-vertiefung.skill` | Monthly grammar deep-dive |
+| `platforms/claude/daily-german-practice.skill` | Tue/Thu conversation |
+| `platforms/claude/german-weekend-review.skill` | Friday quiz |
+| `platforms/claude/german-sunday-schreiben-und-hoeren.skill` | Sunday listening + translation |
+| `platforms/claude/schreib-skill.skill` | Monthly free-form writing |
+| `platforms/claude/lektuere-skill.skill` | Fortnightly reading comprehension |
+| `platforms/claude/monatsrueckblick.skill` | Monthly report card |
+| `platforms/claude/grammatik-vertiefung.skill` | Monthly grammar deep-dive |
 
 ### Option B — Copy SKILL.md manually
 
-1. Open the skill folder (e.g. `daily-german-practice/`).
+1. Open the skill folder (e.g. `skills/daily-german-practice/`).
 2. Copy the full contents of `SKILL.md`.
 3. In Claude Code or Cowork, create a new scheduled task and paste it as the prompt.
 
@@ -133,6 +130,22 @@ Use the `mcp__scheduled-tasks__create_scheduled_task` MCP tool. Pass the SKILL.m
 
 ---
 
+## Multi-Platform Support
+
+This repo is designed to work beyond Claude Code. The skill prompts live in `skills/` and the session data contract is documented in `core/session-schema.json` — any AI platform that can follow instructions and connect to Notion can run these sessions.
+
+| Platform | All 7 skills | Notion MCP | Auto-scheduling | Setup |
+|---|---|---|---|---|
+| **Claude Code / Cowork** | Yes | Yes | Yes (cron) | [platforms/claude/](platforms/claude/README.md) |
+| **Roo Code** | Yes | Yes (local MCP) | Partial | [platforms/roo-code/](platforms/roo-code/README.md) |
+| **OpenWebUI** | Yes | Yes (MCP) | Yes | [platforms/openwebui/](platforms/openwebui/README.md) |
+| **GitHub Copilot** | Yes (no Notion save) | No | No | [platforms/copilot/](platforms/copilot/README.md) |
+| **n8n / GitHub Actions** | monatsrueckblick only | Yes | Yes (cron) | [platforms/n8n/](platforms/n8n/README.md) |
+
+Claude Code is the only platform that supports all features fully. The other platforms cover different trade-offs — see each platform's README for an honest capability breakdown.
+
+---
+
 ## How Sessions Are Saved
 
 Each skill saves a Notion page inside **Deutsch lernen B2** with this naming convention:
@@ -147,15 +160,15 @@ Each skill saves a Notion page inside **Deutsch lernen B2** with this naming con
 | Grammar deep-dive (10th of month) | `Deutsch B2 Grammatik, YYYY-MM-DD, Topic` |
 | Monthly report card (1st of month) | `Deutsch B2 Monatsrückblick, YYYY-MM, Month in German` |
 
-The first block of every conversation and listening page is a JSON code block containing the
-full structured session data (vocabulary, mistakes, stats). The dashboard reads this block
-directly — no HTML parsing required.
+The first block of every session page is a JSON code block containing the full structured
+session data (vocabulary, mistakes, stats). The dashboard reads this block directly — no HTML
+parsing required.
 
 ---
 
 ## Progress Dashboard
 
-`dashboard.html` is a self-contained HTML file that visualises your session history:
+`core/dashboard/dashboard.html` is a self-contained HTML file that visualises your session history:
 
 - Session streak heatmap (conversation sessions in blue, listening sessions in teal)
 - KPI tiles: total sessions, vocabulary items, mistakes, and a combined listening/reading tile
@@ -169,12 +182,12 @@ directly — no HTML parsing required.
 
 **To use it:**
 
-1. Open `dashboard.html` in Microsoft Edge or Chrome.
+1. Open `core/dashboard/dashboard.html` in Microsoft Edge or Chrome.
 2. It loads with sample data by default so you can see the layout immediately.
 3. After your first few real sessions, ask Claude Code:
 
    > "Read all pages inside my Deutsch lernen B2 Notion page and update the
-   > SNAPSHOT_SESSIONS array in dashboard.html with my real session data.
+   > SNAPSHOT_SESSIONS array in core/dashboard/dashboard.html with my real session data.
    > Also update SNAPSHOT_ASOF to today's date."
 
 4. Refresh the browser tab. Your real data will now appear.
@@ -213,7 +226,7 @@ embedded snapshot data — just ask Claude to refresh the snapshot after each se
 
 ## License
 
-MIT. Forked from the original [deutsch-lernpaket by MohgaNabil](../../). This fork adds Notion integration, Windows and Android support, four new skill files (schreib-skill, lektuere-skill, monatsrueckblick, grammatik-vertiefung), dashboard improvements, and all documentation. Both the original and this fork's contributions are MIT licensed — use freely, remix, share.
+MIT. Forked from the original [deutsch-lernpaket by MohgaNabil](https://github.com/MohgaNabil/deutsch-lernpaket). This fork adds Notion integration, cross-platform support, four new skill files (schreib-skill, lektuere-skill, monatsrueckblick, grammatik-vertiefung), dashboard improvements, and all documentation. Both the original and this fork's contributions are MIT licensed — use freely, remix, share.
 
 ---
 

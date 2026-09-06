@@ -1,0 +1,150 @@
+{
+  "name": "Deutsch B2 Monatsrückblick",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "query": "Deutsch B2",
+        "filters": {
+          "timestamp": {
+            "property": "created_time",
+            "condition": "after",
+            "value": "={{ $now.minus(30, 'days').toISO() }}"
+          }
+        }
+      },
+      "id": "notion-search",
+      "name": "Notion: Search past 30 days",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [440, 300],
+      "credentials": {
+        "notionApi": {
+          "id": "REPLACE_WITH_YOUR_NOTION_CREDENTIAL_ID",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getBlocks",
+        "pageId": "={{ $json.id }}"
+      },
+      "id": "notion-get-blocks",
+      "name": "Notion: Get page blocks",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [640, 300],
+      "credentials": {
+        "notionApi": {
+          "id": "REPLACE_WITH_YOUR_NOTION_CREDENTIAL_ID",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract JSON from the first code block of each page\n// and aggregate into a single data object for the LLM prompt\nconst pages = $input.all();\nconst sessions = [];\nfor (const page of pages) {\n  const blocks = page.json.results || [];\n  const firstBlock = blocks[0];\n  if (firstBlock && firstBlock.type === 'code') {\n    try {\n      const text = firstBlock.code.rich_text.map(t => t.plain_text).join('');\n      const session = JSON.parse(text);\n      sessions.push(session);\n    } catch (e) {\n      // skip pages without valid JSON block\n    }\n  }\n}\nreturn [{ json: { sessions, count: sessions.length, generatedAt: new Date().toISOString() } }];"
+      },
+      "id": "aggregate-sessions",
+      "name": "Aggregate session JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "REPLACE_WITH_YOUR_ANTHROPIC_API_KEY" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 4096,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are generating a German B2 monthly report card (Monatsrückblick). Here is the session data from the past 30 days:\\n\\n\" + JSON.stringify($json.sessions, null, 2) + \"\\n\\nGenerate a comprehensive monthly report following the monatsrueckblick skill structure. Include: session counts by type, total vocabulary (nouns/verbs/idioms), mistake category analysis ranked by frequency, reuse rate, active weeks, 3 concrete focus areas for next month. Output the full report in bilingual format (🇩🇪 bold German + blank line + 🇬🇧 English). End with the JSON summary block.\"\n    }\n  ]\n}"
+      },
+      "id": "anthropic-api",
+      "name": "Anthropic API: Generate report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": "",
+        "title": "=Deutsch B2 Monatsrückblick, {{ $now.format('yyyy-MM') }}, {{ $now.setLocale('de').toFormat('LLLL') }}",
+        "propertiesUi": {
+          "propertyValues": []
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "code",
+              "textContent": "={{ $('Anthropic API: Generate report').item.json.content[0].text.match(/```json[\\s\\S]*?```/)?.[0]?.replace(/```json\\n?/, '').replace(/\\n?```/, '') || '{}' }}"
+            },
+            {
+              "type": "paragraph",
+              "textContent": "={{ $('Anthropic API: Generate report').item.json.content[0].text }}"
+            }
+          ]
+        }
+      },
+      "id": "notion-create-page",
+      "name": "Notion: Save report page",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [1240, 300],
+      "credentials": {
+        "notionApi": {
+          "id": "REPLACE_WITH_YOUR_NOTION_CREDENTIAL_ID",
+          "name": "Notion account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [[{ "node": "Notion: Search past 30 days", "type": "main", "index": 0 }]]
+    },
+    "Notion: Search past 30 days": {
+      "main": [[{ "node": "Notion: Get page blocks", "type": "main", "index": 0 }]]
+    },
+    "Notion: Get page blocks": {
+      "main": [[{ "node": "Aggregate session JSON", "type": "main", "index": 0 }]]
+    },
+    "Aggregate session JSON": {
+      "main": [[{ "node": "Anthropic API: Generate report", "type": "main", "index": 0 }]]
+    },
+    "Anthropic API: Generate report": {
+      "main": [[{ "node": "Notion: Save report page", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "_comment": "SETUP REQUIRED: Replace all REPLACE_WITH_YOUR_* placeholders. In n8n credentials, add: (1) Notion API credential with your integration token, (2) update the Anthropic API key in the HTTP Request node headers. Share your Deutsch lernen B2 Notion page with your integration. See platforms/n8n/README.md for full setup instructions."
+}

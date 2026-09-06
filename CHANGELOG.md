@@ -8,16 +8,24 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [2.0.0] - 2026-09-05
 
 Fork by Gunasekaran Chandrasekaran. Notion replaces Apple Notes throughout;
-Windows 11 and Android are now first-class platforms.
+cross-platform support added (Claude Code, Copilot, Roo Code, OpenWebUI, n8n).
 
 ### Added
-- `schreib-skill` — monthly free-form writing session (informal email, formal letter, or opinion paragraph; 100-150 words, 6-section structured evaluation).
-- `lektuere-skill` — fortnightly reading comprehension on a real 300-500 word German article fetched from tagesschau.de, Spiegel, or Zeit; pre-teaches 5 vocabulary items, asks 6 comprehension questions.
+- `schreib-skill` — monthly free-form writing session with 6 rotating task types: informal email, formal letter, opinion paragraph, recruiter email, motivation paragraph, professional description (100-150 words, 6-section structured evaluation).
+- `lektuere-skill` — fortnightly reading comprehension on a real 300-500 word German article fetched from tagesschau.de, Spiegel, Zeit, Handelsblatt, Gründerszene, or Heise; pre-teaches 5 vocabulary items, asks 6 comprehension questions.
 - `monatsrueckblick` — monthly report card that aggregates all session JSON from the past 30 days and outputs 3 concrete focus areas.
-- Dashboard: listening heatmap (teal cells), listening/reading KPI tile, CSV export button (`exportVocabCSV()`), mobile layout (`@media max-width: 480px`, 18 px cells, 28-day mobile heatmap), dual-mode live load (page-search or database query via `NOTION_DB_ID`).
+- `grammatik-vertiefung` — monthly grammar deep-dive (10th of each month). 12-topic rotation (Konjunktiv I/II, Passiv, Nominalisierung, Relativsätze, Modalpartikeln, etc.) with lesson, fill-in-the-blank, transformation drills, and free production.
+- Dashboard: listening heatmap (teal cells), listening/reading KPI tile, Recommended Focus callout (top sticky mistake category), CSV export button (`exportVocabCSV()`), mobile layout (`@media max-width: 480px`, 18 px cells, 28-day mobile heatmap), dual-mode live load (page-search or database query via `NOTION_DB_ID`).
 - `NOTION_DATABASE_SETUP.md` — step-by-step guide for optional Notion database mode.
-- Optional database mode in all six SKILL.md files.
-- Six updated `.skill` files (one per skill) for drag-and-drop installation.
+- Optional database mode in all seven SKILL.md files.
+- Seven updated `.skill` files (one per skill) in `platforms/claude/` for drag-and-drop installation.
+- `platforms/` directory with adapters for Copilot, Roo Code, OpenWebUI, and n8n.
+- `core/session-schema.json` — JSON Schema documenting the session data contract across all skill types.
+- `.github/` — CONTRIBUTING.md, issue templates, PR template.
+- Anglizismus/False Friend added as an 11th fixed mistake category across all skills.
+- Sticky Challenge micro-drill in german-weekend-review: categories recurring 3+ times in 14 days trigger a focused 3-question drill.
+- Dictation error detection in daily-german-practice: flags das/dass, seit/seid, wider/wieder from voice input.
+- 💼 professional theme prefix for recruiter email, motivation letter, and professional description tasks (schreib-skill) and Handelsblatt/Gründerszene/Heise articles (lektuere-skill).
 
 ### Changed
 - All three original skills fully migrated from Apple Notes MCP to Notion MCP (`notion_create_page`, `notion_search`, `notion_retrieve_block_children`). Apple Notes MCP calls removed entirely.
@@ -26,7 +34,7 @@ Windows 11 and Android are now first-class platforms.
 - `german-weekend-review`: quiz pool now covers full session history (RECENT 60% + OLDER 40%); Runde 3 Fehler-Rewind weighted by recurrence map across all sessions.
 - `german-sunday-schreiben-und-hoeren`: teaches 3 key words *before* the learner opens the audio link (replaces post-listen Mini-Brücke); fallback to Edge Read Aloud instead of Mac Option+Esc.
 - Learner pronouns centralised to a config comment at the top of each SKILL.md.
-- README revised end-to-end: six skills documented, Notion setup, Windows/Android guidance, how sessions are saved, dashboard usage.
+- README revised end-to-end: seven skills documented, Notion setup, cross-platform guidance, how sessions are saved, dashboard usage.
 - LICENSE updated with dual copyright (original + fork).
 - CHANGELOG updated.
 
@@ -42,7 +50,7 @@ Windows 11 and Android are now first-class platforms.
 ## [1.1.0] - 2026-09-02
 
 ### Added
-- `dashboard.html` — a self-contained progress dashboard that reads the Apple Notes saved by the three skills and visualizes session streak, mistake categories, sticky category patterns, cumulative vocabulary growth, and a tabbed Vocabulary Explorer (Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused). Ships with sample data; ask Claude to rebuild it with your real sessions.
+- `core/dashboard/dashboard.html` — a self-contained progress dashboard that reads the Apple Notes saved by the three skills and visualizes session streak, mistake categories, sticky category patterns, cumulative vocabulary growth, and a tabbed Vocabulary Explorer (Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused). Ships with sample data; ask Claude to rebuild it with your real sessions.
 - README section explaining how to set up and refresh the dashboard.
 
 ## [1.0.0] - 2026-09-02
@@ -60,6 +68,6 @@ Windows 11 and Android are now first-class platforms.
 - Fixed 10-category mistake taxonomy for pattern tracking over time.
 - B2 paraphrase after every corrected answer to show the "correct → fluent" upgrade path.
 
-[2.0.0]: https://github.com/MohgaNabil/deutsch-lernpaket/compare/v1.1.0...HEAD
+[2.0.0]: https://github.com/kalaiguna/deutsch-lernpaket/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/MohgaNabil/deutsch-lernpaket/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MohgaNabil/deutsch-lernpaket/releases/tag/v1.0.0
