@@ -8,8 +8,8 @@ Designed for learners at **B1+ transitioning toward B2**, particularly those aim
 professional fluency in a German-speaking workplace (IT, finance, enterprise). Works equally
 well at any level — adjust the cron schedule and session frequency to your pace.
 
-> **New to this repo?** Read [GETTING_STARTED.md](GETTING_STARTED.md) first.
-> Running on **Windows + Android**? See [ANDROID_WINDOWS_SETUP.md](ANDROID_WINDOWS_SETUP.md).
+> **New to this repo?** Start with the One-Time Notion Setup section below.
+> Running on **Windows + Android**? This repo is built for that — Notion works on both.
 
 ---
 
@@ -20,13 +20,13 @@ well at any level — adjust the cron schedule and session frequency to your pac
 | **daily-german-practice** | Tue + Thu, 9 AM | 30-min typed German conversation. Reads previous recommendations before starting, avoids repeating recent themes, surfaces vocabulary due for reuse. Every mistake gets a category label and B2 paraphrase. |
 | **german-weekend-review** | Fri, 9 AM | Game-show quiz with 4–5 themed rounds and 10–15 questions. Adaptive Fehler-Rewind round weights questions toward your most recurring mistake categories. Pulls from full session history, not just the last 7 days. |
 | **german-sunday-schreiben-und-hoeren** | Sun, 9 AM | Real German audio/video (Deutsche Welle / Easy German / Slow German) with 3 key words pre-taught before listening, comprehension questions, then a translation exercise on the same theme. |
-| **schreib-skill** | Monthly, Sat | Free-form writing session: informal email, formal letter, or opinion paragraph (100–150 words). Evaluated on register, coherence, paragraph structure, and B2 grammar. |
-| **lektuere-skill** | Fortnightly, Wed | Reads a real 300–500 word German article (tagesschau.de, Spiegel, Zeit). Pre-teaches 5 vocabulary items, then asks 6 comprehension questions: skimming, scanning, inference, vocabulary in context. |
+| **schreib-skill** | Monthly, Sat | Free-form writing session with 6 rotating task types: informal email, formal letter, opinion paragraph, recruiter email, motivation paragraph, and professional description (100–150 words). Evaluated on register, coherence, paragraph structure, and B2 grammar. |
+| **lektuere-skill** | Fortnightly, Wed | Reads a real 300–500 word German article (tagesschau.de, Spiegel, Zeit, Handelsblatt, Gründerszene, Heise). Pre-teaches 5 vocabulary items, then asks 6 comprehension questions: skimming, scanning, inference, vocabulary in context. |
 | **monatsrueckblick** | 1st of month | Monthly report card. Aggregates all session data from the past 30 days: mistake patterns, vocabulary growth, reuse rate, B2 structures. Gives 3 concrete focus areas for next month. |
 | **grammatik-vertiefung** | 10th of month | Dedicated grammar deep-dive. One B2 grammar point per session (Konjunktiv I/II, Passiv, Nominalisierung, Relativsätze, Modalpartikeln, etc.) with explicit rules, fill-in-the-blank exercises, transformation drills, and free production. |
 
 All sessions save to a Notion page called **Deutsch lernen B2**, building a searchable
-library of your own learning history. The included `dashboard-template.html` reads those pages
+library of your own learning history. The included `dashboard.html` reads those pages
 and visualises your progress over time.
 
 ---
@@ -69,7 +69,6 @@ and visualises your progress over time.
 | WebSearch + WebFetch | Needed by the Sunday skill to fetch real audio episodes (on by default) |
 
 > This repo works on Windows and Android via Notion.
-> For a full walkthrough see [ANDROID_WINDOWS_SETUP.md](ANDROID_WINDOWS_SETUP.md).
 
 ---
 
@@ -89,7 +88,7 @@ and visualises your progress over time.
 
 ### Option A — Install the `.skill` files (easiest)
 
-Six `.skill` files are included in this repo (one per skill). Drag any of them into Claude Code or Cowork and click **Save skill** in the preview.
+Seven `.skill` files are included in this repo (one per skill). Drag any of them into Claude Code or Cowork and click **Save skill** in the preview.
 
 | File | Skill |
 |---|---|
@@ -111,7 +110,7 @@ Six `.skill` files are included in this repo (one per skill). Drag any of them i
 
 ## Scheduled Tasks
 
-Set up three scheduled tasks using these cron expressions (times in your local timezone):
+Set up seven scheduled tasks using these cron expressions (times in your local timezone):
 
 | Skill | Cron | When |
 |---|---|---|
@@ -143,6 +142,10 @@ Each skill saves a Notion page inside **Deutsch lernen B2** with this naming con
 | Conversation (Tue/Thu) | `Deutsch B2 Konversation, YYYY-MM-DD, Theme` |
 | Quiz (Fri) | `Deutsch B2 Quiz, YYYY-MM-DD` |
 | Listening + Translation (Sun) | `Deutsch B2 Übersetzung & Hören, YYYY-MM-DD, Theme` |
+| Writing (monthly Sat) | `Deutsch B2 Schreiben, YYYY-MM-DD, Task type` |
+| Reading (fortnightly Wed) | `Deutsch B2 Lektüre, YYYY-MM-DD, Topic` |
+| Grammar deep-dive (10th of month) | `Deutsch B2 Grammatik, YYYY-MM-DD, Topic` |
+| Monthly report card (1st of month) | `Deutsch B2 Monatsrückblick, YYYY-MM, Month in German` |
 
 The first block of every conversation and listening page is a JSON code block containing the
 full structured session data (vocabulary, mistakes, stats). The dashboard reads this block
@@ -152,23 +155,26 @@ directly — no HTML parsing required.
 
 ## Progress Dashboard
 
-`dashboard-template.html` is a self-contained HTML file that visualises your session history:
+`dashboard.html` is a self-contained HTML file that visualises your session history:
 
-- Session streak heatmap
+- Session streak heatmap (conversation sessions in blue, listening sessions in teal)
+- KPI tiles: total sessions, vocabulary items, mistakes, and a combined listening/reading tile
+- Recommended Focus callout: your top recurring mistake category, pinned above the charts
 - Mistake category breakdown (pie chart)
 - Sticky mistake categories (which errors keep recurring across sessions)
 - Cumulative vocabulary growth (nouns, verbs, idioms over time)
 - B2 grammar structures used
 - Tabbed Vocabulary Explorer: Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused
+- CSV export button — download your full vocabulary list as a spreadsheet
 
 **To use it:**
 
-1. Open `dashboard-template.html` in Microsoft Edge or Chrome.
+1. Open `dashboard.html` in Microsoft Edge or Chrome.
 2. It loads with sample data by default so you can see the layout immediately.
 3. After your first few real sessions, ask Claude Code:
 
    > "Read all pages inside my Deutsch lernen B2 Notion page and update the
-   > SNAPSHOT_SESSIONS array in dashboard-template.html with my real session data.
+   > SNAPSHOT_SESSIONS array in dashboard.html with my real session data.
    > Also update SNAPSHOT_ASOF to today's date."
 
 4. Refresh the browser tab. Your real data will now appear.
@@ -207,7 +213,7 @@ embedded snapshot data — just ask Claude to refresh the snapshot after each se
 
 ## License
 
-MIT. Forked from the original [deutsch-lernpaket by MohgaNabil](../../). This fork adds Notion integration, Windows and Android support, three new skill files, dashboard improvements, and all documentation. Both the original and this fork's contributions are MIT licensed — use freely, remix, share.
+MIT. Forked from the original [deutsch-lernpaket by MohgaNabil](../../). This fork adds Notion integration, Windows and Android support, four new skill files (schreib-skill, lektuere-skill, monatsrueckblick, grammatik-vertiefung), dashboard improvements, and all documentation. Both the original and this fork's contributions are MIT licensed — use freely, remix, share.
 
 ---
 
