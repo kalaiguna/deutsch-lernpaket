@@ -2,118 +2,706 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deutsch B2 Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root { color-scheme: light; }
-* { box-sizing: border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: #faf9f4;
-  color: #1a1a1a;
-  margin: 0;
-  padding: 24px;
-  line-height: 1.5;
+:root {
+  --bg-base:         #0F172A;
+  --bg-surface:      #1E293B;
+  --bg-surface-2:    #263448;
+  --bg-surface-3:    #2D3E57;
+  --border:          #334155;
+  --border-2:        #475569;
+  --accent:          #8B5CF6;
+  --accent-hover:    #7C3AED;
+  --accent-dim:      #2D1B69;
+  --accent-light:    #C4B5FD;
+  --text-primary:    #F8FAFC;
+  --text-secondary:  #94A3B8;
+  --sidebar-width:   240px;
+  --header-height:   64px;
+
+  /* JS-referenced variable names kept, values updated for dark theme */
+  --bg:              #0F172A;
+  --surface:         #1E293B;
+  --surface-2:       #263448;
+  --surface-3:       #2D3E57;
+  --primary:         #8B5CF6;
+  --primary-hover:   #7C3AED;
+  --text:            #F8FAFC;
+  --text-2:          #CBD5E1;
+  --text-muted:      #94A3B8;
+  --text-faint:      #64748B;
+  --input-border:    #475569;
+  --stale:           #FB923C;
+  --wrong:           #F87171;
+  --right:           #34D399;
+  --cell-empty:      #263448;
+  --cell-conv:       #8B5CF6;
+  --cell-quiz:       #6366F1;
+  --cell-both:       #4C1D95;
+  --cell-listen:     #06B6D4;
+  --cell-listen-conv:#0E7490;
+  --cell-writing:    #A78BFA;
+  --cell-grammar:    #818CF8;
+  --cell-review:     #C084FC;
+  --banner-snap-bg:      #1C1400;
+  --banner-snap-border:  #D97706;
+  --banner-snap-text:    #FDE68A;
+  --banner-live-bg:      #1A1035;
+  --banner-live-border:  #7C3AED;
+  --banner-live-text:    #C4B5FD;
+  --banner-focus-bg:     #2D1B69;
+  --banner-focus-border: #7C3AED;
+  --banner-focus-text:   #C4B5FD;
 }
-.wrap { max-width: 1180px; margin: 0 auto; }
-h1 { color: #2a4d3a; margin: 0 0 4px 0; font-size: 28px; }
-h2 { color: #2a4d3a; margin: 32px 0 12px 0; font-size: 20px; border-bottom: 2px solid #e8e5d4; padding-bottom: 6px; }
-h3 { color: #4a4a4a; margin: 16px 0 8px 0; font-size: 15px; font-weight: 600; }
-.subtitle { color: #777; font-size: 14px; margin-bottom: 8px; }
-.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin: 8px 0 16px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.banner.snapshot { background: #fff7e6; border: 1px solid #f0d99a; color: #6b5118; }
-.banner.live { background: #e8f5e8; border: 1px solid #a8d4a8; color: #2a4d3a; }
-.banner button { background: #2a4d3a; color: white; border: 0; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; }
-.banner button:hover { background: #3a6d4a; }
-.banner button:disabled { background: #aaa; cursor: not-allowed; }
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 16px 0 8px 0; }
-.kpi-card { background: white; border: 1px solid #e8e5d4; border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
-.kpi-value { font-size: 28px; font-weight: 700; color: #2a4d3a; line-height: 1.1; }
-.kpi-label { font-size: 12px; color: #777; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ── Sidebar ─────────────────────────────────────── */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.logo-circle {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: white;
+  flex-shrink: 0;
+}
+
+.logo-text { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.logo-sub  { font-size: 11px; color: var(--text-muted); }
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 8px;
+  overflow-y: auto;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 2px;
+}
+
+.nav-link:hover { background: var(--bg-surface-2); color: var(--text-primary); }
+.nav-link.active { background: var(--accent-dim); color: var(--accent-light); }
+.nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-faint);
+  padding: 12px 12px 4px;
+}
+
+.sidebar-user {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.user-avatar {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: white;
+  flex-shrink: 0;
+}
+
+.user-name  { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.user-level { font-size: 11px; color: var(--text-muted); }
+
+/* ── Page wrapper ────────────────────────────────── */
+#page-wrapper {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 0;
+}
+
+/* ── Top header ──────────────────────────────────── */
+#top-header {
+  position: sticky;
+  top: 0;
+  height: var(--header-height);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  z-index: 90;
+  flex-shrink: 0;
+}
+
+#hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.header-greeting {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.header-search {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 360px;
+  padding: 8px 16px;
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-primary);
+}
+
+.search-input::placeholder { color: var(--text-faint); }
+.search-input:focus { outline: none; border-color: var(--accent); }
+
+.header-date {
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ── Main content ────────────────────────────────── */
+#main-content { padding: 28px 24px; flex: 1; }
+.wrap { max-width: 1100px; margin: 0 auto; }
+
+/* ── Typography ──────────────────────────────────── */
+h2 {
+  color: var(--text-primary);
+  margin: 32px 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+h3 { color: var(--text-muted); margin: 16px 0 8px 0; font-size: 14px; font-weight: 600; }
+.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; }
+
+/* ── Banners ─────────────────────────────────────── */
+.banner {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.banner.snapshot { background: var(--banner-snap-bg); border: 1px solid var(--banner-snap-border); color: var(--banner-snap-text); }
+.banner.live     { background: var(--banner-live-bg); border: 1px solid var(--banner-live-border); color: var(--banner-live-text); }
+.banner.focus    { background: var(--banner-focus-bg); border: 1px solid var(--banner-focus-border); color: var(--banner-focus-text); margin: 0 0 4px 0; }
+
+.banner button {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.banner button:hover { background: var(--accent-hover); }
+.banner button:disabled { background: var(--border-2); cursor: not-allowed; }
+
+/* ── Cards ───────────────────────────────────────── */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+}
+
+.card:hover { transform: translateY(-2px); }
+
+/* ── KPI Grid ────────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin: 16px 0 8px 0;
+}
+
+.kpi-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+}
+
+.kpi-card:hover { transform: translateY(-2px); }
+.kpi-value { font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1.1; }
+.kpi-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* ── Layout rows ─────────────────────────────────── */
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+
+/* ── Charts ──────────────────────────────────────── */
+.chart-box { position: relative; height: 280px; }
+
+/* ── Tables ──────────────────────────────────────── */
+table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+table.data th {
+  background: var(--bg-surface-2);
+  text-align: left;
+  padding: 8px 10px;
+  font-weight: 600;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+}
+
+table.data td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text-primary);
+}
+
+table.data tr:last-child td { border-bottom: none; }
+
+/* ── Tags ────────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  background: var(--bg-surface-2);
+  color: var(--accent-light);
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  margin: 3px 4px 3px 0;
+}
+
+.tag.dim { background: var(--bg-surface-3); color: var(--text-muted); }
+
+/* ── Heatmap ─────────────────────────────────────── */
+.heatmap { display: flex; flex-wrap: wrap; gap: 2px; padding: 8px 0; }
+
+.cell { width: 18px; height: 18px; border-radius: 4px; background: var(--cell-empty); position: relative; }
+.cell.conv           { background: var(--cell-conv); }
+.cell.quiz           { background: var(--cell-quiz); }
+.cell.both           { background: var(--cell-both); }
+.cell.listening      { background: var(--cell-listen); }
+.cell.listening-conv { background: var(--cell-listen-conv); }
+.cell.writing        { background: var(--cell-writing); }
+.cell.grammar        { background: var(--cell-grammar); }
+.cell.monthly-review { background: var(--cell-review); }
+
+.cell[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: -28px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.legend { font-size: 12px; color: var(--text-muted); display: flex; gap: 12px; margin-top: 6px; align-items: center; flex-wrap: wrap; }
+.legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
+
+/* ── Misc ────────────────────────────────────────── */
+.hint { color: var(--text-faint); font-size: 12px; font-style: italic; }
+.muted { color: var(--text-faint); font-size: 12px; }
+.section-intro { font-size: 13px; color: var(--text-muted); margin: 4px 0 12px 0; }
+
+.bar-bg { background: var(--bg-surface-3); border-radius: 4px; height: 8px; overflow: hidden; margin: 4px 0; }
+.bar-fill { background: var(--accent); height: 100%; }
+.flex { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; padding: 3px 0; }
+
+/* ── Vocab tabs ──────────────────────────────────── */
+.vtabs-nav { display: flex; gap: 2px; border-bottom: 2px solid var(--border); margin: 16px 0 12px 0; flex-wrap: wrap; }
+
+.vtab {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  border-radius: 6px 6px 0 0;
+}
+
+.vtab.active { color: var(--accent-light); border-bottom-color: var(--accent); font-weight: 700; background: var(--bg-surface-2); }
+.vtab:hover:not(.active) { background: var(--bg-surface-2); color: var(--text-primary); }
+.vtab-count { color: var(--text-faint); font-size: 11px; margin-left: 4px; }
+.vtab.active .vtab-count { color: var(--accent-light); }
+.vtab-panel { display: none; }
+.vtab-panel.active { display: block; }
+
+.vtab-controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+
+.vsearch {
+  flex: 1;
+  min-width: 180px;
+  padding: 7px 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+.vsearch:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(139,92,246,0.3); }
+
+.vtheme-filter, .vsort-toggle {
+  padding: 7px 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.vtab-list { max-height: 420px; overflow-y: auto; padding-right: 4px; border: 1px solid var(--border); border-radius: 6px; }
+
+.vitem {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 2fr auto;
+  gap: 12px;
+  align-items: baseline;
+  font-size: 13px;
+}
+
+.vitem:last-child { border-bottom: none; }
+.vitem:hover { background: var(--bg-surface-2); }
+.vitem-word { font-weight: 600; color: var(--accent-light); }
+.vitem-meaning { color: var(--text-muted); font-size: 12px; }
+.vitem-meta { color: var(--text-faint); font-size: 11px; text-align: right; white-space: nowrap; }
+.vitem.stale .vitem-meta { color: var(--stale); font-weight: 600; }
+.vitem.stale .vitem-word::before { content: "⏰ "; font-size: 11px; }
+
+.vgroup-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 10px 12px 4px 12px;
+  background: var(--bg-surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.vtab-empty { padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+.diag {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-surface-2);
+  padding: 8px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  margin-top: 8px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+details summary { cursor: pointer; color: var(--text-muted); font-size: 12px; }
+
+/* ── Type badges ─────────────────────────────────── */
+.type-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }
+.type-badge.type-conv      { background: var(--cell-conv);    color: white; }
+.type-badge.type-listening { background: var(--cell-listen);  color: white; }
+.type-badge.type-quiz      { background: var(--bg-surface-3); color: var(--accent-light); border: 1px solid var(--border); }
+.type-badge.type-writing   { background: var(--cell-writing); color: white; }
+.type-badge.type-grammar   { background: var(--cell-grammar); color: white; }
+.type-badge.type-reading   { background: var(--cell-listen);  color: white; }
+.type-badge.type-review    { background: var(--cell-review);  color: white; }
+
+/* ── Trends ──────────────────────────────────────── */
+.trend-up     { color: var(--wrong); font-weight: 700; }
+.trend-down   { color: var(--right); font-weight: 700; }
+.trend-stable { color: var(--text-faint); }
+
+/* ── Session log ─────────────────────────────────── */
+.session-row { cursor: pointer; }
+.session-row:hover { background: var(--bg-surface-2); }
+.session-detail-row { display: none; }
+.session-detail-row.open { display: table-row; }
+.session-detail-row td { background: var(--bg-surface-2); padding: 12px 16px; }
+
+/* ── Focus card ──────────────────────────────────── */
+.focus-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--banner-focus-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 0 0 16px 0;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+.focus-card h3 { color: var(--banner-focus-text); margin: 0 0 8px 0; font-size: 14px; }
+
+.focus-cat {
+  display: inline-block;
+  background: var(--banner-focus-bg);
+  color: var(--banner-focus-text);
+  border: 1px solid var(--banner-focus-border);
+  padding: 4px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 3px 4px 3px 0;
+}
+
+/* ── Mobile overlay ──────────────────────────────── */
+#sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 99;
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+  #sidebar { transform: translateX(-100%); }
+  #sidebar.open { transform: translateX(0); }
+  #sidebar-overlay.open { display: block; }
+  #page-wrapper { margin-left: 0; }
+  #hamburger { display: block; }
+  .header-greeting { font-size: 14px; }
+  .row { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 480px) {
-  .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  #main-content { padding: 16px 12px; }
   .heatmap { gap: 3px; }
   .vitem { grid-template-columns: 1fr; gap: 2px; }
   .vitem-meta { text-align: left; }
   .vtab { padding: 6px 10px; font-size: 12px; }
 }
-.card { background: white; border: 1px solid #e8e5d4; border-radius: 10px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
-.chart-box { position: relative; height: 280px; }
-table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
-table.data th { background: #f0ede4; text-align: left; padding: 8px 10px; font-weight: 600; color: #4a4a4a; border-bottom: 1px solid #e0ddd0; }
-table.data td { padding: 8px 10px; border-bottom: 1px solid #f0ede4; vertical-align: top; }
-table.data tr:last-child td { border-bottom: none; }
-.tag { display: inline-block; background: #e8efe5; color: #2a4d3a; padding: 4px 10px; border-radius: 14px; font-size: 12px; margin: 3px 4px 3px 0; }
-.tag.dim { background: #eee; color: #888; }
-.heatmap { display: flex; flex-wrap: wrap; gap: 2px; padding: 8px 0; }
-.cell { width: 18px; height: 18px; border-radius: 4px; background: #ebe8d8; position: relative; }
-.cell.conv { background: #6b9b7a; }
-.cell.review { background: #b3c9b9; }
-.cell.both { background: #2a4d3a; }
-.cell.listening { background: #5a8fb8; }
-.cell.listening-conv { background: #4a6a8a; }
-.cell[title]:hover::after {
-  content: attr(title); position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
-  background: #333; color: white; padding: 3px 7px; border-radius: 4px; font-size: 11px; white-space: nowrap; z-index: 10;
-}
-.legend { font-size: 12px; color: #666; display: flex; gap: 12px; margin-top: 6px; align-items: center; flex-wrap: wrap; }
-.legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
-.hint { color: #888; font-size: 12px; font-style: italic; }
-.bar-bg { background: #ebe8d8; border-radius: 4px; height: 8px; overflow: hidden; margin: 4px 0; }
-.bar-fill { background: #6b9b7a; height: 100%; }
-.flex { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; padding: 3px 0; }
-.muted { color: #888; font-size: 12px; }
-.section-intro { font-size: 13px; color: #777; margin: 4px 0 12px 0; }
-.vtabs-nav { display: flex; gap: 2px; border-bottom: 2px solid #e0ddd0; margin: 16px 0 12px 0; flex-wrap: wrap; }
-.vtab { background: none; border: none; padding: 8px 14px; font-size: 13px; color: #666; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; border-radius: 6px 6px 0 0; }
-.vtab.active { color: #2a4d3a; border-bottom-color: #6b9b7a; font-weight: 700; background: #f8f7f0; }
-.vtab:hover:not(.active) { background: #f5f3eb; color: #2a4d3a; }
-.vtab-count { color: #999; font-size: 11px; margin-left: 4px; }
-.vtab.active .vtab-count { color: #6b9b7a; }
-.vtab-panel { display: none; }
-.vtab-panel.active { display: block; }
-.vtab-controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
-.vsearch { flex: 1; min-width: 180px; padding: 7px 12px; border: 1px solid #d6d3c4; border-radius: 6px; font-size: 13px; background: white; }
-.vsearch:focus { outline: none; border-color: #6b9b7a; box-shadow: 0 0 0 2px #6b9b7a33; }
-.vtheme-filter, .vsort-toggle { padding: 7px 10px; border: 1px solid #d6d3c4; border-radius: 6px; font-size: 13px; background: white; cursor: pointer; }
-.vtab-list { max-height: 420px; overflow-y: auto; padding-right: 4px; border: 1px solid #f0ede4; border-radius: 6px; }
-.vitem { padding: 8px 12px; border-bottom: 1px solid #f5f3eb; display: grid; grid-template-columns: minmax(140px, 1fr) 2fr auto; gap: 12px; align-items: baseline; font-size: 13px; }
-.vitem:last-child { border-bottom: none; }
-.vitem:hover { background: #faf9f4; }
-.vitem-word { font-weight: 600; color: #2a4d3a; }
-.vitem-meaning { color: #555; font-size: 12px; }
-.vitem-meta { color: #999; font-size: 11px; text-align: right; white-space: nowrap; }
-.vitem.stale .vitem-meta { color: #c8863a; font-weight: 600; }
-.vitem.stale .vitem-word::before { content: "⏰ "; font-size: 11px; }
-.vgroup-header { font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 0.6px; padding: 10px 12px 4px 12px; background: #f5f3eb; border-bottom: 1px solid #e8e5d4; }
-.vtab-empty { padding: 30px 20px; text-align: center; color: #888; font-size: 13px; }
-.diag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #888; background: #f5f3eb; padding: 8px; border-radius: 6px; white-space: pre-wrap; margin-top: 8px; max-height: 200px; overflow: auto; }
-details summary { cursor: pointer; color: #888; font-size: 12px; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="wrap">
-<header>
-<h1>Deutsch B2 Dashboard</h1>
-<div class="subtitle" id="subtitle">Tracking your German practice over time</div>
-</header>
-<div id="banner"></div>
-<main id="app"></main>
+
+<div id="sidebar-overlay"></div>
+
+<div id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-circle">D</div>
+    <div>
+      <div class="logo-text">Deutsch B2</div>
+      <div class="logo-sub">Learning Dashboard</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a class="nav-link active" href="#" onclick="return false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      Dashboard
+    </a>
+    <a class="nav-link" href="#" onclick="navScroll('Vocabulary Explorer'); return false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      Wortschatz
+    </a>
+    <a class="nav-link" href="#" onclick="navScroll('Grammar Sessions'); return false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2l9 4.9V17L12 22l-9-4.9V7z"/>
+      </svg>
+      Grammatik
+    </a>
+
+    <div class="nav-section-label" style="margin-top:8px">Practice</div>
+    <a class="nav-link" href="#" onclick="navScroll('Session Log'); return false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+      Session Log
+    </a>
+    <a class="nav-link" href="#" onclick="navScroll('Consistency'); return false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      Aktivität
+    </a>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="user-avatar">GC</div>
+    <div>
+      <div class="user-name">Guna</div>
+      <div class="user-level">B2 Learner</div>
+    </div>
+  </div>
+</div>
+
+<div id="page-wrapper">
+  <header id="top-header">
+    <button id="hamburger" aria-label="Toggle menu" onclick="toggleSidebar()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <div class="header-greeting">Hallo, Guna! 👋</div>
+    <div class="header-search">
+      <input type="text" class="search-input" id="globalSearch" placeholder="Search vocabulary, themes...">
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </header>
+
+  <main id="main-content">
+    <div class="wrap">
+      <div class="subtitle" id="subtitle">Tracking your German practice over time</div>
+      <div id="banner"></div>
+      <main id="app"></main>
+    </div>
+  </main>
 </div>
 
 <script>
+// Sidebar helpers
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+document.getElementById('sidebar-overlay').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+});
+
+function navScroll(heading) {
+  var all = document.querySelectorAll('h2');
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].textContent.trim().startsWith(heading)) {
+      all[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+  }
+}
+
+// Header date
+(function() {
+  var d = new Date();
+  document.getElementById('headerDate').textContent = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+})();
+
+// Global search wires into vocab tab
+document.getElementById('globalSearch').addEventListener('input', function() {
+  var val = this.value;
+  var inp = document.querySelector('.vsearch[data-tab="nouns"]');
+  if (inp) { inp.value = val; inp.dispatchEvent(new Event('input')); }
+});
+
+// Chart.js dark defaults
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof Chart !== 'undefined') {
+    Chart.defaults.color = '#94A3B8';
+    Chart.defaults.borderColor = '#334155';
+  }
+});
+
 // === SNAPSHOT DATA (regenerated each time you ask Claude to refresh the dashboard) ===
 // This is SAMPLE data so you can see the shape the dashboard expects.
 // Ask Claude to read your Notion pages (Deutsch lernen B2) and replace SNAPSHOT_SESSIONS / SNAPSHOT_REVIEW_DATES
 // with your real session history the first time you set this up.
-const SNAPSHOT_ASOF = "2026-09-05";
+const SNAPSHOT_ASOF = "2026-09-06";
 const NOTION_DB_ID = null; // Optional: set to your Notion database ID to enable database mode (see NOTION_DATABASE_SETUP.md)
 const SNAPSHOT_SESSIONS = [
   {
     "date": "2026-09-01",
     "theme": "Technologie im Alltag",
+    "type": "conv",
     "name": "Deutsch B2 Konversation, 2026-09-01, Technologie im Alltag",
     "nouns": [
       { "word": "das Gerät", "plural": "die Geräte", "meaning": "device, gadget", "example": "Dieses Gerät macht mein Leben viel einfacher." },
@@ -137,6 +725,7 @@ const SNAPSHOT_SESSIONS = [
   {
     "date": "2026-08-28",
     "theme": "Reisen und Kultur",
+    "type": "quiz",
     "name": "Deutsch B2 Quiz, 2026-08-28",
     "nouns": [
       { "word": "die Sehenswürdigkeit", "plural": "die Sehenswürdigkeiten", "meaning": "tourist attraction, sight", "example": "Wir haben alle wichtigen Sehenswürdigkeiten besichtigt." },
@@ -156,15 +745,46 @@ const SNAPSHOT_SESSIONS = [
       { "num": "2", "category": "Wortstellung", "wrong": "Ich habe gestern, weil es geregnet hat, das Museum besucht", "right": "Ich habe gestern das Museum besucht, weil es geregnet hat", "explanation": "Nebensatz meist ans Ende, nicht mitten im Hauptsatz." }
     ],
     "stats": { "Anzahl Antworten": 12, "Wörter insgesamt": 310, "Durchschnittliche Wortzahl pro Antwort": 26, "Komplexe Sätze (Nebensätze)": 6, "dass-Sätze": 2, "weil-Sätze": 2, "wenn-Sätze": 1, "Konjunktiv II": 1, "Passiv": 0, "Genitiv": 1, "Eigene Fragen gestellt": 0, "Wiederverwendung alter Wörter": 1, "Wiederverwendung alter Redewendungen": 0, "Sitzungsdauer (Minuten)": 35 }
+  },
+  {
+    "date": "2026-08-20",
+    "theme": "Grammatik",
+    "type": "grammar",
+    "name": "Deutsch B2 Grammatik, 2026-08-20",
+    "nouns": [], "adjectives": [], "verbs": [], "idioms": [],
+    "mistakes": [
+      { "num": "1", "category": "Verbform", "wrong": "Er sagte, er kommt morgen", "right": "Er sagte, er käme morgen", "explanation": "Konjunktiv I/II in indirekter Rede." }
+    ],
+    "stats": { "Thema": "Konjunktiv II", "Lückentext richtig": "3/3", "Umformung richtig": "1/2", "Wörter insgesamt": 0 }
+  },
+  {
+    "date": "2026-08-15",
+    "theme": "Bewerbung",
+    "type": "writing",
+    "name": "Deutsch B2 Schreiben, 2026-08-15",
+    "nouns": [], "adjectives": [], "verbs": [], "idioms": [],
+    "mistakes": [
+      { "num": "1", "category": "Wortwahl", "wrong": "Ich bin sehr gut in Deutsch", "right": "Ich verfüge über gute Deutschkenntnisse", "explanation": "Formal register required for cover letters." }
+    ],
+    "stats": { "Aufgabentyp": "E-Mail", "Wörter insgesamt": 132, "Register korrekt": "ja", "Fehler gesamt": 1 }
+  },
+  {
+    "date": "2026-08-01",
+    "theme": "Monatsrückblick",
+    "type": "review",
+    "name": "Deutsch B2 Monatsrückblick, 2026-08-01",
+    "nouns": [], "adjectives": [], "verbs": [], "idioms": [],
+    "mistakes": [],
+    "stats": { "Häufigste Fehlerkategorie": "Wortstellung", "Zweithäufigste Fehlerkategorie": "Kasus", "Dritthäufigste Fehlerkategorie": "Präposition", "Sitzungen analysiert": 8 }
   }
 ];
 const SNAPSHOT_REVIEW_DATES = ["2026-08-22", "2026-08-28"];
 
 const CATEGORY_COLORS = {
-  'Artikel/Genus': '#6b9b7a', 'Kasus': '#c4885a', 'Wortstellung': '#7a8fb8',
+  'Artikel/Genus': '#8B5CF6', 'Kasus': '#c4885a', 'Wortstellung': '#7a8fb8',
   'Verbform': '#d4a85a', 'Präposition': '#a87ba8', 'Wortwahl': '#5a9fa8',
   'Vokabular': '#b85a7a', 'Rechtschreibung': '#8a8a5a', 'Komposition': '#a8a8a8',
-  'Sonstiges': '#bdbdbd', 'Unkategorisiert': '#cccccc'
+  'Sonstiges': '#bdbdbd', 'Unkategorisiert': '#cccccc', 'Anglizismus': '#e879f9'
 };
 
 let lastDiag = '';
@@ -255,11 +875,15 @@ async function tryLiveLoad() {
   }
   if (NOTION_DB_ID) return tryLiveLoadDatabase();
 
-  // Search Notion for all three session types
+  // Search Notion for all seven session types
   const queries = [
     { q: 'Deutsch B2 Konversation', type: 'conv' },
     { q: 'Deutsch B2 Quiz', type: 'quiz' },
-    { q: 'Deutsch B2 Übersetzung', type: 'listening' }
+    { q: 'Deutsch B2 Übersetzung', type: 'listening' },
+    { q: 'Deutsch B2 Schreiben', type: 'writing' },
+    { q: 'Deutsch B2 Lektüre', type: 'reading' },
+    { q: 'Deutsch B2 Grammatik', type: 'grammar' },
+    { q: 'Deutsch B2 Monatsrückblick', type: 'review' }
   ];
   const pages = [];
   for (const { q, type } of queries) {
@@ -300,7 +924,6 @@ async function tryLiveLoad() {
       continue;
     }
 
-    // Retrieve the first code block which contains the session JSON
     try {
       const raw = await window.cowork.callMcpTool('notion_retrieve_block_children', { block_id: pageId });
       if (raw && raw.isError) { diagLines.push('retrieve_blocks "' + noteName + '" -> error'); continue; }
@@ -313,7 +936,11 @@ async function tryLiveLoad() {
       if (!codeText.trim()) { diagLines.push('"' + noteName + '" -> empty code block'); continue; }
       try {
         const session = JSON.parse(codeText);
-        if (session && session.date) { sessions.push(session); diagLines.push('"' + noteName + '" -> ok'); }
+        if (session && session.date) {
+          if (!session.type) session.type = type;
+          sessions.push(session);
+          diagLines.push('"' + noteName + '" -> ok');
+        }
       } catch { diagLines.push('"' + noteName + '" -> JSON parse failed'); }
     } catch (e) {
       diagLines.push('retrieve_blocks "' + noteName + '" -> ' + (e.message || String(e)));
@@ -325,45 +952,18 @@ async function tryLiveLoad() {
   return { ok: true, sessions, reviewDates: quizDates, diag: diagLines.join('\n') };
 }
 
-function parseNote(html, noteName) {
-  const dateMatch = noteName.match(/(\d{4}-\d{2}-\d{2})/);
-  const themeMatch = noteName.match(/\d{4}-\d{2}-\d{2},\s*(.+)$/);
-  const session = {
-    date: dateMatch ? dateMatch[1] : null,
-    theme: themeMatch ? themeMatch[1].trim() : 'Unbekannt',
-    name: noteName,
-    nouns: [], adjectives: [], verbs: [], idioms: [], mistakes: [], stats: {}
+function getTypeMeta(s) {
+  const t = (s.type || 'conv').toLowerCase();
+  const map = {
+    conv:     { label: 'Conversation', cls: 'type-conv' },
+    quiz:     { label: 'Quiz',         cls: 'type-quiz' },
+    listening:{ label: 'Listening',    cls: 'type-listening' },
+    reading:  { label: 'Reading',      cls: 'type-reading' },
+    writing:  { label: 'Writing',      cls: 'type-writing' },
+    grammar:  { label: 'Grammar',      cls: 'type-grammar' },
+    review:   { label: 'Review',       cls: 'type-review' }
   };
-  if (typeof html !== 'string') return session;
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const tables = Array.from(doc.querySelectorAll('table'));
-  tables.forEach(t => {
-    const rows = Array.from(t.querySelectorAll('tr'));
-    if (rows.length === 0) return;
-    const header = Array.from(rows[0].querySelectorAll('td,th')).map(c => c.textContent.trim());
-    const data = rows.slice(1).map(tr => Array.from(tr.querySelectorAll('td,th')).map(c => c.textContent.trim()));
-    if (data.length === 0) return;
-    if (header.includes('Wort') && header.includes('Plural')) {
-      session.nouns.push(...data.map(r => ({ word: r[0]||'', plural: r[1]||'', meaning: r[2]||'', example: r[3]||'' })));
-    } else if (header[0] === 'Adjektiv') {
-      session.adjectives.push(...data.map(r => ({ word: r[0]||'', meaning: r[1]||'', example: r[2]||'' })));
-    } else if (header[0] === 'Infinitiv') {
-      session.verbs.push(...data.map(r => ({ infinitive: r[0]||'', presens: r[1]||'', perfekt: r[2]||'', meaning: r[3]||'', example: r[4]||'' })));
-    } else if (header[0] === 'Redewendung') {
-      session.idioms.push(...data.map(r => ({ idiom: r[0]||'', literal: r[1]||'', meaning: r[2]||'', example: r[3]||'' })));
-    } else if (header.includes('Kategorie') && header.includes('Falsch')) {
-      session.mistakes.push(...data.map(r => ({ num: r[0]||'', category: (r[1]||'Sonstiges').trim(), wrong: r[2]||'', right: r[3]||'', explanation: r[4]||'' })));
-    } else if (header[0] === '#' && header.includes('Falsch')) {
-      session.mistakes.push(...data.map(r => ({ num: r[0]||'', category: 'Unkategorisiert', wrong: r[1]||'', right: r[2]||'', explanation: r[3]||'' })));
-    } else if (header[0] === 'Metrik') {
-      data.forEach(r => {
-        const key = r[0]||''; const val = r[1]||'';
-        const num = parseInt(String(val).replace(/[^\d\-]/g, ''), 10);
-        session.stats[key] = isNaN(num) ? val : num;
-      });
-    }
-  });
-  return session;
+  return map[t] || { label: t, cls: 'type-conv' };
 }
 
 function setBanner(mode, diag) {
@@ -372,16 +972,16 @@ function setBanner(mode, diag) {
     bar.className = 'banner live';
     bar.innerHTML = '<span><b>Live</b> data from your Notion pages, refreshed just now.</span><button id="refreshBtn">Refresh again</button>';
   } else {
-    const detail = diag ? `<details style="margin-top:6px"><summary>Why am I seeing a snapshot?</summary><div class="diag">${escapeHtml(diag)}</div></details>` : '';
+    const detail = diag ? '<details style="margin-top:6px"><summary>Why am I seeing a snapshot?</summary><div class="diag">' + escapeHtml(diag) + '</div></details>' : '';
     bar.className = 'banner snapshot';
-    bar.innerHTML = `<span><b>Snapshot</b> from ${SNAPSHOT_ASOF}. Live Notion load requires the Notion MCP connector. Ask Claude "refresh my dashboard" to rebake with the latest data.${detail}</span><button id="refreshBtn">Try live again</button>`;
+    bar.innerHTML = '<span><b>Snapshot</b> from ' + SNAPSHOT_ASOF + '. Live Notion load requires the Notion MCP connector. Ask Claude "refresh my dashboard" to rebake with the latest data.' + detail + '</span><button id="refreshBtn">Try live again</button>';
   }
   const btn = document.getElementById('refreshBtn');
   if (btn) btn.onclick = boot;
 }
 
 async function boot() {
-  document.getElementById('app').innerHTML = '<div class="card" style="text-align:center;color:#888;padding:40px">Trying live Notion load...</div>';
+  document.getElementById('app').innerHTML = '<div class="card" style="text-align:center;color:var(--text-muted);padding:40px">Trying live Notion load...</div>';
   setBanner('snapshot', 'Trying live load...');
   const live = await tryLiveLoad();
   if (live.ok) {
@@ -398,14 +998,14 @@ function render(sessions, reviewDates) {
   const allNouns = new Map(), allAdj = new Map(), allVerbs = new Map(), allIdioms = new Map();
   let totalMistakes = 0;
   const mistakeByCat = {};
-  const catSessionSet = new Map(); // category -> Set of session dates it appeared in
+  const catSessionSet = new Map();
   sessions.forEach(s => {
-    s.nouns.forEach(n => { if (n.word) { const k = n.word.toLowerCase(); const prev = allNouns.get(k); allNouns.set(k, { ...n, firstDate: prev?.firstDate || s.date, firstTheme: prev?.firstTheme || s.theme }); } });
-    s.adjectives.forEach(a => { if (a.word) { const k = a.word.toLowerCase(); const prev = allAdj.get(k); allAdj.set(k, { ...a, firstDate: prev?.firstDate || s.date, firstTheme: prev?.firstTheme || s.theme }); } });
-    s.verbs.forEach(v => { const k = (v.infinitive||'').toLowerCase().split(/[\s(]/)[0]; if (k) { const prev = allVerbs.get(k); allVerbs.set(k, { ...v, firstDate: prev?.firstDate || s.date, firstTheme: prev?.firstTheme || s.theme }); } });
-    s.idioms.forEach(i => { if (i.idiom) { const k = i.idiom.toLowerCase(); const prev = allIdioms.get(k); allIdioms.set(k, { ...i, firstDate: prev?.firstDate || s.date, firstTheme: prev?.firstTheme || s.theme }); } });
+    (s.nouns || []).forEach(n => { if (n.word) { const k = n.word.toLowerCase(); const prev = allNouns.get(k); allNouns.set(k, { ...n, firstDate: prev ? prev.firstDate : s.date, firstTheme: prev ? prev.firstTheme : s.theme }); } });
+    (s.adjectives || []).forEach(a => { if (a.word) { const k = a.word.toLowerCase(); const prev = allAdj.get(k); allAdj.set(k, { ...a, firstDate: prev ? prev.firstDate : s.date, firstTheme: prev ? prev.firstTheme : s.theme }); } });
+    (s.verbs || []).forEach(v => { const k = (v.infinitive||'').toLowerCase().split(/[\s(]/)[0]; if (k) { const prev = allVerbs.get(k); allVerbs.set(k, { ...v, firstDate: prev ? prev.firstDate : s.date, firstTheme: prev ? prev.firstTheme : s.theme }); } });
+    (s.idioms || []).forEach(i => { if (i.idiom) { const k = i.idiom.toLowerCase(); const prev = allIdioms.get(k); allIdioms.set(k, { ...i, firstDate: prev ? prev.firstDate : s.date, firstTheme: prev ? prev.firstTheme : s.theme }); } });
     const seenCatsThisSession = new Set();
-    s.mistakes.forEach(m => {
+    (s.mistakes || []).forEach(m => {
       totalMistakes++;
       const cat = m.category || 'Sonstiges';
       mistakeByCat[cat] = (mistakeByCat[cat] || 0) + 1;
@@ -417,17 +1017,17 @@ function render(sessions, reviewDates) {
     });
   });
   const themeCount = {};
-  sessions.forEach(s => { themeCount[s.theme] = (themeCount[s.theme] || 0) + 1; });
+  sessions.forEach(s => { if (s.theme) themeCount[s.theme] = (themeCount[s.theme] || 0) + 1; });
   const activitySet = new Set([...sessions.map(s => s.date), ...reviewDates].filter(Boolean));
-  const streak = computeStreak(activitySet);
+  const activeDays7 = computeActiveDays7(activitySet);
   const b2 = { 'dass-Sätze': 0, 'weil-Sätze': 0, 'wenn-Sätze': 0, 'Konjunktiv II': 0, 'Passiv': 0, 'Genitiv': 0, 'Komplexe Sätze (Nebensätze)': 0 };
   let totalWords = 0, totalQ = 0, reuseW = 0, reuseI = 0;
   sessions.forEach(s => {
-    Object.keys(b2).forEach(k => { const v = s.stats[k]; if (typeof v === 'number') b2[k] += v; });
-    if (typeof s.stats['Wörter insgesamt'] === 'number') totalWords += s.stats['Wörter insgesamt'];
-    if (typeof s.stats['Eigene Fragen gestellt'] === 'number') totalQ += s.stats['Eigene Fragen gestellt'];
-    if (typeof s.stats['Wiederverwendung alter Wörter'] === 'number') reuseW += s.stats['Wiederverwendung alter Wörter'];
-    if (typeof s.stats['Wiederverwendung alter Redewendungen'] === 'number') reuseI += s.stats['Wiederverwendung alter Redewendungen'];
+    Object.keys(b2).forEach(k => { const v = s.stats && s.stats[k]; if (typeof v === 'number') b2[k] += v; });
+    if (s.stats && typeof s.stats['Wörter insgesamt'] === 'number') totalWords += s.stats['Wörter insgesamt'];
+    if (s.stats && typeof s.stats['Eigene Fragen gestellt'] === 'number') totalQ += s.stats['Eigene Fragen gestellt'];
+    if (s.stats && typeof s.stats['Wiederverwendung alter Wörter'] === 'number') reuseW += s.stats['Wiederverwendung alter Wörter'];
+    if (s.stats && typeof s.stats['Wiederverwendung alter Redewendungen'] === 'number') reuseI += s.stats['Wiederverwendung alter Redewendungen'];
   });
   let listenCorrect = 0, listenTotal = 0;
   sessions.forEach(s => {
@@ -443,22 +1043,18 @@ function render(sessions, reviewDates) {
     }
   });
   const listenPct = listenTotal > 0 ? Math.round(listenCorrect / listenTotal * 100) : null;
-  const topCats = Object.entries(mistakeByCat).sort((a,b) => b[1] - a[1]);
-  // Sticky categories: which Kategorie appears in the most distinct sessions?
+  const topCats = Object.entries(mistakeByCat).sort((a,b) => b[1]-a[1]);
+
   const totalLiveSessions = sessions.filter(s => s.mistakes && s.mistakes.length > 0).length;
   const stickyCats = Array.from(catSessionSet.entries())
-    .map(([cat, dates]) => ({
-      category: cat,
-      sessions: dates.size,
-      totalCount: mistakeByCat[cat] || 0,
-      exampleMistakes: []
-    }))
+    .map(function(entry) {
+      return { category: entry[0], sessions: entry[1].size, totalCount: mistakeByCat[entry[0]] || 0, exampleMistakes: [] };
+    })
     .sort((a, b) => (b.sessions - a.sessions) || (b.totalCount - a.totalCount))
     .slice(0, 6);
-  // Attach up to 2 example mistakes per sticky category
   stickyCats.forEach(sc => {
     for (const s of sessions) {
-      for (const m of s.mistakes) {
+      for (const m of (s.mistakes || [])) {
         if ((m.category || 'Sonstiges') === sc.category) {
           sc.exampleMistakes.push({ wrong: m.wrong, right: m.right, date: s.date });
           if (sc.exampleMistakes.length >= 2) break;
@@ -467,215 +1063,133 @@ function render(sessions, reviewDates) {
       if (sc.exampleMistakes.length >= 2) break;
     }
   });
-  const cumulative = sessions.map((s, i) => {
+
+  // Trend computation: split sessions in half chronologically
+  const half = Math.floor(sessions.length / 2);
+  const firstHalf = sessions.slice(0, half);
+  const secondHalf = sessions.slice(half);
+  function catCountInHalf(cat, halfSessions) {
+    let count = 0;
+    halfSessions.forEach(s => (s.mistakes || []).forEach(m => { if ((m.category || 'Sonstiges') === cat) count++; }));
+    return count;
+  }
+
+  const cumulative = sessions.map(function(s, i) {
     const nounSet = new Set(), verbSet = new Set(), idiomSet = new Set();
     for (let j = 0; j <= i; j++) {
-      sessions[j].nouns.forEach(n => nounSet.add(n.word.toLowerCase()));
-      sessions[j].verbs.forEach(v => verbSet.add((v.infinitive||'').toLowerCase().split(/[\s(]/)[0]));
-      sessions[j].idioms.forEach(id => idiomSet.add(id.idiom.toLowerCase()));
+      (sessions[j].nouns || []).forEach(n => nounSet.add(n.word.toLowerCase()));
+      (sessions[j].verbs || []).forEach(v => verbSet.add((v.infinitive||'').toLowerCase().split(/[\s(]/)[0]));
+      (sessions[j].idioms || []).forEach(id => idiomSet.add(id.idiom.toLowerCase()));
     }
     return { date: s.date, nouns: nounSet.size, verbs: verbSet.size, idioms: idiomSet.size };
   });
 
-  document.getElementById('subtitle').textContent = `${totalSessions} session${totalSessions === 1 ? '' : 's'} tracked`;
+  const grammarSessions = sessions.filter(s => s.type === 'grammar');
+  const writingSessions = sessions.filter(s => s.type === 'writing');
+  const reviewSessions = sessions.filter(s => s.type === 'review');
+  const latestReview = reviewSessions.length > 0 ? reviewSessions[reviewSessions.length - 1] : null;
 
-  document.getElementById('app').innerHTML = `
-<section>
-  <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-value">${totalSessions}</div><div class="kpi-label">Sessions</div></div>
-    <div class="kpi-card"><div class="kpi-value">${streak}</div><div class="kpi-label">Streak (days)</div></div>
-    <div class="kpi-card"><div class="kpi-value">${allNouns.size + allAdj.size}</div><div class="kpi-label">Words</div></div>
-    <div class="kpi-card"><div class="kpi-value">${allVerbs.size}</div><div class="kpi-label">Verbs</div></div>
-    <div class="kpi-card"><div class="kpi-value">${allIdioms.size}</div><div class="kpi-label">Idioms</div></div>
-    <div class="kpi-card"><div class="kpi-value">${totalMistakes}</div><div class="kpi-label">Mistakes</div></div>
-    <div class="kpi-card"><div class="kpi-value">${Object.keys(themeCount).length}</div><div class="kpi-label">Themes</div></div>
-    <div class="kpi-card"><div class="kpi-value">${listenPct !== null ? listenPct + '%' : '—'}</div><div class="kpi-label">Listen/Read score</div></div>
-  </div>
-</section>
+  window._sessions = sessions.slice().reverse();
 
-${stickyCats.length > 0 ? `<div class="banner" style="background:#fef0e8;border-color:#f0c4a0;color:#7a3010;margin:0 0 4px 0">
-  <span>📌 <b>Recommended focus:</b> ${escapeHtml(stickyCats[0].category)} — your most recurring mistake (${stickyCats[0].sessions} sessions, ${stickyCats[0].totalCount} total). Target this in your next practice session.</span>
-</div>` : ''}
+  document.getElementById('subtitle').textContent = totalSessions + ' session' + (totalSessions === 1 ? '' : 's') + ' tracked';
 
-<h2>Consistency</h2>
-<div class="card">
-  <div id="heatmap" class="heatmap"></div>
-  <div class="legend">
-    <span><span class="sw" style="background:#6b9b7a"></span>Conversation</span>
-    <span><span class="sw" style="background:#5a8fb8"></span>Listening/Reading</span>
-    <span><span class="sw" style="background:#b3c9b9"></span>Quiz</span>
-    <span><span class="sw" style="background:#2a4d3a"></span>Both</span>
-    <span><span class="sw" style="background:#ebe8d8"></span>No practice</span>
-  </div>
-  <div class="hint" id="streakHint"></div>
-</div>
+  // Monthly focus card
+  var focusCardHtml = '';
+  if (latestReview) {
+    var cats = [latestReview.stats['Häufigste Fehlerkategorie'], latestReview.stats['Zweithäufigste Fehlerkategorie'], latestReview.stats['Dritthäufigste Fehlerkategorie']].filter(Boolean);
+    if (cats.length > 0) {
+      focusCardHtml = '<div class="focus-card"><h3>📅 Focus this month <span style="font-weight:400;font-size:12px;color:var(--text-faint)">from ' + escapeHtml(latestReview.date) + ' review</span></h3><div>' + cats.map(function(c) { return '<span class="focus-cat">' + escapeHtml(c) + '</span>'; }).join('') + '</div></div>';
+    }
+  }
 
-<h2>Themes Covered</h2>
-<div class="card">
-  ${Object.entries(themeCount).sort((a,b)=>b[1]-a[1]).map(([t,c]) => `<span class="tag">${escapeHtml(t)}${c>1?' ×'+c:''}</span>`).join('') || '<div class="muted">No themes yet.</div>'}
-  <div class="hint">Aim for variety. Themes you haven't tried could be next week's conversation.</div>
-</div>
+  // Sticky cats trend rows
+  var stickyCatsRows = stickyCats.map(function(sc) {
+    var pctSessions = totalLiveSessions > 0 ? Math.round(sc.sessions / totalLiveSessions * 100) : 0;
+    var c1 = catCountInHalf(sc.category, firstHalf);
+    var c2 = catCountInHalf(sc.category, secondHalf);
+    var trendHtml = '';
+    var trendTitle = c1 + ' in first half, ' + c2 + ' in second half';
+    if (sessions.length < 2) { trendHtml = '<span class="trend-stable" title="Need more sessions">—</span>'; }
+    else if (c2 > c1) { trendHtml = '<span class="trend-up" title="' + trendTitle + '">▲ worse</span>'; }
+    else if (c2 < c1) { trendHtml = '<span class="trend-down" title="' + trendTitle + '">▼ improving</span>'; }
+    else { trendHtml = '<span class="trend-stable" title="' + trendTitle + '">→ stable</span>'; }
+    return '<tr><td><span class="tag" style="background:' + (CATEGORY_COLORS[sc.category]||'#ddd') + ';color:white">' + escapeHtml(sc.category) + '</span></td><td><b>' + sc.sessions + '</b> of ' + totalLiveSessions + ' <span class="muted">(' + pctSessions + '%)</span></td><td>' + sc.totalCount + '</td><td>' + trendHtml + '</td><td>' + sc.exampleMistakes.map(function(m) { return '<div style="margin-bottom:3px;font-size:12px"><span style="color:var(--wrong)">' + escapeHtml(m.wrong) + '</span> <span class="muted">→</span> <span style="color:var(--right)">' + escapeHtml(m.right) + '</span></div>'; }).join('') + '</td></tr>';
+  }).join('');
 
-<div class="row">
-  <div>
-    <h2>B2 Structures Used</h2>
-    <div class="card">
-      <p class="section-intro">"Grown-up grammar" markers across all sessions.</p>
-      <div class="chart-box"><canvas id="b2Chart"></canvas></div>
-    </div>
-  </div>
-  <div>
-    <h2>Mistake Patterns</h2>
-    <div class="card">
-      <p class="section-intro">Where your brain keeps tripping.</p>
-      <div class="chart-box"><canvas id="mistakeChart"></canvas></div>
-    </div>
-  </div>
-</div>
+  // Grammar card
+  var grammarCardHtml = '';
+  if (grammarSessions.length > 0) {
+    var gFillScores = grammarSessions.map(function(s) { return s.stats && s.stats['Lückentext richtig']; }).filter(Boolean);
+    var gFillPct = '—';
+    if (gFillScores.length) { var gFc = 0, gFt = 0; gFillScores.forEach(function(sc) { var p = String(sc).split('/'); if (p.length===2) { gFc+=parseInt(p[0])||0; gFt+=parseInt(p[1])||0; } }); if (gFt>0) gFillPct = Math.round(gFc/gFt*100)+'%'; }
+    var gTransScores = grammarSessions.map(function(s) { return s.stats && s.stats['Umformung richtig']; }).filter(Boolean);
+    var gTransPct = '—';
+    if (gTransScores.length) { var gTc = 0, gTt = 0; gTransScores.forEach(function(sc) { var p = String(sc).split('/'); if (p.length===2) { gTc+=parseInt(p[0])||0; gTt+=parseInt(p[1])||0; } }); if (gTt>0) gTransPct = Math.round(gTc/gTt*100)+'%'; }
+    var gTopics = Array.from(new Set(grammarSessions.map(function(s) { return s.stats && s.stats['Thema']; }).filter(Boolean)));
+    var gRows = grammarSessions.slice().reverse().map(function(s) {
+      return '<tr><td>' + escapeHtml(s.date) + '</td><td>' + escapeHtml((s.stats && s.stats['Thema']) || '—') + '</td><td>' + escapeHtml((s.stats && s.stats['Lückentext richtig']) || '—') + '</td><td>' + escapeHtml((s.stats && s.stats['Umformung richtig']) || '—') + '</td></tr>';
+    }).join('');
+    grammarCardHtml = '<h2>Grammar Sessions</h2><div class="card"><div class="kpi-grid" style="margin-bottom:12px"><div class="kpi-card"><div class="kpi-value">' + grammarSessions.length + '</div><div class="kpi-label">Grammar sessions</div></div><div class="kpi-card"><div class="kpi-value">' + gFillPct + '</div><div class="kpi-label">Avg fill-in score</div></div><div class="kpi-card"><div class="kpi-value">' + gTransPct + '</div><div class="kpi-label">Avg transform score</div></div></div><div style="margin-bottom:8px">' + gTopics.map(function(t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div><table class="data"><thead><tr><th>Date</th><th>Topic</th><th>Fill-in</th><th>Transform</th></tr></thead><tbody>' + gRows + '</tbody></table></div>';
+  }
 
-<h2>Cumulative Knowledge</h2>
-<div class="card">
-  <p class="section-intro">Your vocabulary, verbs, and idioms growing session by session.</p>
-  <div class="chart-box"><canvas id="cumulativeChart"></canvas></div>
-</div>
+  // Writing card
+  var writingCardHtml = '';
+  if (writingSessions.length > 0) {
+    var wWords = writingSessions.map(function(s) { return s.stats && s.stats['Wörter insgesamt']; }).filter(function(n) { return typeof n === 'number'; });
+    var wAvgWords = wWords.length ? Math.round(wWords.reduce(function(a,b){return a+b;},0)/wWords.length) : '—';
+    var wReg = writingSessions.filter(function(s) { return s.stats && s.stats['Register korrekt'] === 'ja'; }).length;
+    var wRegPct = writingSessions.length ? Math.round(wReg/writingSessions.length*100)+'%' : '—';
+    var wTypes = Array.from(new Set(writingSessions.map(function(s) { return s.stats && s.stats['Aufgabentyp']; }).filter(Boolean)));
+    writingCardHtml = '<h2>Writing Sessions</h2><div class="card"><div class="kpi-grid" style="margin-bottom:12px"><div class="kpi-card"><div class="kpi-value">' + writingSessions.length + '</div><div class="kpi-label">Writing sessions</div></div><div class="kpi-card"><div class="kpi-value">' + wAvgWords + '</div><div class="kpi-label">Avg word count</div></div><div class="kpi-card"><div class="kpi-value">' + wRegPct + '</div><div class="kpi-label">Register accuracy</div></div></div><div style="margin-bottom:8px">' + wTypes.map(function(t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div></div>';
+  }
 
-<h2>Top Mistake Categories</h2>
-<div class="card">
-  ${topCats.length === 0 ? '<div class="muted">No mistakes tracked yet.</div>' : `
-    <table class="data">
-      <thead><tr><th>Category</th><th>Count</th><th>Share</th></tr></thead>
-      <tbody>
-        ${topCats.map(([c,n]) => {
-          const pct = Math.round(n / totalMistakes * 100);
-          return `<tr>
-            <td><span class="tag" style="background:${CATEGORY_COLORS[c]||'#ddd'};color:white">${escapeHtml(c)}</span></td>
-            <td>${n}</td>
-            <td><div style="display:flex;align-items:center;gap:8px"><div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:${pct}%;background:${CATEGORY_COLORS[c]||'#999'}"></div></div><span class="muted">${pct}%</span></div></td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>`}
-</div>
+  // Session log rows
+  var sessionLogRows = window._sessions.map(function(s, idx) {
+    var meta = getTypeMeta(s);
+    var noData = (s.type === 'quiz' || s.type === 'review');
+    var totalW = s.stats && s.stats['Wörter insgesamt'];
+    return '<tr class="session-row" onclick="toggleDetail(' + idx + ')"><td>' + escapeHtml(s.date) + '</td><td><span class="type-badge ' + meta.cls + '">' + meta.label + '</span></td><td>' + escapeHtml(s.theme || '—') + '</td><td>' + ((s.nouns||[]).length + (s.adjectives||[]).length) + '</td><td>' + (s.verbs||[]).length + '</td><td>' + (s.idioms||[]).length + '</td><td>' + (s.mistakes||[]).length + '</td><td>' + (noData ? '<span title="not applicable for this session type">—</span>' : (typeof totalW === 'number' ? totalW : '—')) + '</td></tr><tr class="session-detail-row" id="detail-' + idx + '"><td colspan="8">' + renderSessionDetail(s) + '</td></tr>';
+  }).join('');
 
-<h2>Sticky Categories</h2>
-<div class="card">
-  <p class="section-intro">Which mistake categories appear in the most live sessions. This is your real "recurring pattern" list, since exact wording rarely repeats but categories do.</p>
-  ${stickyCats.length === 0 ? '<div class="muted">No mistake data yet.</div>' : `
-    <table class="data">
-      <thead><tr><th>Category</th><th>Appeared in sessions</th><th>Total mistakes</th><th>Recent examples</th></tr></thead>
-      <tbody>
-        ${stickyCats.map(sc => {
-          const pctSessions = totalLiveSessions > 0 ? Math.round(sc.sessions / totalLiveSessions * 100) : 0;
-          return `<tr>
-            <td><span class="tag" style="background:${CATEGORY_COLORS[sc.category]||'#ddd'};color:white">${escapeHtml(sc.category)}</span></td>
-            <td><b>${sc.sessions}</b> of ${totalLiveSessions} <span class="muted">(${pctSessions}%)</span></td>
-            <td>${sc.totalCount}</td>
-            <td>${sc.exampleMistakes.map(m => `<div style="margin-bottom:3px;font-size:12px"><span style="color:#a04747">${escapeHtml(m.wrong)}</span> <span class="muted">→</span> <span style="color:#2a7a3a">${escapeHtml(m.right)}</span></div>`).join('')}</td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>
-  `}
-</div>
+  // Top cats rows
+  var topCatRows = topCats.map(function(entry) {
+    var c = entry[0], n = entry[1];
+    var pct = Math.round(n / totalMistakes * 100);
+    return '<tr><td><span class="tag" style="background:' + (CATEGORY_COLORS[c]||'#ddd') + ';color:white">' + escapeHtml(c) + '</span></td><td>' + n + '</td><td><div style="display:flex;align-items:center;gap:8px"><div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:' + pct + '%;background:' + (CATEGORY_COLORS[c]||'#999') + '"></div></div><span class="muted">' + pct + '%</span></div></td></tr>';
+  }).join('');
 
-<h2>Vocabulary Explorer</h2>
-<div class="card">
-  <div class="kpi-grid" style="margin-bottom:0">
-    <div class="kpi-card"><div class="kpi-value">${reuseW}</div><div class="kpi-label">Reused words</div></div>
-    <div class="kpi-card"><div class="kpi-value">${reuseI}</div><div class="kpi-label">Reused idioms</div></div>
-    <div class="kpi-card"><div class="kpi-value">${totalQ}</div><div class="kpi-label">Initiative moments</div></div>
-    <div class="kpi-card"><div class="kpi-value">${totalSessions > 0 ? Math.round(totalWords/totalSessions) : 0}</div><div class="kpi-label">Avg words/session</div></div>
-  </div>
-  <div style="text-align:right;margin:8px 0 0 0">
-    <button onclick="exportVocabCSV()" style="background:#2a4d3a;color:white;border:0;padding:7px 16px;border-radius:6px;font-size:13px;cursor:pointer">Export CSV</button>
-  </div>
+  document.getElementById('app').innerHTML =
+    focusCardHtml +
+    '<section><div class="kpi-grid">' +
+    '<div class="kpi-card"><div class="kpi-value">' + totalSessions + '</div><div class="kpi-label">Sessions</div></div>' +
+    '<div class="kpi-card"><div class="kpi-value">' + activeDays7 + '</div><div class="kpi-label">Active Days (7d)</div></div>' +
+    '<div class="kpi-card"><div class="kpi-value">' + (allNouns.size + allAdj.size) + '</div><div class="kpi-label">Words</div></div>' +
+    '<div class="kpi-card"><div class="kpi-value">' + allVerbs.size + '</div><div class="kpi-label">Verbs</div></div>' +
+    '<div class="kpi-card"><div class="kpi-value">' + allIdioms.size + '</div><div class="kpi-label">Idioms</div></div>' +
+    '<div class="kpi-card"><div class="kpi-value">' + totalMistakes + '</div><div class="kpi-label">Mistakes</div></div>' +
+    '<div class="kpi-card"><div class="kpi-value">' + Object.keys(themeCount).length + '</div><div class="kpi-label">Themes</div></div>' +
+    '<div class="kpi-card"><div class="kpi-value">' + (listenPct !== null ? listenPct + '%' : '—') + '</div><div class="kpi-label">Listen/Read score</div></div>' +
+    '</div></section>' +
+    (stickyCats.length > 0 ? '<div class="banner focus"><span>📌 <b>Recommended focus:</b> ' + escapeHtml(stickyCats[0].category) + ' — your most recurring mistake (' + stickyCats[0].sessions + ' session' + (stickyCats[0].sessions===1?'':'s') + ', ' + stickyCats[0].totalCount + ' total). Target this in your next practice session.</span></div>' : '') +
+    '<h2>Consistency</h2><div class="card"><div id="heatmap" class="heatmap"></div><div class="legend"><span><span class="sw" style="background:var(--cell-conv)"></span>Conversation</span><span><span class="sw" style="background:var(--cell-listen)"></span>Listening/Reading</span><span><span class="sw" style="background:var(--cell-quiz)"></span>Quiz</span><span><span class="sw" style="background:var(--cell-writing)"></span>Writing</span><span><span class="sw" style="background:var(--cell-grammar)"></span>Grammar</span><span><span class="sw" style="background:var(--cell-review)"></span>Review</span><span><span class="sw" style="background:var(--cell-both)"></span>Multiple</span><span><span class="sw" style="background:var(--cell-empty);border:1px solid var(--border)"></span>No practice</span></div><div class="hint" id="streakHint"></div></div>' +
+    '<h2>Themes Covered</h2><div class="card">' + (Object.entries(themeCount).sort(function(a,b){return b[1]-a[1];}).map(function(entry) { return '<span class="tag">' + escapeHtml(entry[0]) + (entry[1]>1?' ×'+entry[1]:'') + '</span>'; }).join('') || '<div class="muted">No themes yet.</div>') + '<div class="hint">Aim for variety. Themes you haven\'t tried could be next week\'s conversation.</div></div>' +
+    '<div class="row"><div><h2>B2 Structures Used</h2><div class="card"><p class="section-intro">"Grown-up grammar" markers across all sessions.</p><div class="chart-box"><canvas id="b2Chart"></canvas></div></div></div><div><h2>Mistake Patterns</h2><div class="card"><p class="section-intro">Where your brain keeps tripping.</p><div class="chart-box"><canvas id="mistakeChart"></canvas></div></div></div></div>' +
+    '<h2>Cumulative Knowledge</h2><div class="card"><p class="section-intro">Your vocabulary, verbs, and idioms growing session by session.</p><div class="chart-box"><canvas id="cumulativeChart"></canvas></div></div>' +
+    '<h2>Top Mistake Categories</h2><div class="card">' + (topCats.length === 0 ? '<div class="muted">No mistakes tracked yet.</div>' : '<table class="data"><thead><tr><th>Category</th><th>Count</th><th>Share</th></tr></thead><tbody>' + topCatRows + '</tbody></table>') + '</div>' +
+    '<h2>Sticky Categories</h2><div class="card"><p class="section-intro">Which mistake categories appear in the most sessions — your real recurring pattern list.</p>' + (stickyCats.length === 0 ? '<div class="muted">No mistake data yet.</div>' : '<table class="data"><thead><tr><th>Category</th><th>Appeared in</th><th>Count</th><th>Trend</th><th>Recent examples</th></tr></thead><tbody>' + stickyCatsRows + '</tbody></table>') + '</div>' +
+    grammarCardHtml +
+    writingCardHtml +
+    '<h2>Vocabulary Explorer</h2><div class="card"><div class="kpi-grid" style="margin-bottom:0"><div class="kpi-card"><div class="kpi-value">' + reuseW + '</div><div class="kpi-label">Reused words</div></div><div class="kpi-card"><div class="kpi-value">' + reuseI + '</div><div class="kpi-label">Reused idioms</div></div><div class="kpi-card"><div class="kpi-value">' + totalQ + '</div><div class="kpi-label">Initiative moments</div></div><div class="kpi-card"><div class="kpi-value">' + (totalSessions > 0 ? Math.round(totalWords/totalSessions) : 0) + '</div><div class="kpi-label">Avg words/session</div></div></div><div style="text-align:right;margin:8px 0 0 0"><button onclick="exportVocabCSV()" style="background:var(--primary);color:white;border:0;padding:7px 16px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">Export CSV</button></div>' +
+    '<div class="vtabs-nav"><button class="vtab active" data-vtab="nouns">📚 Nouns & Adj <span class="vtab-count">' + (allNouns.size + allAdj.size) + '</span></button><button class="vtab" data-vtab="verbs">⚙️ Verbs <span class="vtab-count">' + allVerbs.size + '</span></button><button class="vtab" data-vtab="idioms">🎭 Idioms <span class="vtab-count">' + allIdioms.size + '</span></button><button class="vtab" data-vtab="ready">⏰ Ready to Reuse <span class="vtab-count" id="readyCount"></span></button><button class="vtab" data-vtab="reused">✨ Reused <span class="vtab-count" id="reusedCount"></span></button></div>' +
+    '<div class="vtab-panel active" id="vtab-nouns"><div class="vtab-controls"><input type="text" class="vsearch" data-tab="nouns" placeholder="Search nouns and adjectives..."><select class="vtheme-filter" data-tab="nouns"><option value="all">All themes</option></select><select class="vsort-toggle" data-tab="nouns"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="az">A → Z</option></select></div><div class="vtab-list" id="vlist-nouns"></div></div>' +
+    '<div class="vtab-panel" id="vtab-verbs"><div class="vtab-controls"><input type="text" class="vsearch" data-tab="verbs" placeholder="Search verbs..."><select class="vtheme-filter" data-tab="verbs"><option value="all">All themes</option></select><select class="vsort-toggle" data-tab="verbs"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="az">A → Z</option></select></div><div class="vtab-list" id="vlist-verbs"></div></div>' +
+    '<div class="vtab-panel" id="vtab-idioms"><div class="vtab-controls"><input type="text" class="vsearch" data-tab="idioms" placeholder="Search idioms..."><select class="vtheme-filter" data-tab="idioms"><option value="all">All themes</option></select><select class="vsort-toggle" data-tab="idioms"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="az">A → Z</option></select></div><div class="vtab-list" id="vlist-idioms"></div></div>' +
+    '<div class="vtab-panel" id="vtab-ready"><p class="section-intro">Words, verbs, and idioms learned more than 14 days ago that haven\'t been marked as reused. Pull one into next Tuesday\'s conversation to move it from "know it" to "own it."</p><div class="vtab-controls"><input type="text" class="vsearch" data-tab="ready" placeholder="Search..."><select class="vtheme-filter" data-tab="ready"><option value="all">All themes</option></select><select class="vsort-toggle" data-tab="ready"><option value="stale">Most stale (longest since learned)</option><option value="newest">Newest first</option><option value="az">A → Z</option></select></div><div class="vtab-list" id="vlist-ready"></div></div>' +
+    '<div class="vtab-panel" id="vtab-reused"><p class="section-intro">Specific items you have actively reused in later sessions. Historical sessions only tracked reuse counts, so this fills in going forward from your next Tuesday session.</p><div class="vtab-list" id="vlist-reused"></div></div>' +
+    '</div>' +
+    '<h2>Session Log</h2><div class="card"><table class="data"><thead><tr><th>Date</th><th>Type</th><th>Theme</th><th>Words</th><th>Verbs</th><th>Idioms</th><th>Mistakes</th><th>Total Wörter</th></tr></thead><tbody>' + sessionLogRows + '</tbody></table></div>';
 
-  <div class="vtabs-nav">
-    <button class="vtab active" data-vtab="nouns">📚 Nouns & Adj <span class="vtab-count">${allNouns.size + allAdj.size}</span></button>
-    <button class="vtab" data-vtab="verbs">⚙️ Verbs <span class="vtab-count">${allVerbs.size}</span></button>
-    <button class="vtab" data-vtab="idioms">🎭 Idioms <span class="vtab-count">${allIdioms.size}</span></button>
-    <button class="vtab" data-vtab="ready">⏰ Ready to Reuse <span class="vtab-count" id="readyCount"></span></button>
-    <button class="vtab" data-vtab="reused">✨ Reused <span class="vtab-count" id="reusedCount"></span></button>
-  </div>
-
-  <div class="vtab-panel active" id="vtab-nouns">
-    <div class="vtab-controls">
-      <input type="text" class="vsearch" data-tab="nouns" placeholder="Search nouns and adjectives...">
-      <select class="vtheme-filter" data-tab="nouns"><option value="all">All themes</option></select>
-      <select class="vsort-toggle" data-tab="nouns">
-        <option value="newest">Newest first</option>
-        <option value="oldest">Oldest first</option>
-        <option value="az">A → Z</option>
-      </select>
-    </div>
-    <div class="vtab-list" id="vlist-nouns"></div>
-  </div>
-
-  <div class="vtab-panel" id="vtab-verbs">
-    <div class="vtab-controls">
-      <input type="text" class="vsearch" data-tab="verbs" placeholder="Search verbs...">
-      <select class="vtheme-filter" data-tab="verbs"><option value="all">All themes</option></select>
-      <select class="vsort-toggle" data-tab="verbs">
-        <option value="newest">Newest first</option>
-        <option value="oldest">Oldest first</option>
-        <option value="az">A → Z</option>
-      </select>
-    </div>
-    <div class="vtab-list" id="vlist-verbs"></div>
-  </div>
-
-  <div class="vtab-panel" id="vtab-idioms">
-    <div class="vtab-controls">
-      <input type="text" class="vsearch" data-tab="idioms" placeholder="Search idioms...">
-      <select class="vtheme-filter" data-tab="idioms"><option value="all">All themes</option></select>
-      <select class="vsort-toggle" data-tab="idioms">
-        <option value="newest">Newest first</option>
-        <option value="oldest">Oldest first</option>
-        <option value="az">A → Z</option>
-      </select>
-    </div>
-    <div class="vtab-list" id="vlist-idioms"></div>
-  </div>
-
-  <div class="vtab-panel" id="vtab-ready">
-    <p class="section-intro">Words, verbs, and idioms learned more than 14 days ago that haven't been marked as reused. Pull one of these into next Tuesday's conversation to move it from "know it" to "own it."</p>
-    <div class="vtab-controls">
-      <input type="text" class="vsearch" data-tab="ready" placeholder="Search...">
-      <select class="vtheme-filter" data-tab="ready"><option value="all">All themes</option></select>
-      <select class="vsort-toggle" data-tab="ready">
-        <option value="stale">Most stale (longest since learned)</option>
-        <option value="newest">Newest first</option>
-        <option value="az">A → Z</option>
-      </select>
-    </div>
-    <div class="vtab-list" id="vlist-ready"></div>
-  </div>
-
-  <div class="vtab-panel" id="vtab-reused">
-    <p class="section-intro">Specific items you have actively reused in later sessions. Historical sessions only tracked reuse counts, so this fills in going forward from your next Tuesday session.</p>
-    <div class="vtab-list" id="vlist-reused"></div>
-  </div>
-</div>
-
-<h2>Session Log</h2>
-<div class="card">
-  <table class="data">
-    <thead><tr><th>Date</th><th>Theme</th><th>Words</th><th>Verbs</th><th>Idioms</th><th>Mistakes</th><th>Total Wörter</th></tr></thead>
-    <tbody>
-      ${sessions.slice().reverse().map(s => `<tr>
-        <td>${s.date}</td><td>${escapeHtml(s.theme)}</td>
-        <td>${s.nouns.length + s.adjectives.length}</td>
-        <td>${s.verbs.length}</td>
-        <td>${s.idioms.length}</td>
-        <td>${s.mistakes.length}</td>
-        <td>${s.stats['Wörter insgesamt'] ?? '—'}</td>
-      </tr>`).join('')}
-    </tbody>
-  </table>
-</div>
-`;
-
-  renderHeatmap(sessions, reviewDates, streak);
+  renderHeatmap(sessions, reviewDates, activeDays7);
   renderB2Chart(b2);
   renderMistakeChart(mistakeByCat);
   renderCumulativeChart(cumulative);
@@ -683,77 +1197,82 @@ ${stickyCats.length > 0 ? `<div class="banner" style="background:#fef0e8;border-
   setupVocabTabs(allNouns, allAdj, allVerbs, allIdioms, sessions);
 }
 
-function computeStreak(dateSet) {
-  if (dateSet.size === 0) return 0;
-  const sorted = Array.from(dateSet).sort();
-  const last = sorted[sorted.length - 1];
-  if (last < daysAgo(2)) return 0;
-  let streak = 1;
-  let cursor = new Date(last);
-  for (let i = sorted.length - 2; i >= 0; i--) {
-    const d = new Date(sorted[i]);
-    const diff = Math.round((cursor - d) / 86400000);
-    if (diff <= 2 && diff >= 0) { streak++; cursor = d; } else break;
+function renderSessionDetail(s) {
+  var hasNouns = (s.nouns||[]).length + (s.adjectives||[]).length > 0;
+  var hasVerbs = (s.verbs||[]).length > 0;
+  var hasIdioms = (s.idioms||[]).length > 0;
+  var hasMistakes = (s.mistakes||[]).length > 0;
+  if (!hasNouns && !hasVerbs && !hasIdioms && !hasMistakes) {
+    return '<div class="muted">No detailed data for this session type.</div>';
   }
-  return streak;
+  var html = '';
+  if (hasNouns || hasVerbs || hasIdioms) {
+    html += '<div style="margin-bottom:8px"><b style="font-size:12px;color:var(--text-2)">Vocabulary</b><div style="margin-top:4px">';
+    (s.nouns||[]).forEach(function(n) { html += '<span class="tag">' + escapeHtml(n.word) + '</span>'; });
+    (s.adjectives||[]).forEach(function(a) { html += '<span class="tag dim">' + escapeHtml(a.word) + '</span>'; });
+    (s.verbs||[]).forEach(function(v) { html += '<span class="tag">' + escapeHtml(v.infinitive) + '</span>'; });
+    (s.idioms||[]).forEach(function(i) { html += '<span class="tag dim">' + escapeHtml(i.idiom) + '</span>'; });
+    html += '</div></div>';
+  }
+  if (hasMistakes) {
+    html += '<b style="font-size:12px;color:var(--text-2)">Mistakes</b>';
+    html += '<table class="data" style="margin-top:4px;font-size:12px"><thead><tr><th>Category</th><th>Wrong</th><th>Right</th></tr></thead><tbody>';
+    (s.mistakes||[]).forEach(function(m) {
+      html += '<tr><td><span class="tag" style="background:' + (CATEGORY_COLORS[m.category||'Sonstiges']||'#ddd') + ';color:white;font-size:11px">' + escapeHtml(m.category||'Sonstiges') + '</span></td><td style="color:var(--wrong)">' + escapeHtml(m.wrong) + '</td><td style="color:var(--right)">' + escapeHtml(m.right) + '</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  return html;
+}
+
+window.toggleDetail = function(idx) {
+  var row = document.getElementById('detail-' + idx);
+  if (!row) return;
+  row.classList.toggle('open');
+};
+
+function computeActiveDays7(dateSet) {
+  var cutoff = daysAgo(7);
+  return Array.from(dateSet).filter(function(d) { return d >= cutoff; }).length;
 }
 
 function daysAgo(n) {
-  const d = new Date(); d.setDate(d.getDate() - n);
+  var d = new Date(); d.setDate(d.getDate() - n);
   return d.toISOString().slice(0, 10);
 }
 
 function setupVocabTabs(allNouns, allAdj, allVerbs, allIdioms, sessions) {
-  const today = new Date();
-  const daysSince = d => Math.floor((today - new Date(d)) / 86400000);
-  const READY_DAYS = 14;
+  var today = new Date();
+  var daysSince = function(d) { return Math.floor((today - new Date(d)) / 86400000); };
+  var READY_DAYS = 14;
 
-  // Build normalized item lists
-  const nounsAdjs = [
-    ...Array.from(allNouns.values()).map(n => ({ ...n, displayWord: n.word, type: 'Nomen' })),
-    ...Array.from(allAdj.values()).map(a => ({ ...a, displayWord: a.word, type: 'Adjektiv' }))
+  var nounsAdjs = [
+    ...Array.from(allNouns.values()).map(function(n) { return Object.assign({}, n, { displayWord: n.word, type: 'Nomen' }); }),
+    ...Array.from(allAdj.values()).map(function(a) { return Object.assign({}, a, { displayWord: a.word, type: 'Adjektiv' }); })
   ];
-  const verbs = Array.from(allVerbs.values()).map(v => ({ ...v, displayWord: v.infinitive, type: 'Verb' }));
-  const idioms = Array.from(allIdioms.values()).map(i => ({ ...i, displayWord: i.idiom, type: 'Redewendung' }));
+  var verbs = Array.from(allVerbs.values()).map(function(v) { return Object.assign({}, v, { displayWord: v.infinitive, type: 'Verb' }); });
+  var idioms = Array.from(allIdioms.values()).map(function(i) { return Object.assign({}, i, { displayWord: i.idiom, type: 'Redewendung' }); });
 
-  // Ready to reuse: items older than READY_DAYS
-  const ready = [...nounsAdjs, ...verbs, ...idioms]
-    .filter(x => x.firstDate && daysSince(x.firstDate) >= READY_DAYS);
+  var ready = [...nounsAdjs, ...verbs, ...idioms].filter(function(x) { return x.firstDate && daysSince(x.firstDate) >= READY_DAYS; });
+  var reused = [];
 
-  // Reused: empty for now (historical data doesn't have named items)
-  const reused = [];
+  var tabData = { nouns: nounsAdjs, verbs: verbs, idioms: idioms, ready: ready, reused: reused };
 
-  const tabData = {
-    nouns: nounsAdjs,
-    verbs: verbs,
-    idioms: idioms,
-    ready: ready,
-    reused: reused
-  };
-
-  // Update tab count spans
-  const readyCountEl = document.getElementById('readyCount');
+  var readyCountEl = document.getElementById('readyCount');
   if (readyCountEl) readyCountEl.textContent = ready.length;
-  const reusedCountEl = document.getElementById('reusedCount');
+  var reusedCountEl = document.getElementById('reusedCount');
   if (reusedCountEl) reusedCountEl.textContent = reused.length;
 
-  // Collect themes from all items
-  const collectThemes = items => Array.from(new Set(items.map(x => x.firstTheme).filter(Boolean))).sort();
-  ['nouns', 'verbs', 'idioms', 'ready'].forEach(tab => {
-    const themes = collectThemes(tabData[tab]);
-    const sel = document.querySelector(`.vtheme-filter[data-tab="${tab}"]`);
+  var collectThemes = function(items) { return Array.from(new Set(items.map(function(x) { return x.firstTheme; }).filter(Boolean))).sort(); };
+  ['nouns', 'verbs', 'idioms', 'ready'].forEach(function(tab) {
+    var themes = collectThemes(tabData[tab]);
+    var sel = document.querySelector('.vtheme-filter[data-tab="' + tab + '"]');
     if (sel && themes.length) {
-      themes.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t;
-        opt.textContent = t;
-        sel.appendChild(opt);
-      });
+      themes.forEach(function(t) { var opt = document.createElement('option'); opt.value = t; opt.textContent = t; sel.appendChild(opt); });
     }
   });
 
-  // Per-tab state
-  const state = {
+  var state = {
     nouns: { search: '', theme: 'all', sort: 'newest' },
     verbs: { search: '', theme: 'all', sort: 'newest' },
     idioms: { search: '', theme: 'all', sort: 'newest' },
@@ -762,128 +1281,111 @@ function setupVocabTabs(allNouns, allAdj, allVerbs, allIdioms, sessions) {
   };
 
   function filterAndSort(items, tab) {
-    const s = state[tab];
-    let result = items;
+    var s = state[tab];
+    var result = items;
     if (s.search) {
-      const q = s.search.toLowerCase();
-      result = result.filter(x =>
-        (x.displayWord || '').toLowerCase().includes(q) ||
-        (x.meaning || '').toLowerCase().includes(q) ||
-        (x.example || '').toLowerCase().includes(q)
-      );
+      var q = s.search.toLowerCase();
+      result = result.filter(function(x) { return (x.displayWord||'').toLowerCase().includes(q)||(x.meaning||'').toLowerCase().includes(q)||(x.example||'').toLowerCase().includes(q); });
     }
-    if (s.theme !== 'all') {
-      result = result.filter(x => (x.firstTheme || '') === s.theme);
-    }
-    result = [...result];
-    if (s.sort === 'newest') {
-      result.sort((a, b) => (b.firstDate || '').localeCompare(a.firstDate || ''));
-    } else if (s.sort === 'oldest' || s.sort === 'stale') {
-      result.sort((a, b) => (a.firstDate || '').localeCompare(b.firstDate || ''));
-    } else if (s.sort === 'az') {
-      result.sort((a, b) => (a.displayWord || '').localeCompare(b.displayWord || ''));
-    }
+    if (s.theme !== 'all') result = result.filter(function(x) { return (x.firstTheme||'') === s.theme; });
+    result = result.slice();
+    if (s.sort === 'newest') result.sort(function(a,b) { return (b.firstDate||'').localeCompare(a.firstDate||''); });
+    else if (s.sort === 'oldest' || s.sort === 'stale') result.sort(function(a,b) { return (a.firstDate||'').localeCompare(b.firstDate||''); });
+    else if (s.sort === 'az') result.sort(function(a,b) { return (a.displayWord||'').localeCompare(b.displayWord||''); });
     return result;
   }
 
   function renderItem(item) {
-    const days = item.firstDate ? daysSince(item.firstDate) : null;
-    const staleClass = days !== null && days >= READY_DAYS ? ' stale' : '';
-    const dateLabel = item.firstDate ? item.firstDate + (days !== null && days >= READY_DAYS ? ` (${days}d)` : '') : '';
-    const themeLabel = item.firstTheme ? `<span style="color:#8a8a5a">${escapeHtml(item.firstTheme)}</span> · ` : '';
-    return `<div class="vitem${staleClass}"><span class="vitem-word">${escapeHtml(item.displayWord || '')}</span><span class="vitem-meaning">${escapeHtml(item.meaning || '')}</span><span class="vitem-meta">${themeLabel}${dateLabel}</span></div>`;
+    var days = item.firstDate ? daysSince(item.firstDate) : null;
+    var staleClass = days !== null && days >= READY_DAYS ? ' stale' : '';
+    var dateLabel = item.firstDate ? item.firstDate + (days !== null && days >= READY_DAYS ? ' (' + days + 'd)' : '') : '';
+    var themeLabel = item.firstTheme ? '<span style="color:var(--text-2)">' + escapeHtml(item.firstTheme) + '</span> · ' : '';
+    return '<div class="vitem' + staleClass + '"><span class="vitem-word">' + escapeHtml(item.displayWord||'') + '</span><span class="vitem-meaning">' + escapeHtml(item.meaning||'') + '</span><span class="vitem-meta">' + themeLabel + dateLabel + '</span></div>';
   }
 
   function renderList(tab) {
-    const listEl = document.getElementById('vlist-' + tab);
+    var listEl = document.getElementById('vlist-' + tab);
     if (!listEl) return;
     if (tab === 'reused' && reused.length === 0) {
-      listEl.innerHTML = '<div class="vtab-empty">✨ Named reused items will start appearing here after your next Tuesday session. The conversation task now saves each reused word/idiom by name in section G) of the note. Historical sessions only stored counts.</div>';
+      listEl.innerHTML = '<div class="vtab-empty">✨ Named reused items will start appearing here after your next Tuesday session.</div>';
       return;
     }
-    const items = filterAndSort(tabData[tab], tab);
-    if (items.length === 0) {
-      listEl.innerHTML = '<div class="vtab-empty">No matches. Try clearing the search or changing the filter.</div>';
-      return;
-    }
+    var items = filterAndSort(tabData[tab], tab);
+    if (items.length === 0) { listEl.innerHTML = '<div class="vtab-empty">No matches. Try clearing the search or changing the filter.</div>'; return; }
     listEl.innerHTML = items.map(renderItem).join('');
   }
 
-  // Wire up tab switching
-  document.querySelectorAll('.vtab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.vtab').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.vtab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.vtab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.vtab').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.vtab-panel').forEach(function(p) { p.classList.remove('active'); });
       btn.classList.add('active');
-      const tab = btn.dataset.vtab;
-      const panel = document.getElementById('vtab-' + tab);
+      var tab = btn.dataset.vtab;
+      var panel = document.getElementById('vtab-' + tab);
       if (panel) panel.classList.add('active');
     });
   });
 
-  // Wire up search inputs
-  document.querySelectorAll('.vsearch').forEach(inp => {
-    inp.addEventListener('input', e => {
-      const tab = e.target.dataset.tab;
-      state[tab].search = e.target.value.trim();
-      renderList(tab);
-    });
+  document.querySelectorAll('.vsearch').forEach(function(inp) {
+    inp.addEventListener('input', function(e) { state[e.target.dataset.tab].search = e.target.value.trim(); renderList(e.target.dataset.tab); });
+  });
+  document.querySelectorAll('.vtheme-filter').forEach(function(sel) {
+    sel.addEventListener('change', function(e) { state[e.target.dataset.tab].theme = e.target.value; renderList(e.target.dataset.tab); });
+  });
+  document.querySelectorAll('.vsort-toggle').forEach(function(sel) {
+    sel.addEventListener('change', function(e) { state[e.target.dataset.tab].sort = e.target.value; renderList(e.target.dataset.tab); });
   });
 
-  // Wire up theme filter
-  document.querySelectorAll('.vtheme-filter').forEach(sel => {
-    sel.addEventListener('change', e => {
-      const tab = e.target.dataset.tab;
-      state[tab].theme = e.target.value;
-      renderList(tab);
-    });
-  });
-
-  // Wire up sort
-  document.querySelectorAll('.vsort-toggle').forEach(sel => {
-    sel.addEventListener('change', e => {
-      const tab = e.target.dataset.tab;
-      state[tab].sort = e.target.value;
-      renderList(tab);
-    });
-  });
-
-  // Initial render of all lists
   ['nouns', 'verbs', 'idioms', 'ready', 'reused'].forEach(renderList);
 }
 
-function renderHeatmap(sessions, reviewDates, streak) {
-  const days = window.innerWidth < 480 ? 28 : 56;
-  const conv = new Set(sessions.filter(s => s.type !== 'listening' && s.type !== 'reading').map(s => s.date));
-  const listen = new Set(sessions.filter(s => s.type === 'listening' || s.type === 'reading').map(s => s.date));
-  const rev = new Set(reviewDates);
-  const cells = [];
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const iso = d.toISOString().slice(0, 10);
-    let cls = 'cell';
-    const hasConv = conv.has(iso), hasListen = listen.has(iso), hasRev = rev.has(iso);
-    if ((hasConv || hasListen) && hasRev) cls += ' both';
-    else if (hasConv && hasListen) cls += ' listening-conv';
-    else if (hasListen) cls += ' listening';
-    else if (hasConv) cls += ' conv';
-    else if (hasRev) cls += ' review';
-    const typeLabel = hasConv && hasListen ? ' (Conv + Listening)' : hasConv ? ' (Conversation)' : hasListen ? ' (Listening/Reading)' : hasRev ? ' (Quiz)' : '';
-    cells.push(`<div class="${cls}" title="${iso}${typeLabel}"></div>`);
+function renderHeatmap(sessions, reviewDates, activeDays7) {
+  var days = window.innerWidth < 480 ? 28 : 56;
+  var byDate = {};
+  sessions.forEach(function(s) {
+    if (!s.date) return;
+    if (!byDate[s.date]) byDate[s.date] = [];
+    byDate[s.date].push(s.type || 'conv');
+  });
+  var rev = new Set(reviewDates);
+  var cells = [];
+  for (var i = days - 1; i >= 0; i--) {
+    var d = new Date(); d.setDate(d.getDate() - i);
+    var iso = d.toISOString().slice(0, 10);
+    var types = byDate[iso] || [];
+    var hasRev = rev.has(iso);
+    var cls = 'cell';
+    var typeLabel = '';
+    if (types.length > 1 || (types.length > 0 && hasRev)) {
+      cls += ' both';
+      typeLabel = types.join('+') + (hasRev ? '+quiz' : '');
+    } else if (types.length === 1) {
+      var t = types[0];
+      if (t === 'writing') cls += ' writing';
+      else if (t === 'grammar') cls += ' grammar';
+      else if (t === 'review') cls += ' monthly-review';
+      else if (t === 'listening' || t === 'reading') cls += ' listening';
+      else cls += ' conv';
+      typeLabel = t;
+    } else if (hasRev) {
+      cls += ' quiz';
+      typeLabel = 'Quiz';
+    }
+    cells.push('<div class="' + cls + '" title="' + iso + (typeLabel ? ' (' + typeLabel + ')' : '') + '"></div>');
   }
   document.getElementById('heatmap').innerHTML = cells.join('');
-  document.getElementById('streakHint').textContent = streak > 0
-    ? `Current streak: ${streak} session day${streak===1?'':'s'} in the last week.`
-    : 'No active streak. Your next scheduled session will start one.';
+  document.getElementById('streakHint').textContent = activeDays7 > 0
+    ? activeDays7 + ' active day' + (activeDays7===1?'':'s') + ' in the last 7 days.'
+    : 'No sessions in the last 7 days. Your next scheduled session will start one.';
 }
 
 function renderB2Chart(totals) {
-  const ctx = document.getElementById('b2Chart').getContext('2d');
-  const labels = Object.keys(totals).map(k => k.replace('-Sätze', '').replace('Komplexe Sätze (Nebensätze)', 'Nebensätze'));
-  const data = Object.values(totals);
+  var ctx = document.getElementById('b2Chart').getContext('2d');
+  var labels = Object.keys(totals).map(function(k) { return k.replace('-Sätze', '').replace('Komplexe Sätze (Nebensätze)', 'Nebensätze'); });
+  var data = Object.values(totals);
   new Chart(ctx, {
     type: 'bar',
-    data: { labels, datasets: [{ label: 'Uses', data, backgroundColor: '#6b9b7a', borderRadius: 4 }] },
+    data: { labels: labels, datasets: [{ label: 'Uses', data: data, backgroundColor: '#8B5CF6', borderRadius: 4 }] },
     options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y',
       plugins: { legend: { display: false } },
       scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
@@ -891,21 +1393,21 @@ function renderB2Chart(totals) {
 }
 
 function renderMistakeChart(byCat) {
-  const ctx = document.getElementById('mistakeChart').getContext('2d');
-  const entries = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  var ctx = document.getElementById('mistakeChart').getContext('2d');
+  var entries = Object.entries(byCat).sort(function(a,b){return b[1]-a[1];});
   if (entries.length === 0) {
     ctx.canvas.parentElement.innerHTML = '<div class="muted" style="padding:40px;text-align:center">No mistakes tracked yet.</div>';
     return;
   }
   new Chart(ctx, {
     type: 'doughnut',
-    data: { labels: entries.map(e=>e[0]), datasets: [{ data: entries.map(e=>e[1]), backgroundColor: entries.map(e=>CATEGORY_COLORS[e[0]]||'#aaa'), borderWidth: 2, borderColor: '#fff' }] },
+    data: { labels: entries.map(function(e){return e[0];}), datasets: [{ data: entries.map(function(e){return e[1];}), backgroundColor: entries.map(function(e){return CATEGORY_COLORS[e[0]]||'#aaa';}), borderWidth: 2, borderColor: '#0F172A' }] },
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } } }
   });
 }
 
 function renderCumulativeChart(rows) {
-  const ctx = document.getElementById('cumulativeChart').getContext('2d');
+  var ctx = document.getElementById('cumulativeChart').getContext('2d');
   if (rows.length === 0) {
     ctx.canvas.parentElement.innerHTML = '<div class="muted" style="padding:40px;text-align:center">No data yet.</div>';
     return;
@@ -913,11 +1415,11 @@ function renderCumulativeChart(rows) {
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: rows.map(r => r.date),
+      labels: rows.map(function(r){return r.date;}),
       datasets: [
-        { label: 'Nouns/Adj', data: rows.map(r => r.nouns), borderColor: '#6b9b7a', backgroundColor: '#6b9b7a33', tension: 0.3, fill: true },
-        { label: 'Verbs', data: rows.map(r => r.verbs), borderColor: '#c4885a', backgroundColor: '#c4885a33', tension: 0.3, fill: true },
-        { label: 'Idioms', data: rows.map(r => r.idioms), borderColor: '#7a8fb8', backgroundColor: '#7a8fb833', tension: 0.3, fill: true }
+        { label: 'Nouns/Adj', data: rows.map(function(r){return r.nouns;}), borderColor: '#8B5CF6', backgroundColor: '#8B5CF633', tension: 0.3, fill: true },
+        { label: 'Verbs', data: rows.map(function(r){return r.verbs;}), borderColor: '#06B6D4', backgroundColor: '#06B6D433', tension: 0.3, fill: true },
+        { label: 'Idioms', data: rows.map(function(r){return r.idioms;}), borderColor: '#F59E0B', backgroundColor: '#F59E0B33', tension: 0.3, fill: true }
       ]
     },
     options: { responsive: true, maintainAspectRatio: false,
@@ -927,20 +1429,20 @@ function renderCumulativeChart(rows) {
 }
 
 function exportVocabCSV() {
-  const rows = [['Type','Word','Plural','Meaning','Example','Theme','Date']];
-  (window._allNouns || []).forEach(n => rows.push(['Noun', n.word||'', n.plural||'', n.meaning||'', n.example||'', n.firstTheme||'', n.firstDate||'']));
-  (window._allAdj || []).forEach(a => rows.push(['Adjective', a.word||'', '', a.meaning||'', a.example||'', a.firstTheme||'', a.firstDate||'']));
-  (window._allVerbs || []).forEach(v => rows.push(['Verb', v.infinitive||'', '', v.meaning||'', v.example||'', v.firstTheme||'', v.firstDate||'']));
-  (window._allIdioms || []).forEach(i => rows.push(['Idiom', i.idiom||'', '', i.meaning||'', i.example||'', i.firstTheme||'', i.firstDate||'']));
-  const csv = rows.map(r => r.map(f => `"${String(f).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['﻿' + csv], {type: 'text/csv;charset=utf-8;'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = `deutsch-b2-vocab-${new Date().toISOString().slice(0,10)}.csv`;
+  var rows = [['Type','Word','Plural','Meaning','Example','Theme','Date']];
+  Array.from((window._allNouns || new Map()).values()).forEach(function(n) { rows.push(['Noun', n.word||'', n.plural||'', n.meaning||'', n.example||'', n.firstTheme||'', n.firstDate||'']); });
+  Array.from((window._allAdj || new Map()).values()).forEach(function(a) { rows.push(['Adjective', a.word||'', '', a.meaning||'', a.example||'', a.firstTheme||'', a.firstDate||'']); });
+  Array.from((window._allVerbs || new Map()).values()).forEach(function(v) { rows.push(['Verb', v.infinitive||'', '', v.meaning||'', v.example||'', v.firstTheme||'', v.firstDate||'']); });
+  Array.from((window._allIdioms || new Map()).values()).forEach(function(i) { rows.push(['Idiom', i.idiom||'', '', i.meaning||'', i.example||'', i.firstTheme||'', i.firstDate||'']); });
+  var csv = rows.map(function(r) { return r.map(function(f) { return '"' + String(f).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
+  var blob = new Blob(['﻿' + csv], {type: 'text/csv;charset=utf-8;'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'deutsch-b2-vocab-' + new Date().toISOString().slice(0,10) + '.csv';
   a.click(); URL.revokeObjectURL(a.href);
 }
 
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(s).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

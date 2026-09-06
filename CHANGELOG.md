@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-09-06
+
+Multi-platform Core+Adapter restructure, full dashboard overhaul with dark-mode sidebar redesign, and cross-platform dictation support.
+
+### Added
+- `platforms/antigravity/` — Google Antigravity adapter; skill format is identical to Claude Code, Notion MCP config snippet provided, Windows Task Scheduler setup script included (`task-scheduler-setup.ps1`).
+- `platforms/` directory with adapters for Claude Code/Cowork, GitHub Copilot, Roo Code, OpenWebUI, and n8n.
+- `platforms/claude/` — seven `.skill` files for drag-and-drop installation; scheduled task cron table.
+- `platforms/copilot/` — `.github/copilot-instructions.md` adapter; capability matrix; session save guide.
+- `platforms/roo-code/` — `.roo/rules/german-learning.md` (Roo Code v3+ path), `mcp-config.json`, README.
+- `platforms/openwebui/` — `system-prompt.md`, README.
+- `platforms/n8n/` — `monatsrueckblick-workflow.json`, `github-actions/monthly-report.yml`, README (leads with scope warning: 5 conversational skills cannot be automated in n8n).
+- `core/session-schema.json` — JSON Schema documenting the session data contract across all skill types.
+- `skills/` parent directory consolidating all seven SKILL.md files.
+- `.github/` — `CONTRIBUTING.md`, bug report template, platform adapter template, PR template.
+- Dashboard: full dark-mode sidebar layout redesign — fixed 240px sidebar (logo, nav, user avatar), 64px sticky top header (greeting, search, date), Inter font from Google Fonts.
+- Dashboard: dark slate colour palette (`--bg-base: #0F172A`, `--bg-surface: #1E293B`, `--accent: #8B5CF6`) with 40+ CSS custom properties.
+- Dashboard: responsive hamburger — sidebar hidden on mobile (`≤768px`), overlay backdrop, smooth slide-in transition.
+- Dashboard: Monthly Focus card (pinned above KPI grid, sourced from latest `type: review` session stats).
+- Dashboard: Grammar Sessions card — sub-KPI row, topic tag cloud, score table (fill-in + transform).
+- Dashboard: Writing Sessions card — sub-KPI row, task type tags, register accuracy %.
+- Dashboard: Trend column in Sticky Categories table (▲/▼/→ with first-half vs. second-half comparison).
+- Dashboard: Type column in Session Log with coloured badges (Conversation, Quiz, Listening, Reading, Writing, Grammar, Review).
+- Dashboard: Session detail drawer — click any Session Log row to expand vocabulary tags and mistakes mini-table.
+- Dashboard: Four additional session types in `tryLiveLoad()` — Schreiben, Lektüre, Grammatik, Monatsrückblick.
+- Dashboard: Three new heatmap cell classes — `.cell.writing`, `.cell.grammar`, `.cell.monthly-review`; legend updated to 8 entries.
+- Dashboard: `getTypeMeta()` function for consistent type badge generation.
+- Dashboard: Three sample sessions in `SNAPSHOT_SESSIONS` (grammar, writing, review) for testing new cards.
+- Dictation tips expanded to cover all platforms in `daily-german-practice` and `grammatik-vertiefung` SKILL.md files.
+
+### Changed
+- Dashboard: KPI tile renamed from "Streak (days)" to "Active Days (7d)" — now counts distinct session days in the last 7 days, not consecutive streak.
+- Dashboard: Recommended Focus banner extracted from inline `style=""` to `.banner.focus` CSS class.
+- Dashboard: `exportVocabCSV()` fixed — Map iteration now uses `Array.from((window._allNouns || new Map()).values())` for all four vocabulary types.
+- Dashboard: `CATEGORY_COLORS` — `Artikel/Genus` updated to `#7c3aed`; `Anglizismus` added as 12th category (`#e879f9`).
+- Dashboard: Chart.js colours — Cumulative Nouns/Adj `#7c3aed`, Verbs `#0891b2`, Idioms `#f59e0b`; B2 bar `#7c3aed`.
+- Dashboard: Heatmap `renderHeatmap()` refactored — now buckets by actual session type instead of broad conv/listen split; handles writing, grammar, review cells.
+- README: Installation section updated with full `platforms/claude/` paths; Multi-Platform Support section added with capability matrix.
+- README: dashboard path updated to `core/dashboard/dashboard.html`.
+- NOTION_DATABASE_SETUP.md: dashboard path reference updated.
+- Dictation tip in SKILL.md files: Windows-only tip expanded to cover macOS (Fn×2) and Android/iOS (microphone key).
+
+### Removed
+- Light purple/violet theme from dashboard (replaced by dark-mode slate design).
+- Green/earth-tone colour palette from dashboard (all replaced by CSS variables).
+
 ## [2.0.0] - 2026-09-05
 
 Fork by Gunasekaran Chandrasekaran. Notion replaces Apple Notes throughout;
@@ -19,9 +65,6 @@ cross-platform support added (Claude Code, Copilot, Roo Code, OpenWebUI, n8n).
 - `NOTION_DATABASE_SETUP.md` — step-by-step guide for optional Notion database mode.
 - Optional database mode in all seven SKILL.md files.
 - Seven updated `.skill` files (one per skill) in `platforms/claude/` for drag-and-drop installation.
-- `platforms/` directory with adapters for Copilot, Roo Code, OpenWebUI, and n8n.
-- `core/session-schema.json` — JSON Schema documenting the session data contract across all skill types.
-- `.github/` — CONTRIBUTING.md, issue templates, PR template.
 - Anglizismus/False Friend added as an 11th fixed mistake category across all skills.
 - Sticky Challenge micro-drill in german-weekend-review: categories recurring 3+ times in 14 days trigger a focused 3-question drill.
 - Dictation error detection in daily-german-practice: flags das/dass, seit/seid, wider/wieder from voice input.
@@ -68,6 +111,7 @@ cross-platform support added (Claude Code, Copilot, Roo Code, OpenWebUI, n8n).
 - Fixed 10-category mistake taxonomy for pattern tracking over time.
 - B2 paraphrase after every corrected answer to show the "correct → fluent" upgrade path.
 
-[2.0.0]: https://github.com/kalaiguna/deutsch-lernpaket/compare/v1.1.0...HEAD
+[2.1.0]: https://github.com/kalaiguna/deutsch-lernpaket/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/kalaiguna/deutsch-lernpaket/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/MohgaNabil/deutsch-lernpaket/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MohgaNabil/deutsch-lernpaket/releases/tag/v1.0.0
