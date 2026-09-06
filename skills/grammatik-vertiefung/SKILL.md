@@ -54,9 +54,9 @@ SESSION STRUCTURE
 
    🇬🇧 Hearing tip: Highlight my German text, right-click and choose "Read aloud" in Microsoft Edge.
 
-   🇩🇪 **Tipp zum Sprechen (optional):** Benutze Windows-Spracherkennung (Windows + H), um Antworten auf Deutsch zu diktieren.
+   🇩🇪 **Tipp zum Sprechen (optional):** Diktiere deine Antworten auf Deutsch. Windows: Windows + H · macOS: Fn zweimal drücken · Android/iOS: Mikrofon-Taste auf der Tastatur.
 
-   🇬🇧 Speaking tip (optional): Use Windows Speech Recognition (Windows key + H) to dictate your answers in German.
+   🇬🇧 Speaking tip (optional): Dictate your answers in German. Windows: Win+H · macOS: press Fn twice · Android/iOS: microphone key on the keyboard.
 
 2) WARM OPENING + TOPIC ANNOUNCEMENT
 

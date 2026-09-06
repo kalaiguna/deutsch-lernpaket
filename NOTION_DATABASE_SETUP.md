@@ -38,7 +38,7 @@ Delete the default properties Notion creates and add these instead:
 |---|---|---|
 | **Name** | Title | Auto-created. Keep it. |
 | **Date** | Date | Session date (YYYY-MM-DD). |
-| **Type** | Select | Options: Konversation, Quiz, Hören, Schreiben, Lektüre, Monatsrückblick |
+| **Type** | Select | Options: Konversation, Quiz, Hören, Schreiben, Lektüre, Grammatik, Monatsrückblick |
 | **Theme** | Text | Session theme or task type. |
 | **Word Count** | Number | Words written by learner (conversation/writing sessions). |
 | **Mistake Count** | Number | Total mistakes corrected in the session. |
@@ -69,7 +69,7 @@ To add a property: click **"+"** at the right edge of the column headers inside 
 
 ## Step 4 — Set NOTION_DB_ID in the dashboard
 
-Open `dashboard.html` in a text editor and find line 112:
+Open `core/dashboard/dashboard.html` in a text editor and find line 112:
 
 ```js
 const NOTION_DB_ID = null;
@@ -124,5 +124,5 @@ If you want old sessions in the database too, ask Claude:
   as rows. Old page-mode sessions are not automatically included.
 
 **Dashboard still shows snapshot data after setting NOTION_DB_ID:**
-- Open `dashboard.html` in the browser, click **"Try live again"**.
+- Open `core/dashboard/dashboard.html` in the browser, click **"Try live again"**.
 - The live load only runs when that button is clicked; it does not auto-run on page load.

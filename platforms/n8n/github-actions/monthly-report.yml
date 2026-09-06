@@ -1,0 +1,132 @@
+name: Deutsch B2 Monatsrückblick
+
+on:
+  schedule:
+    # Runs at 9:00 AM UTC on the 1st of every month
+    # Adjust the hour offset for your local timezone (e.g. 7 for UTC+2)
+    - cron: '0 9 1 * *'
+  workflow_dispatch:  # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  generate-monthly-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch past 30 days of Notion session pages
+        id: fetch-sessions
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          # Calculate date 30 days ago in ISO format
+          THIRTY_DAYS_AGO=$(date -d "30 days ago" --utc +%Y-%m-%dT%H:%M:%SZ)
+
+          # Search Notion for all "Deutsch B2" pages
+          SEARCH_RESULT=$(curl -s -X POST "https://api.notion.com/v1/search" \
+            -H "Authorization: Bearer $NOTION_TOKEN" \
+            -H "Notion-Version: 2022-06-28" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "query": "Deutsch B2",
+              "filter": {"property": "object", "value": "page"},
+              "sort": {"direction": "descending", "timestamp": "created_time"}
+            }')
+
+          echo "search_result<<EOF" >> $GITHUB_OUTPUT
+          echo "$SEARCH_RESULT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Extract JSON blocks from session pages
+        id: extract-sessions
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          # Parse page IDs from search result and fetch first block of each
+          PAGE_IDS=$(echo '${{ steps.fetch-sessions.outputs.search_result }}' | \
+            python3 -c "import json,sys; data=json.load(sys.stdin); print('\n'.join([p['id'] for p in data.get('results', [])]))")
+
+          SESSIONS="["
+          FIRST=true
+          while IFS= read -r PAGE_ID; do
+            if [ -z "$PAGE_ID" ]; then continue; fi
+            BLOCKS=$(curl -s "https://api.notion.com/v1/blocks/$PAGE_ID/children?page_size=1" \
+              -H "Authorization: Bearer $NOTION_TOKEN" \
+              -H "Notion-Version: 2022-06-28")
+
+            # Extract text from first code block if it exists
+            JSON_TEXT=$(echo "$BLOCKS" | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          results = data.get('results', [])
+          if results and results[0].get('type') == 'code':
+            texts = results[0]['code']['rich_text']
+            print(''.join(t['plain_text'] for t in texts))
+          " 2>/dev/null)
+
+            if [ -n "$JSON_TEXT" ]; then
+              if [ "$FIRST" = true ]; then FIRST=false; else SESSIONS="$SESSIONS,"; fi
+              SESSIONS="$SESSIONS$JSON_TEXT"
+            fi
+          done <<< "$PAGE_IDS"
+          SESSIONS="$SESSIONS]"
+
+          echo "sessions<<EOF" >> $GITHUB_OUTPUT
+          echo "$SESSIONS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate report with Anthropic API
+        id: generate-report
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          SESSIONS='${{ steps.extract-sessions.outputs.sessions }}'
+          TODAY=$(date +%Y-%m-%d)
+          MONTH_DE=$(date +%B --locale=de_DE 2>/dev/null || date +%B)
+
+          PROMPT="You are generating a German B2 monthly report card (Monatsrückblick) for the learner. Here is the session data from the past 30 days:\n\n$SESSIONS\n\nGenerate a comprehensive monthly report. Include: session counts by type, total vocabulary added, mistake category analysis ranked by frequency, vocabulary reuse rate, active weeks, 3 concrete focus areas for next month. Format bilingually (🇩🇪 bold German + blank line + 🇬🇧 English). Follow the structure in skills/monatsrueckblick/SKILL.md. End with the JSON summary block for the session schema."
+
+          RESPONSE=$(curl -s -X POST "https://api.anthropic.com/v1/messages" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"model\": \"claude-sonnet-4-6\",
+              \"max_tokens\": 4096,
+              \"messages\": [{\"role\": \"user\", \"content\": \"$PROMPT\"}]
+            }")
+
+          REPORT_TEXT=$(echo "$RESPONSE" | python3 -c "import json,sys; data=json.load(sys.stdin); print(data['content'][0]['text'])" 2>/dev/null)
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          echo "$REPORT_TEXT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Save report to Notion
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          PARENT_PAGE_ID: ${{ secrets.NOTION_PARENT_PAGE_ID }}
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          MONTH_YEAR=$(date +%Y-%m)
+          REPORT='${{ steps.generate-report.outputs.report }}'
+
+          # Create the Notion page
+          curl -s -X POST "https://api.notion.com/v1/pages" \
+            -H "Authorization: Bearer $NOTION_TOKEN" \
+            -H "Notion-Version: 2022-06-28" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"parent\": {\"page_id\": \"$PARENT_PAGE_ID\"},
+              \"properties\": {
+                \"title\": {\"title\": [{\"text\": {\"content\": \"Deutsch B2 Monatsrückblick, $MONTH_YEAR\"}}]}
+              },
+              \"children\": [
+                {
+                  \"object\": \"block\",
+                  \"type\": \"paragraph\",
+                  \"paragraph\": {\"rich_text\": [{\"type\": \"text\", \"text\": {\"content\": \"Report generated by GitHub Actions on $TODAY\"}}]}
+                }
+              ]
+            }"
+
+          echo "Report saved to Notion successfully."
