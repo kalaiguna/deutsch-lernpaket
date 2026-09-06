@@ -137,6 +137,7 @@ This repo is designed to work beyond Claude Code. The skill prompts live in `ski
 | Platform | All 7 skills | Notion MCP | Auto-scheduling | Setup |
 |---|---|---|---|---|
 | **Claude Code / Cowork** | Yes | Yes | Yes (cron) | [platforms/claude/](platforms/claude/README.md) |
+| **Google Antigravity** | Yes | Yes (manual config) | Via Windows Task Scheduler | [platforms/antigravity/](platforms/antigravity/README.md) |
 | **Roo Code** | Yes | Yes (local MCP) | Partial | [platforms/roo-code/](platforms/roo-code/README.md) |
 | **OpenWebUI** | Yes | Yes (MCP) | Yes | [platforms/openwebui/](platforms/openwebui/README.md) |
 | **GitHub Copilot** | Yes (no Notion save) | No | No | [platforms/copilot/](platforms/copilot/README.md) |
@@ -170,15 +171,21 @@ parsing required.
 
 `core/dashboard/dashboard.html` is a self-contained HTML file that visualises your session history:
 
-- Session streak heatmap (conversation sessions in blue, listening sessions in teal)
-- KPI tiles: total sessions, vocabulary items, mistakes, and a combined listening/reading tile
-- Recommended Focus callout: your top recurring mistake category, pinned above the charts
+- Monthly Focus card — top 3 areas from your most recent monthly report, pinned at the top
+- 8 KPI tiles: sessions, active days, words, verbs, idioms, mistakes, themes, listen/read score
+- Recommended Focus callout: your single most recurring mistake category
+- Activity heatmap (8 session types, colour-coded: violet for conversation, teal for listening, and distinct shades for writing, grammar, quiz, review)
 - Mistake category breakdown (pie chart)
-- Sticky mistake categories (which errors keep recurring across sessions)
-- Cumulative vocabulary growth (nouns, verbs, idioms over time)
-- B2 grammar structures used
+- Sticky mistake categories with trend indicators (▲ worsening / ▼ improving / → stable)
+- Cumulative vocabulary growth (nouns/adj, verbs, idioms over sessions)
+- B2 grammar structures used (bar chart)
+- Grammar Sessions card: topics covered, fill-in and transformation scores per session
+- Writing Sessions card: task type rotation (A–F), error rate, register accuracy
+- Session Log with Type badge column; click any row to expand vocabulary and mistakes inline
 - Tabbed Vocabulary Explorer: Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused
-- CSV export button — download your full vocabulary list as a spreadsheet
+- CSV export — download your full vocabulary list as a spreadsheet
+
+The dashboard uses a dark-mode sidebar layout: fixed 240px nav on the left, sticky top header with greeting and search, main content panel on the right. Fully responsive — sidebar collapses on mobile behind a hamburger.
 
 **To use it:**
 
