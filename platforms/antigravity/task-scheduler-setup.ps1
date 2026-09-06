@@ -74,47 +74,46 @@ $tasks = @(
 )
 
 foreach ($task in $tasks) {
-    $action = New-ScheduledTaskAction `
-        -Execute "agy" `
-        -Argument "--print --dangerously-skip-permissions `"$($task.Skill)`""
-
     if ($task.TriggerType -eq "Weekly") {
-        $days = $task.DaysOfWeek -join ","
+        $action = New-ScheduledTaskAction `
+            -Execute "agy" `
+            -Argument "--print --dangerously-skip-permissions `"$($task.Skill)`""
+
         $trigger = New-ScheduledTaskTrigger `
             -Weekly `
             -DaysOfWeek $task.DaysOfWeek `
             -At $task.StartTime
+
+        $settings = New-ScheduledTaskSettingsSet `
+            -ExecutionTimeLimit (New-TimeSpan -Hours 2) `
+            -MultipleInstances IgnoreNew `
+            -StartWhenAvailable
+
+        $existing = Get-ScheduledTask -TaskPath $taskPath -TaskName $task.Name -ErrorAction SilentlyContinue
+        if ($existing) {
+            Write-Host "Updating existing task: $($task.Name)" -ForegroundColor Yellow
+            Set-ScheduledTask `
+                -TaskPath $taskPath `
+                -TaskName $task.Name `
+                -Action $action `
+                -Trigger $trigger `
+                -Settings $settings | Out-Null
+        } else {
+            Write-Host "Registering task: $($task.Name)" -ForegroundColor Green
+            Register-ScheduledTask `
+                -TaskPath $taskPath `
+                -TaskName $task.Name `
+                -Description $task.Description `
+                -Action $action `
+                -Trigger $trigger `
+                -Settings $settings `
+                -RunLevel Limited | Out-Null
+        }
     } elseif ($task.TriggerType -eq "Monthly") {
-        $trigger = New-ScheduledTaskTrigger `
-            -Monthly `
-            -DaysOfMonth $task.DayOfMonth `
-            -At $task.StartTime
-    }
-
-    $settings = New-ScheduledTaskSettingsSet `
-        -ExecutionTimeLimit (New-TimeSpan -Hours 2) `
-        -MultipleInstances IgnoreNew `
-        -StartWhenAvailable
-
-    $existing = Get-ScheduledTask -TaskPath $taskPath -TaskName $task.Name -ErrorAction SilentlyContinue
-    if ($existing) {
-        Write-Host "Updating existing task: $($task.Name)" -ForegroundColor Yellow
-        Set-ScheduledTask `
-            -TaskPath $taskPath `
-            -TaskName $task.Name `
-            -Action $action `
-            -Trigger $trigger `
-            -Settings $settings | Out-Null
-    } else {
-        Write-Host "Registering task: $($task.Name)" -ForegroundColor Green
-        Register-ScheduledTask `
-            -TaskPath $taskPath `
-            -TaskName $task.Name `
-            -Description $task.Description `
-            -Action $action `
-            -Trigger $trigger `
-            -Settings $settings `
-            -RunLevel Limited | Out-Null
+        Write-Host "Registering monthly task: $($task.Name)" -ForegroundColor Green
+        $taskName = "$taskPath$($task.Name)"
+        $argStr = "agy --print --dangerously-skip-permissions `"$($task.Skill)`""
+        schtasks /Create /SC MONTHLY /D $task.DayOfMonth /TN $taskName /TR $argStr /ST $task.StartTime /F | Out-Null
     }
 }
 
