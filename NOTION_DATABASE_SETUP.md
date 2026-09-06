@@ -1,4 +1,4 @@
-# Notion Database Setup (Optional)
+﻿# Notion Database Setup (Optional)
 
 By default the skills save each session as a child **page** inside your "Deutsch lernen B2"
 Notion page. That is enough to use this repo — you do not need a database.
@@ -69,7 +69,7 @@ To add a property: click **"+"** at the right edge of the column headers inside 
 
 ## Step 4 — Set NOTION_DB_ID in the dashboard
 
-Open `dashboard-template.html` in a text editor and find line 112:
+Open `dashboard.html` in a text editor and find line 112:
 
 ```js
 const NOTION_DB_ID = null;
@@ -124,5 +124,5 @@ If you want old sessions in the database too, ask Claude:
   as rows. Old page-mode sessions are not automatically included.
 
 **Dashboard still shows snapshot data after setting NOTION_DB_ID:**
-- Open `dashboard-template.html` in the browser, click **"Try live again"**.
+- Open `dashboard.html` in the browser, click **"Try live again"**.
 - The live load only runs when that button is clicked; it does not auto-run on page load.

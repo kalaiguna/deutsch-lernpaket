@@ -78,6 +78,14 @@ SESSION STRUCTURE
 
    RECURRENCE MAP: While reading all pages, tally which mistake categories appear in each session (from the mistakes array in the JSON block). Sort by session-count descending. This drives Runde 3 weighting.
 
+   STICKY CHALLENGE DETECTION: Also count how many sessions in the last 14 days each category appeared in. If any category appears in 3 or more of those sessions, flag it as a 🔴 Sticky Challenge. After the final quiz question, before the wrap-up, run a focused 3-question micro-drill on that category:
+
+   🇩🇪 **🔴 Sticky Challenge: [Category]** — diese Kategorie ist in den letzten 14 Tagen [N] Mal aufgetreten.
+
+   🇬🇧 Sticky Challenge: [Category] — this category appeared [N] times in the last 14 days.
+
+   Present 3 targeted exercises (Lückentext or Umformung) focused only on that grammar point, ONE AT A TIME, with feedback after each. If two categories qualify, drill the one with the higher 14-day count only — keep the micro-drill to 3 questions maximum.
+
 4) RUN THE QUIZ (10 to 15 questions max, ONE AT A TIME, grouped into Runden)
 
    For every question use the header format shown above. Stop and wait for the learner's answer.
