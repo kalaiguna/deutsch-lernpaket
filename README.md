@@ -231,6 +231,18 @@ embedded snapshot data — just ask Claude to refresh the snapshot after each se
 
 ---
 
+## Testing
+
+Run the automated consistency checks after any edit to a skill prompt, the dashboard, or platform adapter:
+
+```
+bash scripts/verify-repo.sh
+```
+
+See [TESTING.md](TESTING.md) for the full manual QA scenario checklist.
+
+---
+
 ## License
 
 MIT. Forked from the original [deutsch-lernpaket by MohgaNabil](https://github.com/MohgaNabil/deutsch-lernpaket). This fork adds Notion integration, cross-platform support, four new skill files (schreib-skill, lektuere-skill, monatsrueckblick, grammatik-vertiefung), dashboard improvements, and all documentation. Both the original and this fork's contributions are MIT licensed — use freely, remix, share.
