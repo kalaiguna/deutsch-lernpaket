@@ -34,6 +34,8 @@ Multi-platform Core+Adapter restructure, full dashboard overhaul with dark-mode 
 - Dashboard: `getTypeMeta()` function for consistent type badge generation.
 - Dashboard: Three sample sessions in `SNAPSHOT_SESSIONS` (grammar, writing, review) for testing new cards.
 - Dictation tips expanded to cover all platforms in `daily-german-practice` and `grammatik-vertiefung` SKILL.md files.
+- `TESTING.md` — manual QA scenario checklist covering all 7 skills, Notion integration, and the dashboard. Adapted from upstream's testing framework (MohgaNabil/deutsch-lernpaket, `feature/add_onboarding_skill`).
+- `scripts/verify-repo.sh` — 12 automated consistency checks: structure and zip sync, frontmatter validity, Notion MCP coverage, no Apple Notes remnants, no Austrian flag, gender-neutral pronoun audit, session-schema.json validity, platform adapter completeness, CHANGELOG footer links, dashboard session type coverage, and JS syntax. Adapted from upstream's verify-repo.sh.
 
 ### Changed
 - Dashboard: KPI tile renamed from "Streak (days)" to "Active Days (7d)" — now counts distinct session days in the last 7 days, not consecutive streak.
