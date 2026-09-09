@@ -151,6 +151,33 @@ Open `core/dashboard/dashboard.html` in Microsoft Edge or Chrome.
 
 ---
 
+### 9. Exam Prep Skill (`telc-pruefungsvorbereitung`) + Cheatsheet Dashboard Tab
+
+**Skill — on-demand, install via `platforms/claude/telc-pruefungsvorbereitung.skill`:**
+
+- [ ] Opening message asks which component to run: A (Schreiben) / B (Sprechen T1) / C (Sprechen T2+3) / D (Trap Drill)
+- [ ] **Component A:** Generates a realistic exam prompt with exactly 4 Leitpunkte; waits for learner text; scores using official 3-criterion rubric (A=5/B=3/C=1/D=0, ×3 = /45 total); shows B2 model passage for weakest section
+- [ ] **Component B:** Presents one of 7 Teil-1 themes; evaluates 5-step scaffold (Einstieg/Kontext/Schilderung/Wertung/Pflicht-Abschluss); flags missing Wertung + Begründung as Aufgabenbewältigung deduction
+- [ ] **Component C:** Generates a short article; Part A requires Konjunktiv I in Wiedergabe; Part B plays examiner in discussion; Part 3 plays planning partner
+- [ ] **Component D:** Generates exactly 5 MC questions, one per trap type (Wortgleichheit / Extremwörter / Eigene Logik / Meinungswechsel / Verneinung); explains each trap after answers
+- [ ] Session saved as `Deutsch B2 Prüfungsvorbereitung, YYYY-MM-DD, [A/B/C/D]`
+- [ ] First block is a JSON code block
+- [ ] `notion_create_page` used (not `notion_update_page`)
+
+**Dashboard Cheatsheet tab:**
+
+- [ ] "Cheatsheet" nav link appears under a "Reference" section label in the sidebar
+- [ ] Clicking "Cheatsheet" hides `#app` and shows `#cheatsheet-panel`; clicking "Dashboard" nav items shows `#app` and hides the panel
+- [ ] Four tabs visible: Grammatik / Schreiben / Sprechen / Prüfung
+- [ ] Tab switching works — only one tab's content visible at a time; no console errors
+- [ ] **Grammatik tab:** Konnektoren tables (NS + HS) render with correct columns; Partizipialattribute table present; cheat-warn blocks visible
+- [ ] **Schreiben tab:** Beschwerdebrief Pflichtbausteine table present; Konjunktiv I table present
+- [ ] **Sprechen tab:** Teil 1 5-step scaffold table present; Teil 2 Konjunktiv I scaffold table present
+- [ ] **Prüfung tab:** Exam structure table with 5 subtests and Bestehensgrenze note; 16 Themenbereiche badge grid (all 16 visible); Lesen Fallen table present; Hören signal table present
+- [ ] No horizontal overflow on 1280px viewport; tables scroll or wrap on narrow screens
+
+---
+
 ### Cross-Cutting
 
 - [ ] No em dashes in any skill output (use commas, colons, or rephrase instead)

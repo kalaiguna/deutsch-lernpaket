@@ -6,7 +6,7 @@
 
 | Feature | Supported |
 |---|---|
-| All 7 skills (conversational sessions) | Yes — via system prompt |
+| All 8 skills (conversational + on-demand exam prep) | Yes — via system prompt |
 | Notion MCP (auto-save) | Yes — via OpenWebUI MCP connector |
 | Automated scheduling | Yes — via OpenWebUI's built-in task scheduler |
 | WebSearch / WebFetch | Yes — if enabled in OpenWebUI settings |

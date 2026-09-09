@@ -6,7 +6,7 @@
 
 | Feature | Supported |
 |---|---|
-| All 7 skills (conversational + one-shot) | Yes |
+| All 8 skills (conversational + one-shot + on-demand exam prep) | Yes |
 | Notion MCP (auto-save) | Yes — via local MCP server |
 | Notion reads for cross-session memory | Yes (daily practice, weekend quiz) |
 | WebSearch / WebFetch for articles and audio | Depends on model provider |

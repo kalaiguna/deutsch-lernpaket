@@ -11,7 +11,7 @@ This means the skill files in `skills/` drop in without modification.
 
 | Feature | Status |
 |---|---|
-| All 7 skills (conversational) | Yes — skill format is identical |
+| All 8 skills (7 scheduled + 1 on-demand) | Yes — skill format is identical |
 | Notion MCP | Yes — after manual config (see below) |
 | Automatic scheduling | No — `agy` has no `schedule` subcommand; use Windows Task Scheduler |
 | Skill hot-reload | Yes — copy or symlink and Antigravity picks up changes |
@@ -33,7 +33,8 @@ $skills = @(
   "schreib-skill",
   "lektuere-skill",
   "monatsrueckblick",
-  "grammatik-vertiefung"
+  "grammatik-vertiefung",
+  "telc-pruefungsvorbereitung"   # on-demand — invoke manually with /telc-pruefungsvorbereitung
 )
 $dest = "$env:USERPROFILE\.gemini\config\skills"
 foreach ($s in $skills) {
@@ -89,8 +90,9 @@ reference to help Antigravity load context:
 ```markdown
 # German Learning Skills
 
-Seven German B2 learning skills are installed in ~/.gemini/config/skills/.
+Eight German B2 learning skills are installed in ~/.gemini/config/skills/.
 Invoke them with /daily-german-practice, /german-weekend-review, etc.
+/telc-pruefungsvorbereitung is on-demand — run it 2-4 weeks before your exam.
 Session data is saved to a Notion page called "Deutsch lernen B2".
 ```
 
@@ -107,7 +109,8 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\platforms\antigravity\task-scheduler-setup.ps1
 ```
 
-This registers all 7 skills as scheduled tasks under `\DeutschB2\` in Task Scheduler,
+This registers the 7 recurring skills as scheduled tasks under `\DeutschB2\` in Task Scheduler.
+`telc-pruefungsvorbereitung` is **not** scheduled — run it on-demand with `agy "/telc-pruefungsvorbereitung"` when preparing for an exam.
 using these times:
 
 | Skill | Schedule |

@@ -4,7 +4,7 @@
 
 ## Why most skills cannot run in n8n
 
-Five of the seven skills in this repo are **conversational** — they run as a live back-and-forth exchange where the AI asks one question, waits for the learner's typed answer, gives feedback, then asks the next question. A single session involves 10-30 turns over 20-30 minutes.
+Five of the eight skills in this repo are **conversational** — they run as a live back-and-forth exchange where the AI asks one question, waits for the learner's typed answer, gives feedback, then asks the next question. A single session involves 10-30 turns over 20-30 minutes.
 
 n8n is a workflow automation tool: it executes a fixed sequence of nodes and then stops. It cannot pause mid-workflow to wait for a human's typed reply, then resume. There is no "wait for chat input" node.
 
