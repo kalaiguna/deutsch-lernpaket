@@ -1,6 +1,6 @@
 # Claude Code / Cowork Platform
 
-This folder contains `.skill` files for drag-and-drop installation into **Claude Code** or **Cowork**. All 7 skills work fully here — conversational sessions, automatic Notion saving, cross-session memory, and adaptive quiz weighting.
+This folder contains `.skill` files for drag-and-drop installation into **Claude Code** or **Cowork**. All 8 skills work fully here — conversational sessions, automatic Notion saving, cross-session memory, and adaptive quiz weighting.
 
 ## Installation
 
@@ -17,6 +17,7 @@ Drag any `.skill` file from this folder into Claude Code or Cowork and click **S
 | `lektuere-skill.skill` | Fortnightly reading comprehension |
 | `monatsrueckblick.skill` | Monthly report card |
 | `grammatik-vertiefung.skill` | Monthly grammar deep-dive |
+| `telc-pruefungsvorbereitung.skill` | On-demand telc B2 mock exam (run 2–4 weeks before exam) |
 
 ### Option B — Copy SKILL.md manually
 
@@ -26,7 +27,7 @@ Drag any `.skill` file from this folder into Claude Code or Cowork and click **S
 
 ## Scheduled Tasks
 
-Set up seven scheduled tasks using these cron expressions (times in your local timezone):
+Set up seven scheduled tasks using these cron expressions (times in your local timezone). `telc-pruefungsvorbereitung` is on-demand — run it manually when preparing for the exam, no cron needed:
 
 | Skill | Cron | When |
 |---|---|---|
@@ -46,7 +47,7 @@ Set up seven scheduled tasks using these cron expressions (times in your local t
 
 | Feature | Supported |
 |---|---|
-| All 7 skills (conversational + one-shot) | Yes |
+| All 8 skills (conversational + one-shot + on-demand exam prep) | Yes |
 | Notion MCP (auto-save and cross-session reads) | Yes |
 | Automated scheduling via cron | Yes |
 | Dashboard live Notion load | Yes (via Cowork MCP bridge) |

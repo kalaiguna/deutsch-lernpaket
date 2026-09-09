@@ -562,6 +562,33 @@ details summary { cursor: pointer; color: var(--text-muted); font-size: 12px; }
   .vitem-meta { text-align: left; }
   .vtab { padding: 6px 10px; font-size: 12px; }
 }
+
+/* Cheatsheet panel */
+.cheat-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 0.5rem 0 1rem; }
+.cheat-table th { background: var(--accent); color: #fff; padding: 0.4rem 0.6rem; text-align: left; font-weight: 600; font-size: 0.82rem; }
+.cheat-table td { padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.cheat-table tr:nth-child(even) td { background: var(--bg-base); }
+.cheat-table tr:hover td { background: var(--bg-surface-2); }
+.cheat-section { margin-bottom: 1.25rem; }
+.cheat-section h3 { font-size: 0.9rem; font-weight: 700; color: var(--accent-light); margin: 0 0 0.4rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+details.cheat-details { margin-bottom: 0.6rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 6px; }
+details.cheat-details summary { cursor: pointer; font-weight: 600; color: var(--accent-light); padding: 0.5rem 0.75rem; user-select: none; font-size: 0.88rem; list-style: none; }
+details.cheat-details summary::before { content: '▶ '; font-size: 0.7rem; }
+details.cheat-details[open] summary::before { content: '▼ '; }
+details.cheat-details summary:hover { color: var(--text-primary); }
+details.cheat-details > .cheat-detail-body { padding: 0 0.75rem 0.75rem; }
+.cheat-tab { display: none; }
+.cheat-tab.active { display: block; }
+.cheat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.4rem; margin: 0.5rem 0 1rem; }
+.cheat-badge { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.35rem 0.6rem; font-size: 0.82rem; }
+.cheat-badge strong { color: var(--accent-light); display: block; font-size: 0.78rem; }
+.cheat-warn { background: rgba(139,92,246,0.08); border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0; padding: 0.4rem 0.6rem; margin: 0.5rem 0; font-size: 0.83rem; color: var(--text-2); }
+#cheatsheet-panel { padding: 0; }
+#cheatsheet-panel .tab-bar { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
+#cheatsheet-panel .tab-bar button { background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-muted); padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 500; transition: all 0.15s; }
+#cheatsheet-panel .tab-bar button:hover { background: var(--bg-surface-2); color: var(--text-primary); }
+#cheatsheet-panel .tab-bar button.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+@media (max-width: 600px) { .cheat-grid { grid-template-columns: 1fr 1fr; } }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 </head>
@@ -615,6 +642,16 @@ details summary { cursor: pointer; color: var(--text-muted); font-size: 12px; }
       </svg>
       Aktivität
     </a>
+
+    <div class="nav-section-label" style="margin-top:8px">Reference</div>
+    <a class="nav-link" href="#" onclick="toggleCheatsheet(); return false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        <line x1="10" y1="8" x2="16" y2="8"/><line x1="10" y1="12" x2="16" y2="12"/><line x1="10" y1="16" x2="14" y2="16"/>
+      </svg>
+      Cheatsheet
+    </a>
   </nav>
 
   <div class="sidebar-user">
@@ -645,6 +682,376 @@ details summary { cursor: pointer; color: var(--text-muted); font-size: 12px; }
       <div class="subtitle" id="subtitle">Tracking your German practice over time</div>
       <div id="banner"></div>
       <main id="app"></main>
+
+      <!-- ══════════════ CHEATSHEET PANEL ══════════════ -->
+      <div id="cheatsheet-panel" style="display:none">
+        <h2 style="margin-bottom:0.75rem">Cheatsheet</h2>
+        <div class="card">
+          <div class="tab-bar">
+            <button data-ctab="grammatik" class="active">Grammatik</button>
+            <button data-ctab="schreiben">Schreiben</button>
+            <button data-ctab="sprechen">Sprechen</button>
+            <button data-ctab="pruefung">Prüfung</button>
+          </div>
+
+          <!-- ── GRAMMATIK TAB ── -->
+          <div class="cheat-tab active" id="ctab-grammatik">
+
+            <div class="cheat-section">
+              <h3>Konnektoren — Position &amp; Bedeutung</h3>
+              <details class="cheat-details" open>
+                <summary>Nebensatz-Konnektoren (Verb-End)</summary>
+                <div class="cheat-detail-body">
+                  <table class="cheat-table">
+                    <thead><tr><th>Konnektor</th><th>EN</th><th>Beispiel</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>weil</strong></td><td>because</td><td>…, weil er müde <em>war</em>.</td></tr>
+                      <tr><td><strong>obwohl</strong></td><td>although</td><td>…, obwohl es schwierig <em>war</em>.</td></tr>
+                      <tr><td><strong>damit</strong></td><td>so that</td><td>…, damit er besser <em>wird</em>.</td></tr>
+                      <tr><td><strong>indem</strong></td><td>by doing</td><td>…, indem er täglich <em>übt</em>.</td></tr>
+                      <tr><td><strong>falls / wenn</strong></td><td>if / when</td><td>Falls es <em>regnet</em>, bleiben wir.</td></tr>
+                      <tr><td><strong>während</strong></td><td>while / whereas</td><td>…, während sie Musik <em>hörte</em>.</td></tr>
+                      <tr><td><strong>nachdem</strong></td><td>after</td><td>Nachdem sie <em>gegessen hatten</em>, gingen sie.</td></tr>
+                      <tr><td><strong>bevor</strong></td><td>before</td><td>Bevor wir <em>fahren</em>, müssen wir packen.</td></tr>
+                      <tr><td><strong>als</strong></td><td>when (past once)</td><td>Als ich jung <em>war</em>, spielte ich Fußball.</td></tr>
+                      <tr><td><strong>seitdem</strong></td><td>since (time)</td><td>…, seitdem er <em>umgezogen ist</em>.</td></tr>
+                      <tr><td><strong>ob</strong></td><td>whether</td><td>Ich weiß nicht, ob er <em>kommt</em>.</td></tr>
+                      <tr><td><strong>sodass</strong></td><td>so that (result)</td><td>…, sodass wir nicht <em>ausgingen</em>.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+              <details class="cheat-details">
+                <summary>Hauptsatz-Konnektoren (Pos. 1, Verb auf Pos. 2)</summary>
+                <div class="cheat-detail-body">
+                  <table class="cheat-table">
+                    <thead><tr><th>Konnektor</th><th>EN</th><th>Beispiel (nach Komma → Inversion)</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>deshalb / daher / folglich / somit</strong></td><td>therefore</td><td>Er war krank, <strong>deshalb</strong> blieb er zu Hause.</td></tr>
+                      <tr><td><strong>trotzdem / dennoch / nichtsdestotrotz</strong></td><td>nevertheless</td><td>Es regnete, <strong>trotzdem</strong> gingen wir.</td></tr>
+                      <tr><td><strong>außerdem / darüber hinaus</strong></td><td>furthermore</td><td>Es ist teuer, <strong>außerdem</strong> dauert es lange.</td></tr>
+                      <tr><td><strong>jedoch / allerdings / hingegen</strong></td><td>however</td><td>Sie wollte kommen, <strong>jedoch</strong> hatte sie keine Zeit.</td></tr>
+                      <tr><td><strong>infolgedessen</strong></td><td>consequently (formal)</td><td>Das Budget sank, <strong>infolgedessen</strong> mussten wir sparen.</td></tr>
+                      <tr><td><strong>zumal</strong></td><td>especially since</td><td>Das ist problematisch, <strong>zumal</strong> wir kaum Zeit haben.</td></tr>
+                      <tr><td><strong>denn</strong></td><td>because (HS, no inversion)</td><td>Er blieb, <strong>denn</strong> er hatte keine Alternative.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Passiversatzformen</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Form</th><th>Beispiel</th><th>Bedeutung</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>sein + zu + Inf</strong></td><td>Die Aufgabe ist bis Freitag zu erledigen.</td><td>muss erledigt werden</td></tr>
+                  <tr><td><strong>sich lassen + Inf</strong></td><td>Das Problem lässt sich lösen.</td><td>kann gelöst werden</td></tr>
+                  <tr><td><strong>-bar Adjektiv</strong></td><td>Das Produkt ist lösbar / messbar.</td><td>kann … werden</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Partizipialattribute — Kurzreferenz</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Typ</th><th>Beispiel</th><th>Bedeutung</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Partizip I</strong> (aktiv, gleichzeitig)</td><td>der <em>wartende</em> Mann</td><td>der Mann, der wartet</td></tr>
+                  <tr><td><strong>Partizip II transitiv</strong> (passiv, abgeschlossen)</td><td>das <em>gelesene</em> Buch</td><td>das Buch, das gelesen wurde</td></tr>
+                  <tr><td><strong>Partizip II intransitiv</strong> (sein-Verb, aktiv)</td><td>der <em>angekommene</em> Zug</td><td>der Zug, der angekommen ist</td></tr>
+                  <tr><td><strong>Gerundivum</strong> (Notwendigkeit)</td><td>das <em>zu lösende</em> Problem</td><td>das Problem, das gelöst werden muss</td></tr>
+                </tbody>
+              </table>
+              <div class="cheat-warn">⚠ Dekodierstrategie: Artikel lesen → zum Nomen springen → Mitte lesen. „die von der Regierung <em>beschlossenen</em> Maßnahmen" → Maßnahmen → passiv (Partizip II transitiv)</div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Pronominaladverbien</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Mit Person</th><th>Mit Sache/Konzept</th><th>Frage</th></tr></thead>
+                <tbody>
+                  <tr><td>Ich denke <em>an ihn</em>.</td><td>Ich denke <strong>daran</strong>.</td><td><strong>Woran</strong> denkst du?</td></tr>
+                  <tr><td>Ich freue mich <em>auf sie</em>.</td><td>Ich freue mich <strong>darauf</strong>.</td><td><strong>Worauf</strong> freust du dich?</td></tr>
+                  <tr><td>Ich spreche <em>mit ihm</em>.</td><td>Ich spreche <strong>damit</strong>.</td><td><strong>Womit</strong> sprichst du?</td></tr>
+                </tbody>
+              </table>
+              <div class="cheat-warn">da<strong>r</strong>- vor Vokalen: darauf, darunter, daran, darüber. da- vor Konsonanten: dafür, dagegen, dabei.</div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Doppelinfinitiv im Perfekt</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Typ</th><th>Falsch</th><th>Richtig</th></tr></thead>
+                <tbody>
+                  <tr><td>Modalverb Perfekt</td><td>Ich habe das nicht <em>gekonnt</em>.</td><td>Ich habe das nicht tun <strong>können</strong>.</td></tr>
+                  <tr><td>Modal KII Vergangenheit</td><td>Ich habe kommen <em>gemusst</em>.</td><td>Ich hätte früher kommen <strong>müssen</strong>.</td></tr>
+                  <tr><td>lassen Perfekt</td><td>Ich habe das Auto <em>gelassen</em> reparieren.</td><td>Ich habe das Auto reparieren <strong>lassen</strong>.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div><!-- /ctab-grammatik -->
+
+          <!-- ── SCHREIBEN TAB ── -->
+          <div class="cheat-tab" id="ctab-schreiben">
+
+            <div class="cheat-section">
+              <h3>Formelle E-Mail — Bausteine</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Position</th><th>Formulierung</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Anrede</strong></td><td>Sehr geehrte Damen und Herren, / Sehr geehrte Frau [Name], / Sehr geehrter Herr [Name],</td></tr>
+                  <tr><td><strong>Bezugnahme</strong></td><td>Mit Bezug auf Ihre Anzeige vom … / Bezugnehmend auf unser Gespräch vom …</td></tr>
+                  <tr><td><strong>Einleitung</strong></td><td>Hiermit möchte ich … / Ich wende mich an Sie, weil … / Ich erlaube mir mitzuteilen, dass …</td></tr>
+                  <tr><td><strong>Anfrage</strong></td><td>Ich würde mich freuen, wenn Sie mir … mitteilen könnten. / Dürfte ich Sie bitten, …?</td></tr>
+                  <tr><td><strong>Abschluss</strong></td><td>Über eine baldige Rückmeldung würde ich mich sehr freuen.</td></tr>
+                  <tr><td><strong>Gruß</strong></td><td>Mit freundlichen Grüßen / Ich verbleibe mit freundlichen Grüßen</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Beschwerdebrief — Pflichtbausteine</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Baustein</th><th>Formulierung</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Betreff</strong></td><td>Betreff: Beschwerde über [X] vom [Datum]</td></tr>
+                  <tr><td><strong>Bezugnahme</strong></td><td>Mit Bezug auf Ihre Anzeige vom … habe ich an … teilgenommen.</td></tr>
+                  <tr><td><strong>Problem</strong></td><td>Leider muss ich Ihnen mitteilen, dass … / Ich war sehr enttäuscht darüber, dass …</td></tr>
+                  <tr><td><strong>Forderung (weich)</strong></td><td>Ich bitte Sie daher, mir den Betrag zu erstatten. / Ich erwarte von Ihnen, dass …</td></tr>
+                  <tr><td><strong>Fristsetzung</strong></td><td>Ich setze Ihnen hierfür eine Frist bis zum [Datum].</td></tr>
+                  <tr><td><strong>Konsequenz</strong></td><td>Sollte ich bis dahin keine Antwort erhalten, werde ich weitere Schritte in Erwägung ziehen.</td></tr>
+                </tbody>
+              </table>
+              <div class="cheat-warn">⚠ Keine „fordere ich auf" als Einstieg — zu hart für telc B2. Erst als 2. Eskalationsstufe.</div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Höfliche Bitten — B1 → B2 Upgrade (Konjunktiv II)</h3>
+              <table class="cheat-table">
+                <thead><tr><th>B1 (direkt)</th><th>B2 (Konjunktiv II, höflicher)</th></tr></thead>
+                <tbody>
+                  <tr><td>Können Sie mir helfen?</td><td>Könnten Sie mir vielleicht helfen?</td></tr>
+                  <tr><td>Ich möchte einen Termin.</td><td>Ich hätte gern einen Termin.</td></tr>
+                  <tr><td>Ist das möglich?</td><td>Wäre das möglich?</td></tr>
+                  <tr><td>Ich will wissen …</td><td>Ich würde gern wissen, …</td></tr>
+                  <tr><td>Schicken Sie mir bitte …</td><td>Dürfte ich Sie bitten, mir … zu schicken?</td></tr>
+                  <tr><td>Ich brauche Hilfe.</td><td>Ich wäre Ihnen sehr dankbar, wenn Sie mir helfen könnten.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Konjunktiv I — Zusammenfassung</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Infinitiv</th><th>KI (er/sie)</th><th>Beispiel</th></tr></thead>
+                <tbody>
+                  <tr><td>sein</td><td><strong>sei</strong></td><td>Der Autor berichtet, er <strong>sei</strong> krank.</td></tr>
+                  <tr><td>haben</td><td><strong>habe</strong></td><td>Sie <strong>habe</strong> keine Zeit, schreibt er.</td></tr>
+                  <tr><td>werden</td><td><strong>werde</strong></td><td>Es <strong>werde</strong> schwierig.</td></tr>
+                  <tr><td>können</td><td><strong>könne</strong></td><td>Er <strong>könne</strong> nicht kommen.</td></tr>
+                  <tr><td>müssen</td><td><strong>müsse</strong></td><td>Sie <strong>müsse</strong> arbeiten.</td></tr>
+                  <tr><td>kommen</td><td><strong>komme</strong></td><td>Er <strong>komme</strong> morgen.</td></tr>
+                </tbody>
+              </table>
+              <div class="cheat-warn">Vergangenheit im KI: habe/sei + Partizip II → „er <strong>habe</strong> das Buch geschrieben" / „er <strong>sei</strong> angekommen". Plural sein = <strong>seien</strong> (nicht: sind).</div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Forumsbeitrag / Erörterung — Phrasenbank</h3>
+              <details class="cheat-details">
+                <summary>Einleitung &amp; Struktur</summary>
+                <div class="cheat-detail-body">
+                  <ul style="font-size:0.84rem;line-height:1.8;margin:0;padding-left:1.2rem;color:var(--text-2)">
+                    <li>In letzter Zeit wird viel über [Thema] diskutiert.</li>
+                    <li>Das Thema [X] ist in unserer Gesellschaft sehr aktuell.</li>
+                    <li>Zunächst möchte ich darauf hinweisen, dass …</li>
+                    <li>Ein weiterer wichtiger Aspekt ist, dass … / Hinzu kommt, dass …</li>
+                  </ul>
+                </div>
+              </details>
+              <details class="cheat-details">
+                <summary>Pro / Contra / Eigene Meinung</summary>
+                <div class="cheat-detail-body">
+                  <ul style="font-size:0.84rem;line-height:1.8;margin:0;padding-left:1.2rem;color:var(--text-2)">
+                    <li>Einerseits … / Für [X] spricht, dass …</li>
+                    <li>Andererseits … / Gegen [X] spricht, dass …</li>
+                    <li>Meiner Meinung nach … / Ich bin der Überzeugung, dass …</li>
+                    <li>Allerdings muss man bedenken, dass …</li>
+                  </ul>
+                </div>
+              </details>
+              <details class="cheat-details">
+                <summary>Fazit &amp; Appell</summary>
+                <div class="cheat-detail-body">
+                  <ul style="font-size:0.84rem;line-height:1.8;margin:0;padding-left:1.2rem;color:var(--text-2)">
+                    <li>Zusammenfassend lässt sich sagen, dass …</li>
+                    <li>Abschließend möchte ich betonen, dass …</li>
+                    <li>Ich appelliere daher an … / Es ist höchste Zeit, dass …</li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+
+          </div><!-- /ctab-schreiben -->
+
+          <!-- ── SPRECHEN TAB ── -->
+          <div class="cheat-tab" id="ctab-sprechen">
+
+            <div class="cheat-section">
+              <h3>Gesprächsmanagement</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Funktion</th><th>Formulierung</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Höflich unterbrechen</strong></td><td>Entschuldigung, darf ich kurz einhaken? / Wenn ich Sie kurz unterbrechen darf …</td></tr>
+                  <tr><td><strong>Überleiten</strong></td><td>Das bringt mich zu meinem nächsten Punkt. / Um noch einmal auf [X] zurückzukommen …</td></tr>
+                  <tr><td><strong>Widersprechen</strong></td><td>Das sehe ich etwas anders, weil … / Ich verstehe Ihren Standpunkt, allerdings …</td></tr>
+                  <tr><td><strong>Zeit gewinnen</strong></td><td>Das ist eine interessante Frage. / Lassen Sie mich kurz nachdenken. / Soweit ich weiß, …</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Teil 1 — 5-Schritt-Scaffold (Eigene Erfahrung)</h3>
+              <div class="cheat-warn">⚠ Kein Vortrag über ein Thema — Bericht über deine eigene Erfahrung. Eigene Wertung + Begründung sind Pflicht.</div>
+              <table class="cheat-table">
+                <thead><tr><th>Schritt</th><th>Formulierung</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Einstieg</strong></td><td>Ich möchte Ihnen heute von einer persönlichen Erfahrung berichten, die mich sehr geprägt hat: …</td></tr>
+                  <tr><td><strong>Kontext</strong></td><td>Das war vor etwa … Jahren, als ich …</td></tr>
+                  <tr><td><strong>Schilderung</strong></td><td>Besonders in Erinnerung geblieben ist mir, dass … / Was mich dabei überrascht hat, war …</td></tr>
+                  <tr><td><strong>Wertung</strong></td><td>Rückblickend würde ich sagen, dass … / Im Nachhinein bin ich froh, dass …</td></tr>
+                  <tr><td><strong>Pflicht-Abschluss</strong></td><td>Diese Erfahrung war für mich deshalb so wichtig, weil …</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Teil 2 — Text wiedergeben (Konjunktiv I)</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Schritt</th><th>Formulierung</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Text benennen</strong></td><td>Der Text trägt die Überschrift „…" / Der Titel lautet …</td></tr>
+                  <tr><td><strong>Kernfrage</strong></td><td>Der Text handelt von der Frage, ob …</td></tr>
+                  <tr><td><strong>Position des Autors</strong></td><td>Der Autor vertritt die Auffassung, dass … / Im Text wird kritisiert, dass …</td></tr>
+                  <tr><td><strong>Konjunktiv I</strong></td><td>Die Studie kommt zu dem Ergebnis, das Problem <strong>sei</strong> größer als angenommen.</td></tr>
+                  <tr><td><strong>Überleiten</strong></td><td>Dazu möchte ich Stellung nehmen. / Ich sehe das etwas anders, denn …</td></tr>
+                </tbody>
+              </table>
+              <div class="cheat-warn">Den Partner einbeziehen wird mitbewertet: „Wie siehst du das?" / „Wie ist das eigentlich in deinem Heimatland?"</div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Teil 3 — Gemeinsam planen</h3>
+              <ul style="font-size:0.84rem;line-height:2;margin:0;padding-left:1.2rem;color:var(--text-2)">
+                <li>Ich schlage vor, dass wir … / Wie wäre es, wenn wir …?</li>
+                <li>Damit bin ich einverstanden, allerdings sollten wir bedenken, dass …</li>
+                <li>Als Kompromiss könnten wir … / Können wir uns darauf einigen, dass …?</li>
+                <li>Dann halten wir also fest: … Sind wir uns da einig?</li>
+              </ul>
+            </div>
+
+          </div><!-- /ctab-sprechen -->
+
+          <!-- ── PRÜFUNG TAB ── -->
+          <div class="cheat-tab" id="ctab-pruefung">
+
+            <div class="cheat-section">
+              <h3>Prüfungsaufbau — 300 Punkte</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Subtest</th><th>Punkte</th><th>Zeit</th><th>Bestehensgrenze</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Lesen</strong></td><td>75</td><td>90 Min. (mit SB)</td><td>45/75</td></tr>
+                  <tr><td><strong>Sprachbausteine</strong></td><td>30</td><td>↑ inkl.</td><td>18/30</td></tr>
+                  <tr><td><strong>Hören</strong></td><td>75</td><td>ca. 20 Min.</td><td>45/75</td></tr>
+                  <tr><td><strong>Schreiben</strong></td><td>45</td><td>30 Min.</td><td>27/45</td></tr>
+                  <tr><td><strong>Sprechen</strong></td><td>75</td><td>ca. 15 Min.</td><td>45/75</td></tr>
+                </tbody>
+              </table>
+              <div class="cheat-warn">Bestehensgrenze: <strong>60 % in jedem Teil getrennt</strong> — 135/225 schriftlich, 45/75 mündlich.</div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Schreiben — Bewertungskriterien (max. 45 Punkte)</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Kriterium</th><th>Was zählt</th><th>A=5 / B=3 / C=1 / D=0 (× 3)</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>1. Leitpunkte</strong></td><td>3 Punkte inhaltlich ausgeführt, nicht nur genannt</td><td>15 Punkte</td></tr>
+                  <tr><td><strong>2. Kommunikative Gestaltung</strong></td><td>Betreff, Anrede, Register, Textverknüpfung</td><td>15 Punkte</td></tr>
+                  <tr><td><strong>3. Formale Richtigkeit</strong></td><td>Grammatik, Orthografie, Zeichensetzung</td><td>15 Punkte</td></tr>
+                </tbody>
+              </table>
+              <div class="cheat-warn">Grammatik = nur 1/3 der Note. Drei gut entwickelte Punkte (mit Begründung) schlagen vier dünne.</div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>16 offizielle Themenbereiche (Anhang T)</h3>
+              <div class="cheat-grid">
+                <div class="cheat-badge"><strong>1</strong>Angaben zur eigenen Person</div>
+                <div class="cheat-badge"><strong>2</strong>Körper, Gesundheit, Körperpflege</div>
+                <div class="cheat-badge"><strong>3</strong>Wohnen</div>
+                <div class="cheat-badge"><strong>4</strong>Orte</div>
+                <div class="cheat-badge"><strong>5</strong>Tägliches Leben</div>
+                <div class="cheat-badge"><strong>6</strong>Essen und Trinken</div>
+                <div class="cheat-badge"><strong>7</strong>Erziehung, Ausbildung, Lernen</div>
+                <div class="cheat-badge"><strong>8</strong>Arbeit und Beruf</div>
+                <div class="cheat-badge"><strong>9</strong>Geschäfte, Handel, Konsum</div>
+                <div class="cheat-badge"><strong>10</strong>Dienstleistungen</div>
+                <div class="cheat-badge"><strong>11</strong>Natur und Umwelt</div>
+                <div class="cheat-badge"><strong>12</strong>Reise und Verkehr</div>
+                <div class="cheat-badge"><strong>13</strong>Freizeit und Unterhaltung</div>
+                <div class="cheat-badge"><strong>14</strong>Medien und Informationstechniken</div>
+                <div class="cheat-badge"><strong>15</strong>Gesellschaft, Staat, Regierung</div>
+                <div class="cheat-badge"><strong>16</strong>Beziehungen zu anderen Kulturen</div>
+              </div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Lesen — telc-Fallen</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Falle</th><th>Gegenmittel</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Wortgleichheits-Falle</strong></td><td>Distraktor wiederholt Text-Wörter; richtige Antwort paraphrasiert. Klingt verdächtig genau → meistens falsch.</td></tr>
+                  <tr><td><strong>Extremwörter</strong></td><td><em>immer, alle, nie, ausschließlich</em> → verdächtig. Richtige Antworten relativieren: <em>meist, häufig, tendenziell</em>.</td></tr>
+                  <tr><td><strong>Eigene Logik</strong></td><td>Klingt plausibel ≠ steht im Text. Immer fragen: <em>steht das da?</em></td></tr>
+                  <tr><td><strong>Teil 3: Zuordnung</strong></td><td>Jede Bedingung der Situation muss erfüllt sein. Eine Abweichung → disqualifiziert. 2 Anzeigen passen zu nichts.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Hören — Signalwörter</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Signal</th><th>Warum gefährlich</th></tr></thead>
+                <tbody>
+                  <tr><td><em>allerdings, jedoch, doch, trotzdem, dennoch</em></td><td>Erste Information = Köder. Echte Antwort kommt DANACH.</td></tr>
+                  <tr><td><em>„Ja, aber …" / „Im Prinzip schon, allerdings …"</em></td><td>Klingt nach Zustimmung → enthält Widerspruch.</td></tr>
+                  <tr><td><em>ursprünglich, früher vs. jetzt, inzwischen</em></td><td>Zahlen werden korrigiert → immer den neuesten Wert nehmen.</td></tr>
+                  <tr><td><em>nicht, kein, nie, kaum, selten</em></td><td>Verneinungen werden schnell gesprochen. „kaum" ≠ „sehr".</td></tr>
+                  <tr><td><em>„Nicht weil …, sondern weil …"</em></td><td>Erstes „weil" = falsche Begründung. Auf „sondern" hören.</td></tr>
+                </tbody>
+              </table>
+              <div class="cheat-warn">Hören: <strong>falsch</strong> = Text widerspricht der Aussage (NICHT: „nicht erwähnt"). Wenn du weder Bestätigung noch Widerspruch findest → du hast etwas überhört.</div>
+            </div>
+
+            <div class="cheat-section">
+              <h3>Sprachbausteine — 3-Schritt-Strategie</h3>
+              <table class="cheat-table">
+                <thead><tr><th>Schritt</th><th>Vorgehen</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>1. Ganzen Satz lesen</strong></td><td>Auch nach der Lücke — der Teil danach entscheidet über Präposition, Kasus oder Konjunktion.</td></tr>
+                  <tr><td><strong>2. Wortart bestimmen</strong></td><td>Erst Worttyp, dann Optionen ansehen. Konjunktion? Präposition? Verbform? Nomen mit Endung?</td></tr>
+                  <tr><td><strong>3. Verbposition lesen</strong></td><td>Verb am Ende → Konjunktion (weil, obwohl). Verb Pos. 2 → Adverb (deshalb, trotzdem). Kein NS → Präp. (wegen, trotz).</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div><!-- /ctab-pruefung -->
+
+        </div><!-- .card -->
+      </div><!-- #cheatsheet-panel -->
+
     </div>
   </main>
 </div>
@@ -1239,6 +1646,42 @@ function computeActiveDays7(dateSet) {
 function daysAgo(n) {
   var d = new Date(); d.setDate(d.getDate() - n);
   return d.toISOString().slice(0, 10);
+}
+
+function toggleCheatsheet() {
+  var app = document.getElementById('app');
+  var panel = document.getElementById('cheatsheet-panel');
+  var wrap = document.querySelector('#main-content .wrap');
+  var subtitle = document.getElementById('subtitle');
+  var banner = document.getElementById('banner');
+  var isShowing = panel.style.display !== 'none';
+  if (isShowing) {
+    panel.style.display = 'none';
+    app.style.display = '';
+    if (subtitle) subtitle.style.display = '';
+    if (banner) banner.style.display = '';
+  } else {
+    app.style.display = 'none';
+    if (subtitle) subtitle.style.display = 'none';
+    if (banner) banner.style.display = 'none';
+    panel.style.display = '';
+    setupCheatsheetTabs();
+  }
+}
+
+function setupCheatsheetTabs() {
+  var buttons = document.querySelectorAll('#cheatsheet-panel [data-ctab]');
+  if (buttons.length === 0 || buttons[0]._cheatInited) return;
+  buttons[0]._cheatInited = true;
+  buttons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      buttons.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.cheat-tab').forEach(function(p) { p.classList.remove('active'); });
+      var panel = document.getElementById('ctab-' + btn.dataset.ctab);
+      if (panel) panel.classList.add('active');
+    });
+  });
 }
 
 function setupVocabTabs(allNouns, allAdj, allVerbs, allIdioms, sessions) {

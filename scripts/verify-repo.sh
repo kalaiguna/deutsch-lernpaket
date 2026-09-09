@@ -27,6 +27,7 @@ SKILLS=(
   lektuere-skill
   monatsrueckblick
   grammatik-vertiefung
+  telc-pruefungsvorbereitung
 )
 
 echo "== Check 1: Repository structure =="

@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-09-09
+
+Cheatsheet integration: personal B2 exam-prep documents converted to Markdown references and surfaced in the dashboard as an interactive four-tab companion panel, plus a new on-demand exam simulation skill.
+
+### Added
+- `docs/grammar-reference.md` — comprehensive B2 grammar reference converted from personal cheatsheet (DB2CS v3); covers pronoun/article/adjective declension tables, all modal conjugations incl. Konjunktiv II, Konnektoren position rules (27 entries), preposition-case table, Verben/Adjektive/Nomen mit Präpositionen (~80 entries), zu+Infinitiv, Doppelinfinitiv im Perfekt, Pronominaladverbien, Passiversatzformen, Partizipialattribute (4 types with decoding strategy), N-Deklination, Wortbildung (11 patterns), Funktionsverbgefüge (11 entries), Nominalisierung (6 verbal→nominal transformations), and phrase banks for Schreiben and Sprechen. Personal biographical data stripped.
+- `docs/exam-strategy.md` — telc B2 exam strategy guide converted from personal Prüfungsschicht notes; covers prüfungsaufbau table (300 pts, 5 subtests), 3-of-4 Leitpunkte rule, official 3-criterion scoring rubric (/45), 9-item Schreiben checklist, Sprechen Teil 1–3 scaffolds with Konjunktiv I gap analysis, 16 official Themenbereiche, Teil-1-Themen source audit, Lesen trap table, Hören Richtig/Falsch definition and signal table, Sprachbausteine 3-step strategy, and unverified items flagged. Personal data stripped; sample letter signature replaced with [Ihr Name].
+- `.gitignore` — `docs/*.docx` excluded; Word source files are no longer tracked.
+- `skills/telc-pruefungsvorbereitung/SKILL.md` — on-demand exam simulation skill with four components: A (Mock Schreiben with official rubric, /45), B (Mock Sprechen Teil 1, 5-step scaffold evaluation), C (Mock Sprechen Teil 2+3, Konjunktiv I + partner-inclusion scoring), D (Trap Drill, 5 trap types). Session saved to Notion as `Deutsch B2 Prüfungsvorbereitung, YYYY-MM-DD, Component`.
+- `platforms/claude/telc-pruefungsvorbereitung.skill` — ZIP for drag-and-drop installation.
+- Dashboard: **Cheatsheet** nav link under new "Reference" section in sidebar.
+- Dashboard: Cheatsheet panel (`#cheatsheet-panel`) — four-tab interactive reference (Grammatik / Schreiben / Sprechen / Prüfung) with collapsible `<details>` sections, grammar tables, phrase banks, 16 Themenbereiche badge grid, exam scoring table, trap cards, and Hören signal table. Content embedded in HTML; no external fetch required.
+- Dashboard: `toggleCheatsheet()` and `setupCheatsheetTabs()` JS functions; `.cheat-table`, `.cheat-tab`, `.cheat-grid`, `.cheat-badge`, `.cheat-warn`, `.cheat-section` CSS classes using existing dark-mode CSS variables.
+
+### Changed
+- `README.md`: added `telc-pruefungsvorbereitung` to What's Inside table; added `docs/grammar-reference.md` and `docs/exam-strategy.md` to Additional Guides table; added Cheatsheet panel bullet to Dashboard section.
+- `CHANGELOG.md`: `[2.1.0]` footer link updated from `...HEAD` to `...v2.1.0`.
+- `scripts/verify-repo.sh`: `telc-pruefungsvorbereitung` added to SKILLS array (now 8 skills).
+- `TESTING.md`: added scenario 9 for `telc-pruefungsvorbereitung` and dashboard Cheatsheet tab QA checks.
+
 ## [2.1.0] - 2026-09-06
 
 Multi-platform Core+Adapter restructure, full dashboard overhaul with dark-mode sidebar redesign, and cross-platform dictation support.
@@ -113,7 +133,8 @@ cross-platform support added (Claude Code, Copilot, Roo Code, OpenWebUI, n8n).
 - Fixed 10-category mistake taxonomy for pattern tracking over time.
 - B2 paraphrase after every corrected answer to show the "correct → fluent" upgrade path.
 
-[2.1.0]: https://github.com/kalaiguna/deutsch-lernpaket/compare/v2.0.0...HEAD
+[2.2.0]: https://github.com/kalaiguna/deutsch-lernpaket/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/kalaiguna/deutsch-lernpaket/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/kalaiguna/deutsch-lernpaket/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/MohgaNabil/deutsch-lernpaket/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MohgaNabil/deutsch-lernpaket/releases/tag/v1.0.0

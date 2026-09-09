@@ -23,6 +23,7 @@ well at any level — adjust the cron schedule and session frequency to your pac
 | **lektuere-skill** | Fortnightly, Wed | Reads a real 300–500 word German article (tagesschau.de, Spiegel, Zeit, Handelsblatt, Gründerszene, Heise). Pre-teaches 5 vocabulary items, then asks 6 comprehension questions: skimming, scanning, inference, vocabulary in context. |
 | **monatsrueckblick** | 1st of month | Monthly report card. Aggregates all session data from the past 30 days: mistake patterns, vocabulary growth, reuse rate, B2 structures. Gives 3 concrete focus areas for next month. |
 | **grammatik-vertiefung** | 10th of month | Dedicated grammar deep-dive. One B2 grammar point per session (Konjunktiv I/II, Passiv, Nominalisierung, Relativsätze, Modalpartikeln, etc.) with explicit rules, fill-in-the-blank exercises, transformation drills, and free production. |
+| **telc-pruefungsvorbereitung** | On-demand | Mock telc B2 exam sessions: Schreiben simulation with official 3-criterion rubric (/45), Sprechen Teil 1 scaffold coaching, Sprechen Teil 2+3 with Konjunktiv I, and a Trap Drill for Lesen/Hören/Sprachbausteine. Run 2–4 weeks before your exam date. |
 
 All sessions save to a Notion page called **Deutsch lernen B2**, building a searchable
 library of your own learning history. The included `core/dashboard/dashboard.html` reads those pages
@@ -184,6 +185,7 @@ parsing required.
 - Session Log with Type badge column; click any row to expand vocabulary and mistakes inline
 - Tabbed Vocabulary Explorer: Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused
 - CSV export — download your full vocabulary list as a spreadsheet
+- Cheatsheet panel — four-tab companion reference (Grammatik / Schreiben / Sprechen / Prüfung) with interactive grammar tables, phrase banks, Konjunktiv I quick reference, 16 Themenbereiche badge grid, and exam trap cards
 
 The dashboard uses a dark-mode sidebar layout: fixed 240px nav on the left, sticky top header with greeting and search, main content panel on the right. Fully responsive — sidebar collapses on mobile behind a hamburger.
 
@@ -228,6 +230,8 @@ embedded snapshot data — just ask Claude to refresh the snapshot after each se
 | File | Contents |
 |---|---|
 | [NOTION_DATABASE_SETUP.md](NOTION_DATABASE_SETUP.md) | Optional: migrate from free-form Notion pages to a structured Notion database for calendar view and faster queries |
+| [docs/grammar-reference.md](docs/grammar-reference.md) | Comprehensive B2 grammar reference — pronoun/article/adjective tables, all modal conjugations, Konnektoren position rules, Verben/Adjektive/Nomen mit Präpositionen, Partizipialattribute, Passiversatzformen, Wortbildung, Funktionsverbgefüge, and full phrase banks for Schreiben and Sprechen |
+| [docs/exam-strategy.md](docs/exam-strategy.md) | telc B2 exam strategy — prüfungsaufbau table, 3-of-4 Leitpunkte rule, scoring rubric, Schreiben checklist, Sprechen Teil 1–3 scaffolds with Konjunktiv I, 16 official Themenbereiche, Lesen/Hören traps, Sprachbausteine 3-step strategy |
 
 ---
 
