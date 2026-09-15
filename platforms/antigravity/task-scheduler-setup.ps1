@@ -1,5 +1,6 @@
 # Deutsch B2 — Windows Task Scheduler setup for Google Antigravity
-# Registers all 7 skills as scheduled tasks that run agy at the configured times.
+# Registers the 7 recurring skills as scheduled tasks that run agy at the configured times.
+# On-demand skills (telc-pruefungsvorbereitung, wortschatz-auffrischung) are not scheduled here — invoke them manually.
 # Run this script once from an elevated PowerShell prompt.
 #
 # Usage:

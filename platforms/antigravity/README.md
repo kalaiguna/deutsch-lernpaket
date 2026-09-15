@@ -25,7 +25,7 @@ This means the skill files in `skills/` drop in without modification.
 For each skill you want to use, copy its folder into the Antigravity skills directory:
 
 ```powershell
-# Example — copy all 7 skills at once (PowerShell)
+# Example — copy all 9 skills at once (PowerShell)
 $skills = @(
   "daily-german-practice",
   "german-weekend-review",
@@ -34,7 +34,8 @@ $skills = @(
   "lektuere-skill",
   "monatsrueckblick",
   "grammatik-vertiefung",
-  "telc-pruefungsvorbereitung"   # on-demand — invoke manually with /telc-pruefungsvorbereitung
+  "telc-pruefungsvorbereitung",  # on-demand — invoke manually with /telc-pruefungsvorbereitung
+  "wortschatz-auffrischung"      # on-demand — invoke manually with /wortschatz-auffrischung
 )
 $dest = "$env:USERPROFILE\.gemini\config\skills"
 foreach ($s in $skills) {
@@ -90,9 +91,10 @@ reference to help Antigravity load context:
 ```markdown
 # German Learning Skills
 
-Eight German B2 learning skills are installed in ~/.gemini/config/skills/.
+Nine German B2 learning skills are installed in ~/.gemini/config/skills/.
 Invoke them with /daily-german-practice, /german-weekend-review, etc.
 /telc-pruefungsvorbereitung is on-demand — run it 2-4 weeks before your exam.
+/wortschatz-auffrischung is on-demand — run it any time to drill recent vocabulary misses.
 Session data is saved to a Notion page called "Deutsch lernen B2".
 ```
 

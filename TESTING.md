@@ -178,6 +178,25 @@ Open `core/dashboard/dashboard.html` in Microsoft Edge or Chrome.
 
 ---
 
+### 10. Vocabulary Review Skill (`wortschatz-auffrischung`)
+
+**On-demand — install via `platforms/claude/wortschatz-auffrischung.skill`:**
+
+- [ ] Opening message states how many words were collected and from which source (misses or fallback)
+- [ ] If `vocab_review_misses` entries exist in any recent session, those words are drilled first
+- [ ] If no misses found, skill falls back to nouns from the 2 most recent conversation/reading sessions without error
+- [ ] Noun questions show the bare word (no article) and ask for article + English meaning
+- [ ] Verb questions show the English meaning and ask for the German infinitive
+- [ ] Correct answers are confirmed with the full entry (article/plural or preposition, meaning, example)
+- [ ] Wrong answers show ❌ plus the correct entry in 🇩🇪/🇬🇧 format
+- [ ] Running tally shown after each answer: **Stand: X/Y 🌟**
+- [ ] Wrap-up shows final score and Beobachtungsliste (up to 5 remaining-miss words)
+- [ ] No new Notion page is created (lightweight drill only)
+- [ ] No em dashes; proper umlauts throughout
+- [ ] Session ends with reminder: `💡 Tipp: Starte /wortschatz-auffrischung jederzeit...`
+
+---
+
 ### Cross-Cutting
 
 - [ ] No em dashes in any skill output (use commas, colons, or rephrase instead)

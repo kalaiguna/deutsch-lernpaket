@@ -1,6 +1,6 @@
 ﻿# Deutsch B2 Lernpaket
 
-Seven Claude skills that cover all four German language skills (Sprechen, Hören, Schreiben, Lesen)
+Nine Claude skills that cover all four German language skills (Sprechen, Hören, Schreiben, Lesen)
 across a structured weekly and monthly schedule — with every session saved to Notion and
 visualised in a progress dashboard.
 
@@ -24,6 +24,7 @@ well at any level — adjust the cron schedule and session frequency to your pac
 | **monatsrueckblick** | 1st of month | Monthly report card. Aggregates all session data from the past 30 days: mistake patterns, vocabulary growth, reuse rate, B2 structures. Gives 3 concrete focus areas for next month. |
 | **grammatik-vertiefung** | 10th of month | Dedicated grammar deep-dive. One B2 grammar point per session (Konjunktiv I/II, Passiv, Nominalisierung, Relativsätze, Modalpartikeln, etc.) with explicit rules, fill-in-the-blank exercises, transformation drills, and free production. |
 | **telc-pruefungsvorbereitung** | On-demand | Mock telc B2 exam sessions: Schreiben simulation with official 3-criterion rubric (/45), Sprechen Teil 1 scaffold coaching, Sprechen Teil 2+3 with Konjunktiv I, and a Trap Drill for Lesen/Hören/Sprachbausteine. Run 2–4 weeks before your exam date. |
+| **wortschatz-auffrischung** | On-demand | Targeted vocabulary recall drill based on words missed in recent sessions (`vocab_review_misses`). Pulls from the last 14 days of session data, runs up to 12 noun and verb questions one at a time, and shows a Beobachtungsliste of remaining gaps. |
 
 All sessions save to a Notion page called **Deutsch lernen B2**, building a searchable
 library of your own learning history. The included `core/dashboard/dashboard.html` reads those pages
@@ -86,7 +87,7 @@ and visualises your progress over time.
 
 ### Option A — Install the `.skill` files (easiest)
 
-Seven `.skill` files are in `platforms/claude/` (one per skill). Drag any of them into Claude Code or Cowork and click **Save skill** in the preview.
+Nine `.skill` files are in `platforms/claude/` (one per skill). Drag any of them into Claude Code or Cowork and click **Save skill** in the preview.
 
 | File | Skill |
 |---|---|
@@ -97,6 +98,8 @@ Seven `.skill` files are in `platforms/claude/` (one per skill). Drag any of the
 | `platforms/claude/lektuere-skill.skill` | Fortnightly reading comprehension |
 | `platforms/claude/monatsrueckblick.skill` | Monthly report card |
 | `platforms/claude/grammatik-vertiefung.skill` | Monthly grammar deep-dive |
+| `platforms/claude/telc-pruefungsvorbereitung.skill` | On-demand exam prep |
+| `platforms/claude/wortschatz-auffrischung.skill` | On-demand vocabulary review |
 
 ### Option B — Copy SKILL.md manually
 
@@ -135,7 +138,7 @@ Use the `mcp__scheduled-tasks__create_scheduled_task` MCP tool. Pass the SKILL.m
 
 This repo is designed to work beyond Claude Code. The skill prompts live in `skills/` and the session data contract is documented in `core/session-schema.json` — any AI platform that can follow instructions and connect to Notion can run these sessions.
 
-| Platform | All 7 skills | Notion MCP | Auto-scheduling | Setup |
+| Platform | All 9 skills | Notion MCP | Auto-scheduling | Setup |
 |---|---|---|---|---|
 | **Claude Code / Cowork** | Yes | Yes | Yes (cron) | [platforms/claude/](platforms/claude/README.md) |
 | **Google Antigravity** | Yes | Yes (manual config) | Via Windows Task Scheduler | [platforms/antigravity/](platforms/antigravity/README.md) |
@@ -161,6 +164,7 @@ Each skill saves a Notion page inside **Deutsch lernen B2** with this naming con
 | Reading (fortnightly Wed) | `Deutsch B2 Lektüre, YYYY-MM-DD, Topic` |
 | Grammar deep-dive (10th of month) | `Deutsch B2 Grammatik, YYYY-MM-DD, Topic` |
 | Monthly report card (1st of month) | `Deutsch B2 Monatsrückblick, YYYY-MM, Month in German` |
+| Vocabulary review (wortschatz-auffrischung) | No Notion page — drill-only session |
 
 The first block of every session page is a JSON code block containing the full structured
 session data (vocabulary, mistakes, stats). The dashboard reads this block directly — no HTML
@@ -186,6 +190,7 @@ parsing required.
 - Tabbed Vocabulary Explorer: Nouns & Adjectives / Verbs / Idioms / Ready to Reuse / Reused
 - CSV export — download your full vocabulary list as a spreadsheet
 - Cheatsheet panel — four-tab companion reference (Grammatik / Schreiben / Sprechen / Prüfung) with interactive grammar tables, phrase banks, Konjunktiv I quick reference, 16 Themenbereiche badge grid, and exam trap cards
+- Gender Drill — SRS-based noun gender recall overlay (Leitner 6-box, stored in localStorage). Launch from the Nouns tab in Vocabulary Explorer; overdue words are prioritised automatically
 
 The dashboard uses a dark-mode sidebar layout: fixed 240px nav on the left, sticky top header with greeting and search, main content panel on the right. Fully responsive — sidebar collapses on mobile behind a hamburger.
 
@@ -250,7 +255,7 @@ See [TESTING.md](TESTING.md) for the full manual QA scenario checklist.
 
 ## License
 
-MIT. Forked from the original [deutsch-lernpaket by MohgaNabil](https://github.com/MohgaNabil/deutsch-lernpaket). This fork adds Notion integration, cross-platform support, four new skill files (schreib-skill, lektuere-skill, monatsrueckblick, grammatik-vertiefung), dashboard improvements, and all documentation. Both the original and this fork's contributions are MIT licensed — use freely, remix, share.
+MIT. Forked from the original [deutsch-lernpaket by MohgaNabil](https://github.com/MohgaNabil/deutsch-lernpaket). This fork adds Notion integration, cross-platform support, six new skill files (schreib-skill, lektuere-skill, monatsrueckblick, grammatik-vertiefung, telc-pruefungsvorbereitung, wortschatz-auffrischung), a vocab SRS with Gender Drill, dashboard overhaul, cheatsheet panel, and all documentation. Both the original and this fork's contributions are MIT licensed — use freely, remix, share.
 
 ---
 
