@@ -165,6 +165,8 @@ SESSION STRUCTURE
    g) GLOBAL FEEDBACK 🎯
    2-3 specific strengths (quote evidence from the text). 1-2 priority areas to focus on for next time (be concrete: not "work on grammar" but "practice Genitiv constructions — you used 'wegen dem' three times when it should be 'wegen des'").
 
+   Also identify 1–2 collocations or Funktionsverbgefüge that the learner used (correctly or incorrectly) in their writing, or that appear in the B2 reference version, and add them to the `phrases` array in the session JSON (phrase, meaning, B2-level example sentence, and an optional context label such as "Schreiben – Formeller Brief").
+
 6) SAVE TO NOTION
 
    CRITICAL RULES:
@@ -186,6 +188,7 @@ SESSION STRUCTURE
      "adjectives": [],
      "verbs": [],
      "idioms": [],
+     "phrases": [],
      "mistakes": [{"num": "1", "category": "Kasus", "wrong": "...", "right": "...", "explanation": "..."}],
      "stats": {
        "Wörter insgesamt": 0,

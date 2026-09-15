@@ -107,6 +107,7 @@ SESSION STRUCTURE
    - B2 structures used: dass-Sätze, weil-Sätze, wenn-Sätze, complex sentences (Nebensätze), Konjunktiv II, Passiv, Genitiv
    - Initiative count (learner asks questions or initiates topics)
    - Reuse of vocabulary or idioms from past notes. IMPORTANT: track the SPECIFIC items reused (not just a count). List each reused word or idiom by name.
+   - Also identify 1–2 collocations or Funktionsverbgefüge that arose naturally in the conversation and add them to a `phrases` array in the session JSON (phrase, meaning, B2-level example sentence, and an optional context label such as "Konversation – Meinung").
 
    PRONUNCIATION HINTS: For genuinely tricky words, add a phonetic hint in parentheses (e.g. "ich" sounds like "ikh").
 
@@ -156,6 +157,7 @@ SESSION STRUCTURE
      "adjectives": [{"word": "beispielhaft", "meaning": "exemplary", "example": "Sie ist eine beispielhafte Schülerin."}],
      "verbs": [{"infinitive": "lernen", "presens": "lerne / lernst / lernt", "perfekt": "hat gelernt", "meaning": "to learn", "example": "Ich habe Deutsch gelernt."}],
      "idioms": [{"idiom": "...", "literal": "...", "meaning": "...", "example": "..."}],
+     "phrases": [{"phrase": "Bedenken äußern", "meaning": "to express concerns", "example": "Sie äußerte Bedenken gegenüber dem neuen Konzept.", "context": "Konversation – Meinung"}],
      "mistakes": [{"num": "1", "category": "Kasus", "wrong": "...", "right": "...", "explanation": "..."}],
      "stats": {"Anzahl Antworten": 0, "Wörter insgesamt": 0, "Durchschnittliche Wortzahl pro Antwort": 0, "Komplexe Sätze (Nebensätze)": 0, "dass-Sätze": 0, "weil-Sätze": 0, "wenn-Sätze": 0, "Konjunktiv II": 0, "Passiv": 0, "Genitiv": 0, "Eigene Fragen gestellt": 0, "Wiederverwendung alter Wörter": 0, "Wiederverwendung alter Redewendungen": 0, "Sitzungsdauer (Minuten)": 30},
      "vocab_review_misses": []

@@ -197,6 +197,33 @@ Open `core/dashboard/dashboard.html` in Microsoft Edge or Chrome.
 
 ---
 
+### 11. Wendungen Tab (dashboard) + Phrase Capture (skills)
+
+**Dashboard — Wendungen tab:**
+
+- [ ] "💬 Wendungen" tab visible in Vocabulary Explorer alongside the other five tabs
+- [ ] Tab count badge shows correct number of phrases (0 when no phrases in snapshot data)
+- [ ] When no phrases exist: empty-state message "No phrases captured yet..." is shown
+- [ ] When phrases exist (add test data to SNAPSHOT_SESSIONS): phrase, meaning, context, and date all render
+- [ ] Search box filters by phrase text, meaning, and context field
+- [ ] Sort (Newest / Oldest / A→Z) works the same as other tabs
+- [ ] Switching away from Wendungen tab and back does not cause console errors
+
+**Skill prompts:**
+
+- [ ] daily-german-practice: after session, Notion page JSON contains `phrases` array with at least 1 entry
+- [ ] schreib-skill: after session, Notion page JSON contains `phrases` array
+- [ ] monatsrueckblick: if `vocab_review_misses` data exists for the month, "Persistente Vokabellücken" section appears listing words missed 2+ times
+- [ ] monatsrueckblick: if no `vocab_review_misses` data exists, the section is silently omitted (no placeholder text)
+
+**Schema:**
+
+- [ ] `node -e "JSON.parse(require('fs').readFileSync('core/session-schema.json','utf8'))"` exits 0
+- [ ] `phrases` array has all four properties defined: phrase, meaning, example, context
+- [ ] `required` in phrases items only lists phrase, meaning, example (context is optional)
+
+---
+
 ### Cross-Cutting
 
 - [ ] No em dashes in any skill output (use commas, colons, or rephrase instead)

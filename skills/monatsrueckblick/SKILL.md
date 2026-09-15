@@ -98,6 +98,15 @@ SESSION STRUCTURE
    Example format:
    **Kasus (8 Fehler):** Kasus ist wie ein Name-Schild für jedes Wort, das zeigt, welche Rolle es im Satz spielt. Das Schild wechselt je nach Verb oder Präposition.
 
+2b) PERSISTENTE VOKABELLÜCKEN
+
+   Query all session pages from this month. For each page that has a `vocab_review_misses` array, count how many times each word string appears across all pages. List any word that appears 2 or more times as a persistent gap:
+
+   **🔁 Vokabeln zur gezielten Wiederholung:**
+   - [word] ([N]× nicht erinnert)
+
+   If no `vocab_review_misses` fields are found in any page (recall drills not yet active, or no misses this month), omit this section silently — do not mention it.
+
 3) FOCUS AREAS FOR NEXT MONTH
 
    Based on the top 3 recurring categories, give 3 concrete, actionable focus areas. One per category. Format each exactly as:
