@@ -15,9 +15,9 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-ok()   { echo -e "${GREEN}✓${NC} $1"; ((PASS++)); }
-fail() { echo -e "${RED}✗${NC} $1"; ((FAIL++)); }
-warn() { echo -e "${YELLOW}⚠${NC} $1"; ((WARN++)); }
+ok()   { echo -e "${GREEN}✓${NC} $1"; PASS=$((PASS + 1)); }
+fail() { echo -e "${RED}✗${NC} $1"; FAIL=$((FAIL + 1)); }
+warn() { echo -e "${YELLOW}⚠${NC} $1"; WARN=$((WARN + 1)); }
 
 SKILLS=(
   daily-german-practice
@@ -89,8 +89,8 @@ if [[ ! -f "$DASHBOARD" ]]; then
 else
   if command -v node &>/dev/null; then
     TMPFILE=$(mktemp /tmp/dashboard_js_XXXXXX.js 2>/dev/null || mktemp)
-    # Extract content between first <script> and its closing </script>
-    awk '/<script[^>]*>/{found=1; next} found && /<\/script>/{exit} found{print}' "$DASHBOARD" > "$TMPFILE"
+    # Extract content of the inline <script> block (skip external <script src=...> tags)
+    awk '/<script[^>]*src=/{next} /<script[^>]*>/{found=1; next} found && /^<\/script>/{exit} found{print}' "$DASHBOARD" > "$TMPFILE"
     if node --check "$TMPFILE" 2>/dev/null; then
       ok "Dashboard JS syntax valid (node --check)"
     else
@@ -117,9 +117,14 @@ done
 echo ""
 echo "== Check 5: Notion MCP save calls =="
 
+NOTION_SAVE_EXEMPT=(wortschatz-auffrischung)
 for skill in "${SKILLS[@]}"; do
   if [[ ! -f "skills/$skill/SKILL.md" ]]; then continue; fi
-  if grep -q 'notion_create_page' "skills/$skill/SKILL.md"; then
+  exempt=0
+  for ex in "${NOTION_SAVE_EXEMPT[@]}"; do [[ "$skill" == "$ex" ]] && exempt=1; done
+  if [[ $exempt -eq 1 ]]; then
+    ok "$skill: notion_create_page exempt (drill-only skill)"
+  elif grep -q 'notion_create_page' "skills/$skill/SKILL.md"; then
     ok "$skill: notion_create_page present"
   else
     fail "$skill: notion_create_page MISSING"
