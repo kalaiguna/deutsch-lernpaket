@@ -101,6 +101,25 @@
         }
       }
     },
+    "phrases": {
+      "type": "array",
+      "description": "Collocations, Funktionsverbgefüge, and fixed expressions encountered in the session. Phrase-level complement to the word-level nouns/verbs arrays.",
+      "items": {
+        "type": "object",
+        "required": ["phrase", "meaning", "example"],
+        "properties": {
+          "phrase":   { "type": "string", "description": "The full expression (e.g., 'Bedenken äußern')" },
+          "meaning":  { "type": "string", "description": "English equivalent" },
+          "example":  { "type": "string", "description": "A B2-register example sentence" },
+          "context":  { "type": "string", "description": "Where this phrase applies (e.g., 'Schreiben – Beschwerdebrief')" }
+        }
+      }
+    },
+    "vocab_review_misses": {
+      "type": "array",
+      "description": "Words the learner could not recall correctly during the in-session vocab drill (Vokabel-Abschluss or Vokabel-Aufwärmen). Optional. Used by monatsrueckblick and wortschatz-auffrischung for targeted review.",
+      "items": { "type": "string" }
+    },
     "stats": {
       "type": "object",
       "description": "Session statistics. Required keys vary by type — see notes. Include only keys relevant to the session type.",

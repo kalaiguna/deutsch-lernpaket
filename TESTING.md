@@ -178,6 +178,52 @@ Open `core/dashboard/dashboard.html` in Microsoft Edge or Chrome.
 
 ---
 
+### 10. Vocabulary Review Skill (`wortschatz-auffrischung`)
+
+**On-demand — install via `platforms/claude/wortschatz-auffrischung.skill`:**
+
+- [ ] Opening message states how many words were collected and from which source (misses or fallback)
+- [ ] If `vocab_review_misses` entries exist in any recent session, those words are drilled first
+- [ ] If no misses found, skill falls back to nouns from the 2 most recent conversation/reading sessions without error
+- [ ] Noun questions show the bare word (no article) and ask for article + English meaning
+- [ ] Verb questions show the English meaning and ask for the German infinitive
+- [ ] Correct answers are confirmed with the full entry (article/plural or preposition, meaning, example)
+- [ ] Wrong answers show ❌ plus the correct entry in 🇩🇪/🇬🇧 format
+- [ ] Running tally shown after each answer: **Stand: X/Y 🌟**
+- [ ] Wrap-up shows final score and Beobachtungsliste (up to 5 remaining-miss words)
+- [ ] No new Notion page is created (lightweight drill only)
+- [ ] No em dashes; proper umlauts throughout
+- [ ] Session ends with reminder: `💡 Tipp: Starte /wortschatz-auffrischung jederzeit...`
+
+---
+
+### 11. Wendungen Tab (dashboard) + Phrase Capture (skills)
+
+**Dashboard — Wendungen tab:**
+
+- [ ] "💬 Wendungen" tab visible in Vocabulary Explorer alongside the other five tabs
+- [ ] Tab count badge shows correct number of phrases (0 when no phrases in snapshot data)
+- [ ] When no phrases exist: empty-state message "No phrases captured yet..." is shown
+- [ ] When phrases exist (add test data to SNAPSHOT_SESSIONS): phrase, meaning, context, and date all render
+- [ ] Search box filters by phrase text, meaning, and context field
+- [ ] Sort (Newest / Oldest / A→Z) works the same as other tabs
+- [ ] Switching away from Wendungen tab and back does not cause console errors
+
+**Skill prompts:**
+
+- [ ] daily-german-practice: after session, Notion page JSON contains `phrases` array with at least 1 entry
+- [ ] schreib-skill: after session, Notion page JSON contains `phrases` array
+- [ ] monatsrueckblick: if `vocab_review_misses` data exists for the month, "Persistente Vokabellücken" section appears listing words missed 2+ times
+- [ ] monatsrueckblick: if no `vocab_review_misses` data exists, the section is silently omitted (no placeholder text)
+
+**Schema:**
+
+- [ ] `node -e "JSON.parse(require('fs').readFileSync('core/session-schema.json','utf8'))"` exits 0
+- [ ] `phrases` array has all four properties defined: phrase, meaning, example, context
+- [ ] `required` in phrases items only lists phrase, meaning, example (context is optional)
+
+---
+
 ### Cross-Cutting
 
 - [ ] No em dashes in any skill output (use commas, colons, or rephrase instead)

@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-09-15
+
+### Added
+- Dashboard: Wendungen tab in Vocabulary Explorer — phrase-level collocations and Funktionsverbgefüge captured across sessions, with search and sort
+- skills/wortschatz-auffrischung: new on-demand vocabulary review skill — targeted recall drill from vocab_review_misses in recent sessions
+- platforms/claude/wortschatz-auffrischung.skill: Claude Code skill file for on-demand vocab drill
+- docs/b2-wortschatz.md: curated B2 vocabulary reference organised by all 16 telc Themenbereiche — nouns with article and plural, verbs with preposition patterns, key collocations
+
+### Changed
+- session-schema.json: added `phrases` optional array (collocations and Funktionsverbgefüge) and `vocab_review_misses` optional array
+- daily-german-practice: Vokabel-Abschluss recall drill after session; now captures 1–2 phrases per session into `phrases` array
+- german-weekend-review: Vokabel-Aufwärmen warmup before the quiz; /wortschatz-auffrischung reminder at close
+- schreib-skill: now captures 1–2 phrases per session into `phrases` array; /wortschatz-auffrischung reminder at close
+- lektuere-skill: /wortschatz-auffrischung reminder at close
+- monatsrueckblick: added Persistente Vokabellücken section — aggregates vocab_review_misses across the month
+- Dashboard: Gender Drill SRS overlay with Leitner 6-box scheduling (localStorage); nav active-state management; depersonalised avatar
+- scripts/verify-repo.sh: SKILLS array updated to 9 skills
+- README.md, platform READMEs: updated skill count to 9 (7 scheduled + 2 on-demand)
+
 ## [2.2.0] - 2026-09-09
 
 Cheatsheet integration: personal B2 exam-prep documents converted to Markdown references and surfaced in the dashboard as an interactive four-tab companion panel, plus a new on-demand exam simulation skill.

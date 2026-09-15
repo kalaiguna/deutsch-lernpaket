@@ -17,6 +17,8 @@ n8n is a workflow automation tool: it executes a fixed sequence of nodes and the
 | grammatik-vertiefung | Conversational (lesson + 5 exercises) | No | Requires live chat |
 | schreib-skill | Two turns (prompt → evaluate) | Partial | Can send the task prompt automatically; the learner still writes and gets feedback in a chat interface |
 | monatsrueckblick | One-shot (automated, no learner input) | **Yes** | Reads Notion, generates report, saves back — fully automatable |
+| telc-pruefungsvorbereitung | Conversational (mock exam, multiple turns) | No | Requires live chat |
+| wortschatz-auffrischung | Conversational (recall drill, up to 12 turns) | No | Requires live chat |
 
 ## What n8n can do
 

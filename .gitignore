@@ -1,2 +1,3 @@
 # Word source documents — converted to docs/*.md; originals excluded
 docs/*.docx
+/xcluded

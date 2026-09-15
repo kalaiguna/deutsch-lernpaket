@@ -107,6 +107,7 @@ SESSION STRUCTURE
    - B2 structures used: dass-Sätze, weil-Sätze, wenn-Sätze, complex sentences (Nebensätze), Konjunktiv II, Passiv, Genitiv
    - Initiative count (learner asks questions or initiates topics)
    - Reuse of vocabulary or idioms from past notes. IMPORTANT: track the SPECIFIC items reused (not just a count). List each reused word or idiom by name.
+   - Also identify 1–2 collocations or Funktionsverbgefüge that arose naturally in the conversation and add them to a `phrases` array in the session JSON (phrase, meaning, B2-level example sentence, and an optional context label such as "Konversation – Meinung").
 
    PRONUNCIATION HINTS: For genuinely tricky words, add a phonetic hint in parentheses (e.g. "ich" sounds like "ikh").
 
@@ -114,6 +115,27 @@ SESSION STRUCTURE
 
 4) WRAP-UP after about 30 minutes
    Gentle wrap-up. Thank the learner, normalize mistakes as growth.
+
+4b) VOKABEL-ABSCHLUSS (5 minutes, after wrap-up, before saving)
+
+   Use `notion_search` to find the most recent prior "Deutsch B2 Konversation" page
+   (skip any page from today). Call `notion_retrieve_block_children` on it. Extract
+   up to 5 words from the `nouns` and `verbs` arrays (3 nouns + 2 verbs, or all
+   nouns if fewer than 2 verbs available).
+
+   Run ONE question at a time:
+   - Nouns: show the German word WITHOUT the article. Ask the learner to supply
+     the article (der/die/das) and the English meaning.
+   - Verbs: show the English meaning only. Ask the learner to produce the German
+     infinitive and preposition pattern if applicable.
+   Give immediate feedback after each answer.
+
+   Track misses. These populate `vocab_review_misses` in the session JSON (step 5).
+   If no prior session is found (first-ever run), skip this step silently.
+
+   Close with:
+   🇩🇪 **Vokabel-Abschluss geschafft!** Für eine tiefere Wiederholung starte jederzeit /wortschatz-auffrischung.
+   🇬🇧 Vocab close done! For a deeper review, run /wortschatz-auffrischung any time.
 
 5) SAVE THE SUMMARY TO NOTION (CREATE A NEW PAGE IN "Deutsch lernen B2" NOTION PAGE)
 
@@ -135,8 +157,10 @@ SESSION STRUCTURE
      "adjectives": [{"word": "beispielhaft", "meaning": "exemplary", "example": "Sie ist eine beispielhafte Schülerin."}],
      "verbs": [{"infinitive": "lernen", "presens": "lerne / lernst / lernt", "perfekt": "hat gelernt", "meaning": "to learn", "example": "Ich habe Deutsch gelernt."}],
      "idioms": [{"idiom": "...", "literal": "...", "meaning": "...", "example": "..."}],
+     "phrases": [{"phrase": "Bedenken äußern", "meaning": "to express concerns", "example": "Sie äußerte Bedenken gegenüber dem neuen Konzept.", "context": "Konversation – Meinung"}],
      "mistakes": [{"num": "1", "category": "Kasus", "wrong": "...", "right": "...", "explanation": "..."}],
-     "stats": {"Anzahl Antworten": 0, "Wörter insgesamt": 0, "Durchschnittliche Wortzahl pro Antwort": 0, "Komplexe Sätze (Nebensätze)": 0, "dass-Sätze": 0, "weil-Sätze": 0, "wenn-Sätze": 0, "Konjunktiv II": 0, "Passiv": 0, "Genitiv": 0, "Eigene Fragen gestellt": 0, "Wiederverwendung alter Wörter": 0, "Wiederverwendung alter Redewendungen": 0, "Sitzungsdauer (Minuten)": 30}
+     "stats": {"Anzahl Antworten": 0, "Wörter insgesamt": 0, "Durchschnittliche Wortzahl pro Antwort": 0, "Komplexe Sätze (Nebensätze)": 0, "dass-Sätze": 0, "weil-Sätze": 0, "wenn-Sätze": 0, "Konjunktiv II": 0, "Passiv": 0, "Genitiv": 0, "Eigene Fragen gestellt": 0, "Wiederverwendung alter Wörter": 0, "Wiederverwendung alter Redewendungen": 0, "Sitzungsdauer (Minuten)": 30},
+     "vocab_review_misses": []
    }
 
    Full HTML body template (use proper umlauts everywhere):
