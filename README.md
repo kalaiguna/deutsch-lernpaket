@@ -232,6 +232,7 @@ embedded snapshot data — just ask Claude to refresh the snapshot after each se
 | [NOTION_DATABASE_SETUP.md](NOTION_DATABASE_SETUP.md) | Optional: migrate from free-form Notion pages to a structured Notion database for calendar view and faster queries |
 | [docs/grammar-reference.md](docs/grammar-reference.md) | Comprehensive B2 grammar reference — pronoun/article/adjective tables, all modal conjugations, Konnektoren position rules, Verben/Adjektive/Nomen mit Präpositionen, Partizipialattribute, Passiversatzformen, Wortbildung, Funktionsverbgefüge, and full phrase banks for Schreiben and Sprechen |
 | [docs/exam-strategy.md](docs/exam-strategy.md) | telc B2 exam strategy — prüfungsaufbau table, 3-of-4 Leitpunkte rule, scoring rubric, Schreiben checklist, Sprechen Teil 1–3 scaffolds with Konjunktiv I, 16 official Themenbereiche, Lesen/Hören traps, Sprachbausteine 3-step strategy |
+| [docs/b2-wortschatz.md](docs/b2-wortschatz.md) | Curated B2 vocabulary reference organised by the 16 telc Themenbereiche — nouns with article and plural, verbs with preposition patterns, key collocations |
 
 ---
 
