@@ -178,6 +178,8 @@ SESSION STRUCTURE
 9) GOODBYE
    Confirm the page was saved in the "Deutsch lernen B2" Notion page, then a warm German + English farewell.
 
+   💡 Tipp: Für eine gezielte Vokabel-Wiederholung aus deinen letzten Sitzungen, starte jederzeit /wortschatz-auffrischung.
+
 OPTIONAL DATABASE MODE
 
 If you have set up a Notion sessions database (see NOTION_DATABASE_SETUP.md in the repo), after saving the Notion page also create a database row using `notion_create_page` with the database as parent. Set these properties: Date = [YYYY-MM-DD] (date), Theme = [article topic in German] (text), Type = "Lektüre" (select), Score = [Leseverstehen X/Y] (text), Source URL = [article URL] (url). The rich Notion page with the JSON block remains the primary data source.

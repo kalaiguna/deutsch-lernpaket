@@ -101,6 +101,11 @@
         }
       }
     },
+    "vocab_review_misses": {
+      "type": "array",
+      "description": "Words the learner could not recall correctly during the in-session vocab drill (Vokabel-Abschluss or Vokabel-Aufwärmen). Optional. Used by monatsrueckblick and wortschatz-auffrischung for targeted review.",
+      "items": { "type": "string" }
+    },
     "stats": {
       "type": "object",
       "description": "Session statistics. Required keys vary by type — see notes. Include only keys relevant to the session type.",
